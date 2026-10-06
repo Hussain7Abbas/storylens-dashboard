@@ -1,42 +1,42 @@
 {
-	"name": "storylens-dashboard",
-	"version": "3.4.0",
-	"private": true,
-	"license": "PolyForm-Noncommercial-1.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc --noEmit && vite build",
-		"preview": "vite preview --port 4174 --strictPort",
-		"typecheck": "tsc --noEmit",
-		"lint": "biome check",
-		"format": "biome check --write",
-		"orval": "orval --config ./orval.config.ts",
-		"test": "playwright test",
-		"test:e2e": "playwright test",
-		"deploy": "bash deploy/deploy.sh"
-	},
-	"dependencies": {
-		"@fontsource-variable/inter": "^5.3.0",
-		"@tanstack/react-query": "^5.104.0",
-		"axios": "^1.20.0",
-		"lucide-react": "^1.48.0",
-		"react": "^19.3.0",
-		"react-dom": "^19.3.0",
-		"react-router": "^7"
-	},
-	"devDependencies": {
-		"@axe-core/playwright": "^4.13.0",
-		"@biomejs/biome": "2.4.2",
-		"@playwright/test": "1.63.0",
-		"@tailwindcss/vite": "^4.3.3",
-		"@types/node": "^26.6.3",
-		"@types/react": "^19.3.0",
-		"@types/react-dom": "^19.3.0",
-		"@vitejs/plugin-react": "^6.1.1",
-		"orval": "^7.21",
-		"tailwindcss": "^4.3.3",
-		"typescript": "^5.9",
-		"vite": "^8.3.1"
-	}
+ "name": "storylens-dashboard",
+ "version": "3.4.1",
+ "private": true,
+ "license": "PolyForm-Noncommercial-1.0.0",
+ "type": "module",
+ "scripts": {
+  "dev": "vite",
+  "build": "tsc --noEmit && vite build",
+  "preview": "vite preview --port 4174 --strictPort",
+  "typecheck": "tsc --noEmit",
+  "lint": "biome check",
+  "format": "biome check --write",
+  "orval": "orval --config ./orval.config.ts",
+  "test": "playwright test",
+  "test:e2e": "playwright test",
+  "deploy": "bash deploy/deploy.sh"
+ },
+ "dependencies": {
+  "@fontsource-variable/inter": "^5.3.0",
+  "@tanstack/react-query": "^5.104.0",
+  "axios": "^1.20.0",
+  "lucide-react": "^1.48.0",
+  "react": "^19.3.0",
+  "react-dom": "^19.3.0",
+  "react-router": "^7"
+ },
+ "devDependencies": {
+  "@axe-core/playwright": "^4.13.0",
+  "@biomejs/biome": "2.4.2",
+  "@playwright/test": "1.63.0",
+  "@tailwindcss/vite": "^4.3.3",
+  "@types/node": "^26.6.3",
+  "@types/react": "^19.3.0",
+  "@types/react-dom": "^19.3.0",
+  "@vitejs/plugin-react": "^6.1.1",
+  "orval": "^7.21",
+  "tailwindcss": "^4.3.3",
+  "typescript": "^5.9",
+  "vite": "^8.3.1"
+ }
 }
