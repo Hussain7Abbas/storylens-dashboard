@@ -780,3 +780,80 @@ test("renaming an alias in one language keeps the other language's name", async 
 		}),
 	);
 });
+
+test("a keyword's translation link merges the other language's keyword on save", async ({
+	page,
+}) => {
+	const requests = await mockApi(page, { signedIn: true });
+	await page.goto(`/novels/${novels[0]?.id}`);
+	await page.getByRole("button", { name: "Edit الفانوس", exact: true }).click();
+	const dialog = page.getByRole("dialog", { name: "Edit الفانوس" });
+	const link = dialog.getByRole("combobox", { name: "Translation link" });
+
+	await link.fill("lantern");
+	// Mira is named in Arabic too, so it cannot be this Arabic keyword's translation.
+	await expect(page.getByRole("option", { name: /^Mira · ميرا$/ })).toHaveCount(
+		0,
+	);
+	await page.getByRole("option", { name: "The Lantern" }).click();
+	// The link hands over its style, because the merge keeps only one row.
+	await expect(dialog.getByLabel("Description")).toHaveValue("A glowing relic");
+
+	await dialog.getByRole("button", { name: "Save changes" }).click();
+	await expect(page.getByText("Keyword updated")).toBeVisible();
+	expect(requests).toContainEqual({
+		method: "PUT",
+		path: `/api/admin/keywords/${KEYWORD_IDS.lanternAr}`,
+		body: {
+			nameAr: "الفانوس",
+			nameEn: null,
+			matchingType: "PARTIAL",
+			fuzzyMatchArabicCharacters: false,
+			translationKeywordId: KEYWORD_IDS.lanternEn,
+		},
+	});
+	expect(requests).toContainEqual(
+		expect.objectContaining({
+			method: "PUT",
+			path: "/api/admin/keyword-versions/v-lantern-ar",
+			body: expect.objectContaining({ description: "A glowing relic" }),
+		}),
+	);
+});
+
+test("an alias's translation link offers only its keyword's other aliases", async ({
+	page,
+}) => {
+	const profileKeywords = structuredClone(keywordDetails);
+	const mira = profileKeywords[0];
+	const vale = mira?.aliases[0];
+	if (!mira || !vale) throw new Error("Missing alias fixture");
+	// A second alias of the same keyword, named only in the other language.
+	mira.aliases.push({
+		...structuredClone(vale),
+		id: "alias-mira-ar",
+		nameAr: "ميرا فيل",
+		nameEn: null,
+	});
+	const requests = await mockApi(page, { signedIn: true, profileKeywords });
+	await page.goto(`/novels/${novels[0]?.id}`);
+	await page.getByRole("button", { name: "Edit alias Mira Vale" }).click();
+	const dialog = page.getByRole("dialog", { name: "Edit alias" });
+	const link = dialog.getByRole("combobox", { name: "Translation link" });
+
+	await link.click();
+	// Keywords and other keywords' aliases are never offered, only siblings.
+	await expect(page.getByRole("option", { name: /^Mira · ميرا$/ })).toHaveCount(
+		0,
+	);
+	await page.getByRole("option", { name: "ميرا فيل" }).click();
+	await dialog.getByRole("button", { name: "Save changes" }).click();
+	await expect(page.getByText("Alias updated")).toBeVisible();
+	expect(requests).toContainEqual(
+		expect.objectContaining({
+			method: "PUT",
+			path: "/api/admin/keyword-aliases/alias-mira-vale",
+			body: expect.objectContaining({ translationAliasId: "alias-mira-ar" }),
+		}),
+	);
+});

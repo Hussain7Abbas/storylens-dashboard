@@ -11,11 +11,20 @@ import {
 } from "react";
 import type { GetNovelsByIdKeywords200DataItem } from "@/api/generated/schemas";
 import { fuzzyScore, normalizeForSearch } from "@/lib/fuzzy";
+import { baseVersion } from "@/lib/keyword-details";
 import { useNovelKeywords } from "@/lib/novel-keywords";
 import { bothNames } from "@/lib/translation";
 import { Spinner } from "./spinner";
 
-/** A keyword, or (from a Link picker) an alias of `keywordId`. */
+/** The description, category, nature and image a picked row carries. */
+export type PickedStyle = {
+	description: string | null;
+	categoryId: string | null;
+	natureId: string | null;
+	image: { id: string; url: string } | null;
+};
+
+/** A keyword, or (from a Link or Translation picker) an alias of `keywordId`. */
 export type PickedKeyword = {
 	kind: "keyword" | "alias";
 	id: string;
@@ -23,6 +32,8 @@ export type PickedKeyword = {
 	label: string;
 	nameAr: string | null;
 	nameEn: string | null;
+	/** A keyword's base version's style, or an alias's own. */
+	style: PickedStyle;
 };
 
 type Entry = PickedKeyword & {
@@ -45,6 +56,20 @@ const normalized = (names: (string | null | undefined)[]) => [
 	...new Set(names.flatMap((name) => (name ? [normalizeForSearch(name)] : []))),
 ];
 
+function styleOf(row: {
+	description?: string | null;
+	categoryId?: string | null;
+	natureId?: string | null;
+	image?: { id: string; url: string } | null;
+}): PickedStyle {
+	return {
+		description: row.description ?? null,
+		categoryId: row.categoryId ?? null,
+		natureId: row.natureId ?? null,
+		image: row.image ? { id: row.image.id, url: row.image.url } : null,
+	};
+}
+
 function keywordEntry(
 	keyword: GetNovelsByIdKeywords200DataItem,
 	withAliases: boolean,
@@ -56,6 +81,7 @@ function keywordEntry(
 		label: bothNames(keyword),
 		nameAr: keyword.nameAr,
 		nameEn: keyword.nameEn,
+		style: styleOf(baseVersion(keyword) ?? {}),
 		detail: withAliases
 			? keyword.aliases.map((alias) => bothNames(alias)).join(", ") || null
 			: null,
@@ -77,6 +103,7 @@ function aliasEntries(keyword: GetNovelsByIdKeywords200DataItem): Entry[] {
 			label: bothNames(alias),
 			nameAr: alias.nameAr ?? null,
 			nameEn: alias.nameEn ?? null,
+			style: styleOf(alias),
 			detail: `Alias of ${bothNames(keyword)}`,
 			texts: normalized([alias.nameAr, alias.nameEn]),
 			aliasTexts: [],
@@ -101,15 +128,23 @@ export function KeywordPicker({
 	disabled = false,
 	label,
 	placeholder = "Search…",
+	withinKeywordId,
+	candidate,
 }: {
 	novelId: string;
 	excludeId: string;
-	mode: "link" | "parent";
+	mode: "link" | "parent" | "siblingAlias";
 	value: PickedKeyword | null;
 	onChange: (value: PickedKeyword | null) => void;
 	disabled?: boolean;
 	label: string;
 	placeholder?: string;
+	/** The keyword whose aliases `siblingAlias` offers. */
+	withinKeywordId?: string;
+	candidate?: (names: {
+		nameAr: string | null;
+		nameEn: string | null;
+	}) => boolean;
 }) {
 	const listId = useId();
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -124,13 +159,24 @@ export function KeywordPicker({
 		const others = (keywords.data ?? []).filter(
 			(keyword) => keyword.id !== excludeId,
 		);
-		const entries = others.map((keyword) =>
-			keywordEntry(keyword, mode === "parent"),
+		const entries =
+			mode === "siblingAlias"
+				? others
+						.filter((keyword) => keyword.id === withinKeywordId)
+						.flatMap(aliasEntries)
+				: mode === "link"
+					? [
+							...others.map((keyword) => keywordEntry(keyword, false)),
+							...others.flatMap(aliasEntries),
+						]
+					: others.map((keyword) => keywordEntry(keyword, true));
+		return entries.filter(
+			(entry) =>
+				entry.id !== excludeId &&
+				(!candidate ||
+					candidate({ nameAr: entry.nameAr, nameEn: entry.nameEn })),
 		);
-		return mode === "link"
-			? [...entries, ...others.flatMap(aliasEntries)]
-			: entries;
-	}, [keywords.data, excludeId, mode]);
+	}, [keywords.data, excludeId, mode, withinKeywordId, candidate]);
 	const options = useMemo(() => {
 		if (!search) return index.slice(0, RESULTS);
 		return index
@@ -198,6 +244,7 @@ export function KeywordPicker({
 			label: entry.label,
 			nameAr: entry.nameAr,
 			nameEn: entry.nameEn,
+			style: entry.style,
 		});
 		setText("");
 		setOpen(false);

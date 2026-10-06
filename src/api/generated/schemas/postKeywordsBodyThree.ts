@@ -21,6 +21,7 @@ export type PostKeywordsBodyThree = {
   nameEn?: PostKeywordsBodyThreeNameEn;
   matchingType?: PostKeywordsBodyThreeMatchingType;
   fuzzyMatchArabicCharacters?: boolean;
+  translationKeywordId?: string;
   /** @nullable */
   description?: PostKeywordsBodyThreeDescription;
   /** @nullable */

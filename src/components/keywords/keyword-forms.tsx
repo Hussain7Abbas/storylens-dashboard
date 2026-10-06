@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { type FormEvent, type ReactNode, useState } from "react";
+import { type FormEvent, type ReactNode, useCallback, useState } from "react";
 import { errorMessage } from "@/api/axios-instance";
 import {
 	postKeywordAliases,
@@ -12,6 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { ImageField, type PickedImage } from "@/components/ui/image-field";
+import {
+	KeywordPicker,
+	type PickedKeyword,
+} from "@/components/ui/keyword-picker";
 import { useToast } from "@/components/ui/toast";
 import {
 	baseVersion,
@@ -56,6 +60,57 @@ function styleBody(values: StyleValues) {
 		natureId: values.natureId || null,
 		imageId: values.image?.id ?? null,
 	};
+}
+
+type Names = { nameAr: string | null; nameEn: string | null };
+
+/**
+ * Whether a row may be the saved row's translation: neither language may hold a
+ * different name on both sides, since the merge keeps only one of each
+ * (backend `missingNames`).
+ */
+function isTranslationCandidate(own: Names, other: Names): boolean {
+	return (["nameAr", "nameEn"] as const).every(
+		(field) => !own[field] || !other[field] || own[field] === other[field],
+	);
+}
+
+const trimmed = (names: { nameAr: string; nameEn: string }): Names => ({
+	nameAr: names.nameAr.trim() || null,
+	nameEn: names.nameEn.trim() || null,
+});
+
+/** The style a picked translation hands over; the merge keeps only one row's. */
+function translationStyle(picked: PickedKeyword): StyleValues {
+	return {
+		description: picked.style.description ?? "",
+		categoryId: picked.style.categoryId ?? "",
+		natureId: picked.style.natureId ?? "",
+		image: picked.style.image,
+	};
+}
+
+/**
+ * Optional picker of the row that holds the saved row's other-language name.
+ * `Field` clones its child to label it, which the picker's own combobox markup
+ * already does, so the label and hint are rendered here instead.
+ */
+function TranslationLinkField({ children }: { children: ReactNode }) {
+	return (
+		<div>
+			<p className="field-label">
+				<span>Translation link</span>
+			</p>
+			{children}
+			<p className="field-hint">
+				<span>
+					Optional. The entry with this one’s name in the other language: saving
+					merges the two into this one and takes its category, nature,
+					description and image.
+				</span>
+			</p>
+		</div>
+	);
 }
 
 export type StyleOptions = {
@@ -287,8 +342,13 @@ export function KeywordForm({
 		keyword?.fuzzyMatchArabicCharacters ?? true,
 	);
 	const [style, setStyle] = useState(styleValues(base));
+	const [translation, setTranslation] = useState<PickedKeyword | null>(null);
 	const [uploading, setUploading] = useState(false);
 	const { busy, error, setError, run } = useSave(novelId, onDone);
+	const candidate = useCallback(
+		(other: Names) => isTranslationCandidate(trimmed(names), other),
+		[names],
+	);
 
 	const submit = async () => {
 		const nameAr = names.nameAr.trim() || null;
@@ -304,6 +364,7 @@ export function KeywordForm({
 						nameEn,
 						matchingType,
 						fuzzyMatchArabicCharacters,
+						translationKeywordId: translation?.id,
 						...styleBody(style),
 					}),
 				"Keyword created",
@@ -316,6 +377,7 @@ export function KeywordForm({
 				nameEn,
 				matchingType,
 				fuzzyMatchArabicCharacters,
+				translationKeywordId: translation?.id,
 			});
 			if (base) await putKeywordVersionsById(base.id, styleBody(style));
 			else
@@ -369,6 +431,22 @@ export function KeywordForm({
 					onChange={setFuzzyMatchArabicCharacters}
 				/>
 			)}
+			<TranslationLinkField>
+				<KeywordPicker
+					novelId={novelId}
+					excludeId={keyword?.id ?? ""}
+					mode="parent"
+					label="Translation link"
+					placeholder="Search the novel’s keywords…"
+					value={translation}
+					onChange={(picked) => {
+						setTranslation(picked);
+						if (picked) setStyle(translationStyle(picked));
+					}}
+					candidate={candidate}
+					disabled={busy}
+				/>
+			</TranslationLinkField>
 			<StyleFields
 				values={style}
 				onChange={setStyle}
@@ -405,8 +483,13 @@ export function AliasForm({
 		alias?.overrideStyle ?? false,
 	);
 	const [style, setStyle] = useState(styleValues(alias));
+	const [translation, setTranslation] = useState<PickedKeyword | null>(null);
 	const [uploading, setUploading] = useState(false);
 	const { busy, error, setError, run } = useSave(keyword.novelId, onDone);
+	const candidate = useCallback(
+		(other: Names) => isTranslationCandidate(trimmed(names), other),
+		[names],
+	);
 
 	const submit = async () => {
 		const nameAr = names.nameAr.trim() || null;
@@ -418,6 +501,7 @@ export function AliasForm({
 			matchingType: fullWord ? ("FULL" as const) : ("PARTIAL" as const),
 			fuzzyMatchArabicCharacters,
 			overrideStyle,
+			translationAliasId: translation?.id,
 			...styleBody(style),
 		};
 		await run(
@@ -490,6 +574,23 @@ export function AliasForm({
 					</span>
 				</span>
 			</label>
+			<TranslationLinkField>
+				<KeywordPicker
+					novelId={keyword.novelId}
+					excludeId={alias?.id ?? ""}
+					mode="siblingAlias"
+					withinKeywordId={keyword.id}
+					label="Translation link"
+					placeholder="Search this keyword’s aliases…"
+					value={translation}
+					onChange={(picked) => {
+						setTranslation(picked);
+						if (picked) setStyle(translationStyle(picked));
+					}}
+					candidate={candidate}
+					disabled={busy}
+				/>
+			</TranslationLinkField>
 			<StyleFields
 				values={style}
 				onChange={setStyle}

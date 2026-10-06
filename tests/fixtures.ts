@@ -267,6 +267,29 @@ function version(
 }
 
 /** The novel profile's keywords: one named in both languages with a later version and an alias. */
+/** One alias shape, so every keyword's `aliases` share it and tests can add one. */
+const miraVale = {
+	id: "alias-mira-vale",
+	keywordId: KEYWORD_IDS.mira,
+	nameAr: null as string | null,
+	nameEn: "Mira Vale" as string | null,
+	description: null as string | null,
+	matchingType: "FULL",
+	fuzzyMatchArabicCharacters: true,
+	overrideStyle: false,
+	categoryId: null as string | null,
+	category: null as (typeof categories)[number] | null,
+	natureId: null as string | null,
+	nature: null as (typeof natures)[number] | null,
+	imageId: null as string | null,
+	image: null as { id: string; url: string } | null,
+	createdById: null as string | null,
+	createdAt: now,
+	updatedAt: now,
+};
+
+export type FixtureAlias = typeof miraVale;
+
 export const keywordDetails = [
 	{
 		id: KEYWORD_IDS.mira,
@@ -293,27 +316,7 @@ export const keywordDetails = [
 				description: "The archive's new keeper",
 			}),
 		],
-		aliases: [
-			{
-				id: "alias-mira-vale",
-				keywordId: KEYWORD_IDS.mira,
-				nameAr: null as string | null,
-				nameEn: "Mira Vale" as string | null,
-				description: null,
-				matchingType: "FULL",
-				fuzzyMatchArabicCharacters: true,
-				overrideStyle: false,
-				categoryId: null,
-				category: null,
-				natureId: null,
-				nature: null,
-				imageId: null,
-				image: null,
-				createdById: null,
-				createdAt: now,
-				updatedAt: now,
-			},
-		],
+		aliases: [miraVale],
 	},
 	{
 		id: KEYWORD_IDS.lanternAr,
@@ -328,7 +331,7 @@ export const keywordDetails = [
 		createdAt: now,
 		updatedAt: now,
 		versions: [version("v-lantern-ar", KEYWORD_IDS.lanternAr, 0, null)],
-		aliases: [],
+		aliases: [] as FixtureAlias[],
 	},
 	{
 		id: KEYWORD_IDS.lanternEn,
@@ -346,7 +349,7 @@ export const keywordDetails = [
 				description: "A glowing relic",
 			}),
 		],
-		aliases: [],
+		aliases: [] as FixtureAlias[],
 	},
 ];
 

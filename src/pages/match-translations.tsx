@@ -38,7 +38,11 @@ import {
 	loadDesktopSettings,
 	saveDesktopSettings,
 } from "@/lib/desktop-client";
-import { type KeywordDetail, refreshKeywords } from "@/lib/keyword-details";
+import {
+	baseVersion,
+	type KeywordDetail,
+	refreshKeywords,
+} from "@/lib/keyword-details";
 import { novelKeywordsQuery } from "@/lib/novel-keywords";
 import { PERMISSIONS } from "@/lib/permissions";
 import {
@@ -102,6 +106,7 @@ function candidatesIn(
 }
 
 function toPicked(keyword: KeywordDetail): PickedKeyword {
+	const base = baseVersion(keyword);
 	return {
 		kind: "keyword",
 		id: keyword.id,
@@ -109,6 +114,12 @@ function toPicked(keyword: KeywordDetail): PickedKeyword {
 		label: bothNames(keyword),
 		nameAr: keyword.nameAr,
 		nameEn: keyword.nameEn,
+		style: {
+			description: base?.description ?? null,
+			categoryId: base?.categoryId ?? null,
+			natureId: base?.natureId ?? null,
+			image: base?.image ? { id: base.image.id, url: base.image.url } : null,
+		},
 	};
 }
 

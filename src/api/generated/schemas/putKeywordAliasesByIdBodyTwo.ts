@@ -22,6 +22,7 @@ export type PutKeywordAliasesByIdBodyTwo = {
   natureId?: PutKeywordAliasesByIdBodyTwoNatureId;
   /** @nullable */
   imageId?: PutKeywordAliasesByIdBodyTwoImageId;
+  translationAliasId?: string;
   /** @nullable */
   nameAr?: PutKeywordAliasesByIdBodyTwoNameAr;
   /** @nullable */

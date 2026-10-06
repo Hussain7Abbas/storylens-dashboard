@@ -23,6 +23,7 @@ export type PostKeywordAliasesBodyTwo = {
   natureId?: PostKeywordAliasesBodyTwoNatureId;
   /** @nullable */
   imageId?: PostKeywordAliasesBodyTwoImageId;
+  translationAliasId?: string;
   /** @nullable */
   nameAr?: PostKeywordAliasesBodyTwoNameAr;
   /** @nullable */
