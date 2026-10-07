@@ -8,8 +8,12 @@ export const LANGUAGE_LABELS: Record<Language, string> = {
 
 type Named = { nameAr?: string | null; nameEn?: string | null };
 
+export function nameKey(language: Language): "nameAr" | "nameEn" {
+	return language === "ar" ? "nameAr" : "nameEn";
+}
+
 export function nameIn(item: Named, language: Language): string | null {
-	return (language === "ar" ? item.nameAr : item.nameEn) ?? null;
+	return item[nameKey(language)] ?? null;
 }
 
 /** Both names for dashboard lists and dialogs, which manage every language. */

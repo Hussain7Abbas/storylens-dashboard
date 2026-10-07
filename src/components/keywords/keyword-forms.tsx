@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { type FormEvent, type ReactNode, useCallback, useState } from "react";
+import { Link2 } from "lucide-react";
+import { type FormEvent, type ReactNode, useId, useState } from "react";
 import { errorMessage } from "@/api/axios-instance";
 import {
 	postKeywordAliases,
@@ -29,6 +30,12 @@ import {
 	startOf,
 	styleName,
 } from "@/lib/keyword-details";
+import {
+	LANGUAGE_LABELS,
+	type Language,
+	nameIn,
+	nameKey,
+} from "@/lib/translation";
 
 type StyleValues = {
 	description: string;
@@ -62,25 +69,9 @@ function styleBody(values: StyleValues) {
 	};
 }
 
-type Names = { nameAr: string | null; nameEn: string | null };
+type Names = { nameAr: string; nameEn: string };
 
-/**
- * Whether a row may be the saved row's translation: neither language may hold a
- * different name on both sides, since the merge keeps only one of each
- * (backend `missingNames`).
- */
-function isTranslationCandidate(own: Names, other: Names): boolean {
-	return (["nameAr", "nameEn"] as const).every(
-		(field) => !own[field] || !other[field] || own[field] === other[field],
-	);
-}
-
-const trimmed = (names: { nameAr: string; nameEn: string }): Names => ({
-	nameAr: names.nameAr.trim() || null,
-	nameEn: names.nameEn.trim() || null,
-});
-
-/** The style a picked translation hands over; the merge keeps only one row's. */
+/** The style a picked link hands over; the merge keeps only one row's. */
 function translationStyle(picked: PickedKeyword): StyleValues {
 	return {
 		description: picked.style.description ?? "",
@@ -91,22 +82,87 @@ function translationStyle(picked: PickedKeyword): StyleValues {
 }
 
 /**
- * Optional picker of the row that holds the saved row's other-language name.
- * `Field` clones its child to label it, which the picker's own combobox markup
- * already does, so the label and hint are rendered here instead.
+ * The language tabs of a keyword or alias form. Both tabs hold the same fields,
+ * each with its own language's name; the one the characters table is showing
+ * opens first, and the other also offers **Link**.
  */
-function TranslationLinkField({ children }: { children: ReactNode }) {
+function LanguageTabs({
+	language,
+	tab,
+	onTab,
+	linked,
+	fields,
+}: {
+	/** The table's language: the tab that opens first. */
+	language: Language;
+	tab: Language;
+	onTab: (tab: Language) => void;
+	linked: boolean;
+	fields: (tab: Language) => ReactNode;
+}) {
+	const id = useId();
+	return (
+		<>
+			<div
+				role="tablist"
+				aria-label="Language"
+				className="flex gap-1 border-b border-line"
+			>
+				{(["ar", "en"] as const).map((item) => (
+					<button
+						key={item}
+						type="button"
+						role="tab"
+						id={`${id}-${item}`}
+						aria-selected={item === tab}
+						aria-controls={`${id}-panel`}
+						className={`-mb-px inline-flex min-h-10 items-center gap-2 border-b-2 px-4 text-sm font-medium ${
+							item === tab
+								? "border-accent text-accent"
+								: "border-transparent text-muted hover:text-ink"
+						}`}
+						onClick={() => onTab(item)}
+					>
+						<span aria-hidden>{item.toUpperCase()}</span>
+						<span className="sr-only">{LANGUAGE_LABELS[item]}</span>
+						{item !== language && linked && (
+							<>
+								<Link2 size={14} strokeWidth={1.75} aria-hidden />
+								<span className="sr-only">Linked</span>
+							</>
+						)}
+					</button>
+				))}
+			</div>
+			<div
+				role="tabpanel"
+				id={`${id}-panel`}
+				aria-labelledby={`${id}-${tab}`}
+				className="grid gap-4"
+			>
+				{fields(tab)}
+			</div>
+		</>
+	);
+}
+
+/**
+ * The **Link** field of the other language's tab. `Field` clones its child to
+ * label it, which the picker's own combobox markup already does, so the label
+ * and hint are rendered here instead.
+ */
+function LinkField({ children }: { children: ReactNode }) {
 	return (
 		<div>
 			<p className="field-label">
-				<span>Translation link</span>
+				<span>Link</span>
 			</p>
 			{children}
 			<p className="field-hint">
 				<span>
-					Optional. The entry with this one’s name in the other language: saving
-					merges the two into this one and takes its category, nature,
-					description and image.
+					Optional. The entry already named in this language: saving merges it
+					into this one, which takes its name, category, nature, description and
+					image.
 				</span>
 			</p>
 		</div>
@@ -322,16 +378,19 @@ function FuzzyArabicToggle({
 export function KeywordForm({
 	keyword,
 	novelId,
+	language,
 	options,
 	onDone,
 }: {
 	keyword: KeywordDetail | null;
 	novelId: string;
+	/** The characters table's language: the tab that opens first. */
+	language: Language;
 	options: StyleOptions;
 	onDone: () => void;
 }) {
 	const base = keyword ? baseVersion(keyword) : undefined;
-	const [names, setNames] = useState({
+	const [names, setNames] = useState<Names>({
 		nameAr: keyword?.nameAr ?? "",
 		nameEn: keyword?.nameEn ?? "",
 	});
@@ -344,15 +403,21 @@ export function KeywordForm({
 	const [style, setStyle] = useState(styleValues(base));
 	const [translation, setTranslation] = useState<PickedKeyword | null>(null);
 	const [uploading, setUploading] = useState(false);
+	const other: Language = language === "ar" ? "en" : "ar";
+	const [tab, setTab] = useState<Language>(language);
 	const { busy, error, setError, run } = useSave(novelId, onDone);
-	const candidate = useCallback(
-		(other: Names) => isTranslationCandidate(trimmed(names), other),
-		[names],
-	);
 
 	const submit = async () => {
-		const nameAr = names.nameAr.trim() || null;
-		const nameEn = names.nameEn.trim() || null;
+		// A link brings that language's name itself, and the row it absorbs still
+		// holds it, so the form does not send it (`assertKeywordNamesFree`).
+		const saved: Names = translation
+			? {
+					...names,
+					[nameKey(other)]: keyword ? (nameIn(keyword, other) ?? "") : "",
+				}
+			: names;
+		const nameAr = saved.nameAr.trim() || null;
+		const nameEn = saved.nameEn.trim() || null;
 		if (!nameAr && !nameEn) return setError("Enter an Arabic or English name.");
 		const matchingType = fullWord ? ("FULL" as const) : ("PARTIAL" as const);
 		if (!keyword) {
@@ -398,60 +463,77 @@ export function KeywordForm({
 			error={error}
 			submitLabel={keyword ? "Save changes" : "Create keyword"}
 		>
-			<div className="grid gap-4 sm:grid-cols-2">
-				<Field label="Arabic name">
-					<input
-						className="input"
-						dir="rtl"
-						lang="ar"
-						maxLength={300}
-						value={names.nameAr}
-						onChange={(event) =>
-							setNames({ ...names, nameAr: event.target.value })
-						}
-					/>
-				</Field>
-				<Field label="English name">
-					<input
-						className="input"
-						lang="en"
-						maxLength={300}
-						value={names.nameEn}
-						onChange={(event) =>
-							setNames({ ...names, nameEn: event.target.value })
-						}
-					/>
-				</Field>
-			</div>
-			<FullWordToggle checked={fullWord} onChange={setFullWord} />
-			{(/\p{Script=Arabic}/u.test(names.nameAr) ||
-				/\p{Script=Arabic}/u.test(names.nameEn)) && (
-				<FuzzyArabicToggle
-					checked={fuzzyMatchArabicCharacters}
-					onChange={setFuzzyMatchArabicCharacters}
-				/>
-			)}
-			<TranslationLinkField>
-				<KeywordPicker
-					novelId={novelId}
-					excludeId={keyword?.id ?? ""}
-					mode="parent"
-					label="Translation link"
-					placeholder="Search the novel’s keywords…"
-					value={translation}
-					onChange={(picked) => {
-						setTranslation(picked);
-						if (picked) setStyle(translationStyle(picked));
-					}}
-					candidate={candidate}
-					disabled={busy}
-				/>
-			</TranslationLinkField>
-			<StyleFields
-				values={style}
-				onChange={setStyle}
-				options={options}
-				onUploadingChange={setUploading}
+			<LanguageTabs
+				language={language}
+				tab={tab}
+				onTab={setTab}
+				linked={!!translation}
+				fields={(item) => (
+					<>
+						{item !== language && (
+							<LinkField>
+								<KeywordPicker
+									novelId={novelId}
+									excludeId={keyword?.id ?? ""}
+									mode="parent"
+									named={item}
+									unnamed={language}
+									targetName={keyword ? nameIn(keyword, other) : null}
+									label="Link"
+									placeholder="Search keywords in this language…"
+									value={translation}
+									onChange={(picked) => {
+										setTranslation(picked);
+										setNames({
+											...names,
+											[nameKey(item)]: picked
+												? (nameIn(picked, item) ?? "")
+												: keyword
+													? (nameIn(keyword, item) ?? "")
+													: "",
+										});
+										if (picked) setStyle(translationStyle(picked));
+									}}
+									disabled={busy}
+								/>
+							</LinkField>
+						)}
+						<Field
+							label="Name"
+							hint={
+								item !== language && translation
+									? "From the linked entry."
+									: undefined
+							}
+						>
+							<input
+								className="input"
+								dir={item === "ar" ? "rtl" : "ltr"}
+								lang={item}
+								maxLength={300}
+								disabled={item !== language && !!translation}
+								value={names[nameKey(item)]}
+								onChange={(event) =>
+									setNames({ ...names, [nameKey(item)]: event.target.value })
+								}
+							/>
+						</Field>
+						<FullWordToggle checked={fullWord} onChange={setFullWord} />
+						{(/\p{Script=Arabic}/u.test(names.nameAr) ||
+							/\p{Script=Arabic}/u.test(names.nameEn)) && (
+							<FuzzyArabicToggle
+								checked={fuzzyMatchArabicCharacters}
+								onChange={setFuzzyMatchArabicCharacters}
+							/>
+						)}
+						<StyleFields
+							values={style}
+							onChange={setStyle}
+							options={options}
+							onUploadingChange={setUploading}
+						/>
+					</>
+				)}
 			/>
 		</FormShell>
 	);
@@ -461,15 +543,18 @@ export function KeywordForm({
 export function AliasForm({
 	keyword,
 	alias,
+	language,
 	options,
 	onDone,
 }: {
 	keyword: KeywordDetail;
 	alias: KeywordAlias | null;
+	/** The characters table's language: the tab that opens first. */
+	language: Language;
 	options: StyleOptions;
 	onDone: () => void;
 }) {
-	const [names, setNames] = useState({
+	const [names, setNames] = useState<Names>({
 		nameAr: alias?.nameAr ?? "",
 		nameEn: alias?.nameEn ?? "",
 	});
@@ -485,15 +570,20 @@ export function AliasForm({
 	const [style, setStyle] = useState(styleValues(alias));
 	const [translation, setTranslation] = useState<PickedKeyword | null>(null);
 	const [uploading, setUploading] = useState(false);
+	const other: Language = language === "ar" ? "en" : "ar";
+	const [tab, setTab] = useState<Language>(language);
 	const { busy, error, setError, run } = useSave(keyword.novelId, onDone);
-	const candidate = useCallback(
-		(other: Names) => isTranslationCandidate(trimmed(names), other),
-		[names],
-	);
 
 	const submit = async () => {
-		const nameAr = names.nameAr.trim() || null;
-		const nameEn = names.nameEn.trim() || null;
+		// As in the keyword form: a link brings that language's name itself.
+		const saved: Names = translation
+			? {
+					...names,
+					[nameKey(other)]: alias ? (nameIn(alias, other) ?? "") : "",
+				}
+			: names;
+		const nameAr = saved.nameAr.trim() || null;
+		const nameEn = saved.nameEn.trim() || null;
 		if (!nameAr && !nameEn) return setError("Enter an Arabic or English name.");
 		const body = {
 			nameAr,
@@ -526,77 +616,94 @@ export function AliasForm({
 				Another name the character goes by, highlighted on pages in each
 				language it is named in.
 			</p>
-			<div className="grid gap-4 sm:grid-cols-2">
-				<Field label="Arabic name">
-					<input
-						className="input"
-						dir="rtl"
-						lang="ar"
-						maxLength={300}
-						value={names.nameAr}
-						onChange={(event) =>
-							setNames({ ...names, nameAr: event.target.value })
-						}
-					/>
-				</Field>
-				<Field label="English name">
-					<input
-						className="input"
-						lang="en"
-						maxLength={300}
-						value={names.nameEn}
-						onChange={(event) =>
-							setNames({ ...names, nameEn: event.target.value })
-						}
-					/>
-				</Field>
-			</div>
-			<FullWordToggle checked={fullWord} onChange={setFullWord} />
-			{(/\p{Script=Arabic}/u.test(names.nameAr) ||
-				/\p{Script=Arabic}/u.test(names.nameEn)) && (
-				<FuzzyArabicToggle
-					checked={fuzzyMatchArabicCharacters}
-					onChange={setFuzzyMatchArabicCharacters}
-				/>
-			)}
-			<label className="flex items-start gap-3 text-sm">
-				<input
-					type="checkbox"
-					className="mt-1 size-4 accent-[var(--accent)]"
-					checked={overrideStyle}
-					onChange={(event) => setOverrideStyle(event.target.checked)}
-				/>
-				<span>
-					<span className="block font-semibold">Override style</span>
-					<span className="block text-xs text-muted">
-						Highlight this alias with its own category and nature instead of the
-						keyword’s.
-					</span>
-				</span>
-			</label>
-			<TranslationLinkField>
-				<KeywordPicker
-					novelId={keyword.novelId}
-					excludeId={alias?.id ?? ""}
-					mode="siblingAlias"
-					withinKeywordId={keyword.id}
-					label="Translation link"
-					placeholder="Search this keyword’s aliases…"
-					value={translation}
-					onChange={(picked) => {
-						setTranslation(picked);
-						if (picked) setStyle(translationStyle(picked));
-					}}
-					candidate={candidate}
-					disabled={busy}
-				/>
-			</TranslationLinkField>
-			<StyleFields
-				values={style}
-				onChange={setStyle}
-				options={options}
-				onUploadingChange={setUploading}
-				inheritHint="Leave a field empty to use the keyword’s."
+			<LanguageTabs
+				language={language}
+				tab={tab}
+				onTab={setTab}
+				linked={!!translation}
+				fields={(item) => (
+					<>
+						{item !== language && (
+							<LinkField>
+								<KeywordPicker
+									novelId={keyword.novelId}
+									excludeId={alias?.id ?? ""}
+									mode="siblingAlias"
+									withinKeywordId={keyword.id}
+									named={item}
+									unnamed={language}
+									targetName={alias ? nameIn(alias, other) : null}
+									label="Link"
+									placeholder="Search this keyword’s aliases…"
+									value={translation}
+									onChange={(picked) => {
+										setTranslation(picked);
+										setNames({
+											...names,
+											[nameKey(item)]: picked
+												? (nameIn(picked, item) ?? "")
+												: alias
+													? (nameIn(alias, item) ?? "")
+													: "",
+										});
+										if (picked) setStyle(translationStyle(picked));
+									}}
+									disabled={busy}
+								/>
+							</LinkField>
+						)}
+						<Field
+							label="Name"
+							hint={
+								item !== language && translation
+									? "From the linked alias."
+									: undefined
+							}
+						>
+							<input
+								className="input"
+								dir={item === "ar" ? "rtl" : "ltr"}
+								lang={item}
+								maxLength={300}
+								disabled={item !== language && !!translation}
+								value={names[nameKey(item)]}
+								onChange={(event) =>
+									setNames({ ...names, [nameKey(item)]: event.target.value })
+								}
+							/>
+						</Field>
+						<FullWordToggle checked={fullWord} onChange={setFullWord} />
+						{(/\p{Script=Arabic}/u.test(names.nameAr) ||
+							/\p{Script=Arabic}/u.test(names.nameEn)) && (
+							<FuzzyArabicToggle
+								checked={fuzzyMatchArabicCharacters}
+								onChange={setFuzzyMatchArabicCharacters}
+							/>
+						)}
+						<label className="flex items-start gap-3 text-sm">
+							<input
+								type="checkbox"
+								className="mt-1 size-4 accent-[var(--accent)]"
+								checked={overrideStyle}
+								onChange={(event) => setOverrideStyle(event.target.checked)}
+							/>
+							<span>
+								<span className="block font-semibold">Override style</span>
+								<span className="block text-xs text-muted">
+									Highlight this alias with its own category and nature instead
+									of the keyword’s.
+								</span>
+							</span>
+						</label>
+						<StyleFields
+							values={style}
+							onChange={setStyle}
+							options={options}
+							onUploadingChange={setUploading}
+							inheritHint="Leave a field empty to use the keyword’s."
+						/>
+					</>
+				)}
 			/>
 		</FormShell>
 	);

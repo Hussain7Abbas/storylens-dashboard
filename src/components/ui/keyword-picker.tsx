@@ -13,7 +13,7 @@ import type { GetNovelsByIdKeywords200DataItem } from "@/api/generated/schemas";
 import { fuzzyScore, normalizeForSearch } from "@/lib/fuzzy";
 import { baseVersion } from "@/lib/keyword-details";
 import { useNovelKeywords } from "@/lib/novel-keywords";
-import { bothNames } from "@/lib/translation";
+import { bothNames, type Language, nameIn } from "@/lib/translation";
 import { Spinner } from "./spinner";
 
 /** The description, category, nature and image a picked row carries. */
@@ -129,7 +129,9 @@ export function KeywordPicker({
 	label,
 	placeholder = "Search…",
 	withinKeywordId,
-	candidate,
+	named,
+	unnamed,
+	targetName,
 }: {
 	novelId: string;
 	excludeId: string;
@@ -141,10 +143,12 @@ export function KeywordPicker({
 	placeholder?: string;
 	/** The keyword whose aliases `siblingAlias` offers. */
 	withinKeywordId?: string;
-	candidate?: (names: {
-		nameAr: string | null;
-		nameEn: string | null;
-	}) => boolean;
+	/** Offers only rows named in this language… */
+	named?: Language;
+	/** …and not named in this one, so a link can only add the missing name. */
+	unnamed?: Language;
+	/** The surviving entry's stored name in `named`; a link cannot replace it. */
+	targetName?: string | null;
 }) {
 	const listId = useId();
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -173,10 +177,20 @@ export function KeywordPicker({
 		return entries.filter(
 			(entry) =>
 				entry.id !== excludeId &&
-				(!candidate ||
-					candidate({ nameAr: entry.nameAr, nameEn: entry.nameEn })),
+				(!named || !!nameIn(entry, named)) &&
+				(!unnamed || !nameIn(entry, unnamed)) &&
+				(!targetName?.trim() ||
+					(!!named && nameIn(entry, named) === targetName.trim())),
 		);
-	}, [keywords.data, excludeId, mode, withinKeywordId, candidate]);
+	}, [
+		keywords.data,
+		excludeId,
+		mode,
+		withinKeywordId,
+		named,
+		unnamed,
+		targetName,
+	]);
 	const options = useMemo(() => {
 		if (!search) return index.slice(0, RESULTS);
 		return index

@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, type Locator, test } from "@playwright/test";
 import {
 	KEYWORD_IDS,
 	keywordDetails,
@@ -472,6 +472,21 @@ test("character filters and the full search narrow the table", async ({
 	await expect(rows).toHaveCount(1);
 });
 
+/**
+ * Fills a character form's name on one language tab. The tab of the characters
+ * table's language (Arabic by default) opens first; the other one also has Link.
+ */
+async function fillName(
+	dialog: Locator,
+	language: "ar" | "en",
+	value: string,
+): Promise<void> {
+	await dialog
+		.getByRole("tab", { name: language === "ar" ? "Arabic" : "English" })
+		.click();
+	await dialog.getByLabel("Name", { exact: true }).fill(value);
+}
+
 test("character actions add an alias and a version, edit and delete", async ({
 	page,
 }) => {
@@ -480,7 +495,7 @@ test("character actions add an alias and a version, edit and delete", async ({
 
 	await page.getByRole("button", { name: "Add an alias to ميرا" }).click();
 	let dialog = page.getByRole("dialog", { name: "Add an alias to ميرا" });
-	await dialog.getByLabel("English name").fill("The Keeper");
+	await fillName(dialog, "en", "The Keeper");
 	await dialog.getByRole("button", { name: "Add alias" }).click();
 	await expect(page.getByText("Alias added")).toBeVisible();
 	expect(requests).toContainEqual(
@@ -516,7 +531,7 @@ test("character actions add an alias and a version, edit and delete", async ({
 	await page.getByRole("button", { name: "Edit ميرا", exact: true }).click();
 	dialog = page.getByRole("dialog", { name: "Edit ميرا" });
 	await expect(dialog.getByLabel("Category")).toHaveValue("cat-person");
-	await dialog.getByLabel("English name").fill("Mira the Keeper");
+	await fillName(dialog, "en", "Mira the Keeper");
 	await dialog.getByRole("button", { name: "Save changes" }).click();
 	await expect(page.getByText("Keyword updated")).toBeVisible();
 	expect(requests).toContainEqual({
@@ -568,7 +583,7 @@ test("a new keyword is created with its base details", async ({ page }) => {
 	await expect(dialog.getByRole("alert")).toHaveText(
 		"Enter an Arabic or English name.",
 	);
-	await dialog.getByLabel("English name").fill("Old Bell");
+	await fillName(dialog, "en", "Old Bell");
 	await dialog.getByLabel("Category").selectOption("cat-person");
 	await dialog.getByLabel("Description").fill("Rings at dawn");
 	await dialog.getByText("Full word match").click();
@@ -599,9 +614,9 @@ test("Arabic names offer alif variant matching, on by default", async ({
 	await page.getByRole("button", { name: "New keyword" }).click();
 	const dialog = page.getByRole("dialog", { name: "New keyword" });
 	const variants = dialog.getByLabel("Fuzzy Match Arabic Characters Variants");
-	await dialog.getByLabel("English name").fill("Amal");
+	await fillName(dialog, "en", "Amal");
 	await expect(variants).toHaveCount(0);
-	await dialog.getByLabel("Arabic name").fill("أمل");
+	await fillName(dialog, "ar", "أمل");
 	await expect(variants).toBeChecked();
 	await variants.uncheck();
 	await dialog.getByRole("button", { name: "Create keyword" }).click();
@@ -620,7 +635,7 @@ test("Arabic names offer alif variant matching, on by default", async ({
 
 	await page.getByRole("button", { name: "Add an alias to ميرا" }).click();
 	const alias = page.getByRole("dialog", { name: "Add an alias to ميرا" });
-	await alias.getByLabel("Arabic name").fill("إميرا");
+	await fillName(alias, "ar", "إميرا");
 	await expect(
 		alias.getByLabel("Fuzzy Match Arabic Characters Variants"),
 	).toBeChecked();
@@ -738,7 +753,7 @@ test("an alias's translation is edited on the novel profile", async ({
 	await page.goto(`/novels/${novels[0]?.id}`);
 	await page.getByRole("button", { name: "Edit alias Mira Vale" }).click();
 	const dialog = page.getByRole("dialog", { name: "Edit alias" });
-	await dialog.getByLabel("Arabic name").fill("ميرا فيل");
+	await fillName(dialog, "ar", "ميرا فيل");
 	await dialog.getByRole("button", { name: "Save changes" }).click();
 	await expect(page.getByText("Alias updated")).toBeVisible();
 	expect(requests).toContainEqual(
@@ -765,8 +780,12 @@ test("renaming an alias in one language keeps the other language's name", async 
 	await page.goto(`/novels/${novels[0]?.id}`);
 	await page.getByRole("button", { name: "Edit alias Mira Vale" }).click();
 	const dialog = page.getByRole("dialog", { name: "Edit alias" });
-	await dialog.getByLabel("Arabic name").fill("ميرا الجديدة");
-	await expect(dialog.getByLabel("English name")).toHaveValue("Mira Vale");
+	await fillName(dialog, "ar", "ميرا الجديدة");
+	// The other tab keeps its own language's name.
+	await dialog.getByRole("tab", { name: "English" }).click();
+	await expect(dialog.getByLabel("Name", { exact: true })).toHaveValue(
+		"Mira Vale",
+	);
 	await dialog.getByRole("button", { name: "Save changes" }).click();
 	await expect(page.getByText("Alias updated")).toBeVisible();
 	expect(requests).toContainEqual(
@@ -781,14 +800,21 @@ test("renaming an alias in one language keeps the other language's name", async 
 	);
 });
 
-test("a keyword's translation link merges the other language's keyword on save", async ({
+test("a keyword's Link tab merges the other language's keyword on save", async ({
 	page,
 }) => {
 	const requests = await mockApi(page, { signedIn: true });
 	await page.goto(`/novels/${novels[0]?.id}`);
 	await page.getByRole("button", { name: "Edit الفانوس", exact: true }).click();
 	const dialog = page.getByRole("dialog", { name: "Edit الفانوس" });
-	const link = dialog.getByRole("combobox", { name: "Translation link" });
+
+	// The table's language opens first and has no Link; the other tab does.
+	await expect(dialog.getByLabel("Name", { exact: true })).toHaveValue(
+		"الفانوس",
+	);
+	await expect(dialog.getByRole("combobox", { name: "Link" })).toHaveCount(0);
+	await dialog.getByRole("tab", { name: "English" }).click();
+	const link = dialog.getByRole("combobox", { name: "Link" });
 
 	await link.fill("lantern");
 	// Mira is named in Arabic too, so it cannot be this Arabic keyword's translation.
@@ -796,11 +822,15 @@ test("a keyword's translation link merges the other language's keyword on save",
 		0,
 	);
 	await page.getByRole("option", { name: "The Lantern" }).click();
-	// The link hands over its style, because the merge keeps only one row.
+	// The link fills this tab's name and hands over its style: the merge keeps one row.
+	const name = dialog.getByLabel("Name", { exact: true });
+	await expect(name).toHaveValue("The Lantern");
+	await expect(name).toBeDisabled();
 	await expect(dialog.getByLabel("Description")).toHaveValue("A glowing relic");
 
 	await dialog.getByRole("button", { name: "Save changes" }).click();
 	await expect(page.getByText("Keyword updated")).toBeVisible();
+	// The merged keyword still holds that name, so only the link is sent.
 	expect(requests).toContainEqual({
 		method: "PUT",
 		path: `/api/admin/keywords/${KEYWORD_IDS.lanternAr}`,
@@ -821,7 +851,91 @@ test("a keyword's translation link merges the other language's keyword on save",
 	);
 });
 
-test("an alias's translation link offers only its keyword's other aliases", async ({
+for (const kind of ["keyword", "alias"] as const) {
+	test(`a bilingual ${kind} offers no conflicting Link`, async ({ page }) => {
+		const profileKeywords = structuredClone(keywordDetails);
+		const mira = profileKeywords[0];
+		const vale = mira?.aliases[0];
+		if (!mira || !vale) throw new Error("Missing alias fixture");
+		if (kind === "alias") {
+			vale.nameAr = "ميرا فيل";
+			mira.aliases.push({
+				...structuredClone(vale),
+				id: "alias-en-only",
+				nameAr: null,
+				nameEn: "The Keeper",
+			});
+		}
+		await mockApi(page, { signedIn: true, profileKeywords });
+		await page.goto(`/novels/${novels[0]?.id}`);
+		await page
+			.getByRole("button", {
+				name: kind === "keyword" ? "Edit ميرا" : /^Edit alias Mira Vale/,
+				exact: true,
+			})
+			.click();
+		const dialog = page.getByRole("dialog", {
+			name: kind === "keyword" ? "Edit ميرا" : "Edit alias",
+			exact: true,
+		});
+		await dialog.getByRole("tab", { name: "English" }).click();
+		await dialog.getByRole("combobox", { name: "Link" }).click();
+		await expect(page.getByText("No matching keywords")).toBeVisible();
+		await expect(page.getByRole("listbox").getByRole("option")).toHaveCount(0);
+	});
+
+	test(`a ${kind} Link still requires a name in the saved payload`, async ({
+		page,
+	}) => {
+		const profileKeywords = structuredClone(keywordDetails);
+		const mira = profileKeywords[0];
+		const vale = mira?.aliases[0];
+		if (!mira || !vale) throw new Error("Missing alias fixture");
+		if (kind === "alias") {
+			mira.aliases.push({
+				...structuredClone(vale),
+				id: "alias-ar-only",
+				nameAr: "ميرا فيل",
+				nameEn: null,
+			});
+		}
+		const requests = await mockApi(page, { signedIn: true, profileKeywords });
+		await page.goto(
+			`/novels/${novels[0]?.id}${kind === "alias" ? "?lang=en" : ""}`,
+		);
+		await page
+			.getByRole("button", {
+				name: kind === "keyword" ? "Edit الفانوس" : "Edit alias Mira Vale",
+				exact: true,
+			})
+			.click();
+		const dialog = page.getByRole("dialog", {
+			name: kind === "keyword" ? "Edit الفانوس" : "Edit alias",
+			exact: true,
+		});
+		await dialog.getByLabel("Name", { exact: true }).fill("");
+		await dialog
+			.getByRole("tab", { name: kind === "keyword" ? "English" : "Arabic" })
+			.click();
+		await dialog.getByRole("combobox", { name: "Link" }).click();
+		await page
+			.getByRole("option", {
+				name: kind === "keyword" ? "The Lantern" : "ميرا فيل",
+			})
+			.click();
+		await dialog.getByRole("button", { name: "Save changes" }).click();
+		await expect(dialog.getByRole("alert")).toHaveText(
+			"Enter an Arabic or English name.",
+		);
+		expect(
+			requests.filter(
+				(request) => request.method === "PUT" || request.method === "POST",
+			),
+		).toHaveLength(0);
+	});
+}
+
+test("an alias's Link offers only its keyword's aliases in that language", async ({
 	page,
 }) => {
 	const profileKeywords = structuredClone(keywordDetails);
@@ -836,24 +950,33 @@ test("an alias's translation link offers only its keyword's other aliases", asyn
 		nameEn: null,
 	});
 	const requests = await mockApi(page, { signedIn: true, profileKeywords });
-	await page.goto(`/novels/${novels[0]?.id}`);
+	// The English table opens the English tab first, so Link sits in the Arabic one.
+	await page.goto(`/novels/${novels[0]?.id}?lang=en`);
 	await page.getByRole("button", { name: "Edit alias Mira Vale" }).click();
 	const dialog = page.getByRole("dialog", { name: "Edit alias" });
-	const link = dialog.getByRole("combobox", { name: "Translation link" });
+	await expect(dialog.getByRole("combobox", { name: "Link" })).toHaveCount(0);
+	await dialog.getByRole("tab", { name: "Arabic" }).click();
 
-	await link.click();
+	await dialog.getByRole("combobox", { name: "Link" }).click();
 	// Keywords and other keywords' aliases are never offered, only siblings.
 	await expect(page.getByRole("option", { name: /^Mira · ميرا$/ })).toHaveCount(
 		0,
 	);
 	await page.getByRole("option", { name: "ميرا فيل" }).click();
+	await expect(dialog.getByLabel("Name", { exact: true })).toHaveValue(
+		"ميرا فيل",
+	);
 	await dialog.getByRole("button", { name: "Save changes" }).click();
 	await expect(page.getByText("Alias updated")).toBeVisible();
 	expect(requests).toContainEqual(
 		expect.objectContaining({
 			method: "PUT",
 			path: "/api/admin/keyword-aliases/alias-mira-vale",
-			body: expect.objectContaining({ translationAliasId: "alias-mira-ar" }),
+			body: expect.objectContaining({
+				nameAr: null,
+				nameEn: "Mira Vale",
+				translationAliasId: "alias-mira-ar",
+			}),
 		}),
 	);
 });

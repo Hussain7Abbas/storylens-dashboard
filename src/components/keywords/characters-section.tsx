@@ -960,6 +960,7 @@ export function CharactersSection({
 						key={editing.keyword?.id ?? "new"}
 						keyword={editing.keyword}
 						novelId={novelId}
+						language={language}
 						options={options}
 						onDone={() => setEditing(null)}
 					/>
@@ -969,6 +970,7 @@ export function CharactersSection({
 						key={editing.alias?.id ?? `new-${editing.keyword.id}`}
 						keyword={editing.keyword}
 						alias={editing.alias}
+						language={language}
 						options={options}
 						onDone={() => setEditing(null)}
 					/>
