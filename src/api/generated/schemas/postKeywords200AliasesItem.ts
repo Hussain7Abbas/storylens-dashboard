@@ -8,6 +8,8 @@
 import type { PostKeywords200AliasesItemNameAr } from './postKeywords200AliasesItemNameAr';
 import type { PostKeywords200AliasesItemNameEn } from './postKeywords200AliasesItemNameEn';
 import type { PostKeywords200AliasesItemDescription } from './postKeywords200AliasesItemDescription';
+import type { PostKeywords200AliasesItemDescriptionAr } from './postKeywords200AliasesItemDescriptionAr';
+import type { PostKeywords200AliasesItemDescriptionEn } from './postKeywords200AliasesItemDescriptionEn';
 import type { PostKeywords200AliasesItemMatchingType } from './postKeywords200AliasesItemMatchingType';
 import type { PostKeywords200AliasesItemCategoryId } from './postKeywords200AliasesItemCategoryId';
 import type { PostKeywords200AliasesItemNatureId } from './postKeywords200AliasesItemNatureId';
@@ -24,6 +26,8 @@ export type PostKeywords200AliasesItem = {
   nameAr: PostKeywords200AliasesItemNameAr;
   nameEn: PostKeywords200AliasesItemNameEn;
   description: PostKeywords200AliasesItemDescription;
+  descriptionAr: PostKeywords200AliasesItemDescriptionAr;
+  descriptionEn: PostKeywords200AliasesItemDescriptionEn;
   matchingType: PostKeywords200AliasesItemMatchingType;
   fuzzyMatchArabicCharacters: boolean;
   overrideStyle: boolean;

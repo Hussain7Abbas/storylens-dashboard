@@ -8,6 +8,8 @@
 import type { PutKeywordVersionsByIdBodyThreeStartingChapter } from './putKeywordVersionsByIdBodyThreeStartingChapter';
 import type { PutKeywordVersionsByIdBodyThreeEndingChapter } from './putKeywordVersionsByIdBodyThreeEndingChapter';
 import type { PutKeywordVersionsByIdBodyThreeDescription } from './putKeywordVersionsByIdBodyThreeDescription';
+import type { PutKeywordVersionsByIdBodyThreeDescriptionAr } from './putKeywordVersionsByIdBodyThreeDescriptionAr';
+import type { PutKeywordVersionsByIdBodyThreeDescriptionEn } from './putKeywordVersionsByIdBodyThreeDescriptionEn';
 import type { PutKeywordVersionsByIdBodyThreeCategoryId } from './putKeywordVersionsByIdBodyThreeCategoryId';
 import type { PutKeywordVersionsByIdBodyThreeNatureId } from './putKeywordVersionsByIdBodyThreeNatureId';
 import type { PutKeywordVersionsByIdBodyThreeImageId } from './putKeywordVersionsByIdBodyThreeImageId';
@@ -19,6 +21,10 @@ export type PutKeywordVersionsByIdBodyThree = {
   endingChapter?: PutKeywordVersionsByIdBodyThreeEndingChapter;
   /** @nullable */
   description?: PutKeywordVersionsByIdBodyThreeDescription;
+  /** @nullable */
+  descriptionAr?: PutKeywordVersionsByIdBodyThreeDescriptionAr;
+  /** @nullable */
+  descriptionEn?: PutKeywordVersionsByIdBodyThreeDescriptionEn;
   /** @nullable */
   categoryId?: PutKeywordVersionsByIdBodyThreeCategoryId;
   /** @nullable */

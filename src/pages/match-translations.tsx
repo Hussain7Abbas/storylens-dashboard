@@ -116,6 +116,8 @@ function toPicked(keyword: KeywordDetail): PickedKeyword {
 		nameEn: keyword.nameEn,
 		style: {
 			description: base?.description ?? null,
+			descriptionAr: base?.descriptionAr,
+			descriptionEn: base?.descriptionEn,
 			categoryId: base?.categoryId ?? null,
 			natureId: base?.natureId ?? null,
 			image: base?.image ? { id: base.image.id, url: base.image.url } : null,

@@ -19,6 +19,8 @@ import { Spinner } from "./spinner";
 /** The description, category, nature and image a picked row carries. */
 export type PickedStyle = {
 	description: string | null;
+	descriptionAr?: string | null;
+	descriptionEn?: string | null;
 	categoryId: string | null;
 	natureId: string | null;
 	image: { id: string; url: string } | null;
@@ -58,12 +60,16 @@ const normalized = (names: (string | null | undefined)[]) => [
 
 function styleOf(row: {
 	description?: string | null;
+	descriptionAr?: string | null;
+	descriptionEn?: string | null;
 	categoryId?: string | null;
 	natureId?: string | null;
 	image?: { id: string; url: string } | null;
 }): PickedStyle {
 	return {
 		description: row.description ?? null,
+		descriptionAr: row.descriptionAr,
+		descriptionEn: row.descriptionEn,
 		categoryId: row.categoryId ?? null,
 		natureId: row.natureId ?? null,
 		image: row.image ? { id: row.image.id, url: row.image.url } : null,

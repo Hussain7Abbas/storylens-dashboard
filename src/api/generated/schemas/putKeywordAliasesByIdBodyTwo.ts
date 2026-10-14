@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { PutKeywordAliasesByIdBodyTwoDescription } from './putKeywordAliasesByIdBodyTwoDescription';
+import type { PutKeywordAliasesByIdBodyTwoDescriptionAr } from './putKeywordAliasesByIdBodyTwoDescriptionAr';
+import type { PutKeywordAliasesByIdBodyTwoDescriptionEn } from './putKeywordAliasesByIdBodyTwoDescriptionEn';
 import type { PutKeywordAliasesByIdBodyTwoCategoryId } from './putKeywordAliasesByIdBodyTwoCategoryId';
 import type { PutKeywordAliasesByIdBodyTwoNatureId } from './putKeywordAliasesByIdBodyTwoNatureId';
 import type { PutKeywordAliasesByIdBodyTwoImageId } from './putKeywordAliasesByIdBodyTwoImageId';
@@ -16,6 +18,10 @@ import type { PutKeywordAliasesByIdBodyTwoMatchingType } from './putKeywordAlias
 export type PutKeywordAliasesByIdBodyTwo = {
   /** @nullable */
   description?: PutKeywordAliasesByIdBodyTwoDescription;
+  /** @nullable */
+  descriptionAr?: PutKeywordAliasesByIdBodyTwoDescriptionAr;
+  /** @nullable */
+  descriptionEn?: PutKeywordAliasesByIdBodyTwoDescriptionEn;
   /** @nullable */
   categoryId?: PutKeywordAliasesByIdBodyTwoCategoryId;
   /** @nullable */

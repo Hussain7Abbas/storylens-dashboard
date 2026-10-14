@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { GetNovelsByIdKeywords200DataItemVersionsItemDescription } from './getNovelsByIdKeywords200DataItemVersionsItemDescription';
+import type { GetNovelsByIdKeywords200DataItemVersionsItemDescriptionAr } from './getNovelsByIdKeywords200DataItemVersionsItemDescriptionAr';
+import type { GetNovelsByIdKeywords200DataItemVersionsItemDescriptionEn } from './getNovelsByIdKeywords200DataItemVersionsItemDescriptionEn';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemStartingChapter } from './getNovelsByIdKeywords200DataItemVersionsItemStartingChapter';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemEndingChapter } from './getNovelsByIdKeywords200DataItemVersionsItemEndingChapter';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryId } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryId';
@@ -21,6 +23,8 @@ import type { GetNovelsByIdKeywords200DataItemVersionsItemImage } from './getNov
 export type GetNovelsByIdKeywords200DataItemVersionsItem = {
   id: string;
   description: GetNovelsByIdKeywords200DataItemVersionsItemDescription;
+  descriptionAr: GetNovelsByIdKeywords200DataItemVersionsItemDescriptionAr;
+  descriptionEn: GetNovelsByIdKeywords200DataItemVersionsItemDescriptionEn;
   startingChapter: GetNovelsByIdKeywords200DataItemVersionsItemStartingChapter;
   endingChapter: GetNovelsByIdKeywords200DataItemVersionsItemEndingChapter;
   categoryId: GetNovelsByIdKeywords200DataItemVersionsItemCategoryId;

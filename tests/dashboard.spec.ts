@@ -598,7 +598,8 @@ test("a new keyword is created with its base details", async ({ page }) => {
 			nameEn: "Old Bell",
 			matchingType: "PARTIAL",
 			fuzzyMatchArabicCharacters: true,
-			description: "Rings at dawn",
+			descriptionAr: null,
+			descriptionEn: "Rings at dawn",
 			categoryId: "cat-person",
 			natureId: null,
 			imageId: null,
@@ -846,7 +847,7 @@ test("a keyword's Link tab merges the other language's keyword on save", async (
 		expect.objectContaining({
 			method: "PUT",
 			path: "/api/admin/keyword-versions/v-lantern-ar",
-			body: expect.objectContaining({ description: "A glowing relic" }),
+			body: expect.objectContaining({ descriptionEn: "A glowing relic" }),
 		}),
 	);
 });
@@ -980,3 +981,55 @@ test("an alias's Link offers only its keyword's aliases in that language", async
 		}),
 	);
 });
+
+for (const kind of ["keyword", "alias"] as const) {
+	test(`${kind} descriptions remain independent across language tabs`, async ({
+		page,
+	}) => {
+		const requests = await mockApi(page, { signedIn: true });
+		await page.goto(`/novels/${novels[0]?.id}`);
+		await page
+			.getByRole("button", {
+				name: kind === "keyword" ? "New keyword" : "Add an alias to ميرا",
+				exact: true,
+			})
+			.click();
+		const dialog = page.getByRole("dialog", {
+			name: kind === "keyword" ? "New keyword" : "Add an alias to ميرا",
+			exact: true,
+		});
+		await fillName(dialog, "en", "Independent descriptions");
+		await dialog
+			.getByLabel("Description", { exact: true })
+			.fill("English description");
+		await fillName(dialog, "ar", "وصف مستقل");
+		await expect(dialog.getByLabel("Description", { exact: true })).toHaveValue(
+			"",
+		);
+		await dialog.getByLabel("Description", { exact: true }).fill("وصف عربي");
+		await dialog.getByRole("tab", { name: "English" }).click();
+		await expect(dialog.getByLabel("Description", { exact: true })).toHaveValue(
+			"English description",
+		);
+		await dialog
+			.getByRole("button", {
+				name: kind === "keyword" ? "Create keyword" : "Add alias",
+				exact: true,
+			})
+			.click();
+		await expect(
+			page.getByText(kind === "keyword" ? "Keyword created" : "Alias added", {
+				exact: true,
+			}),
+		).toBeVisible();
+		expect(requests).toContainEqual(
+			expect.objectContaining({
+				method: "POST",
+				body: expect.objectContaining({
+					descriptionAr: "وصف عربي",
+					descriptionEn: "English description",
+				}),
+			}),
+		);
+	});
+}

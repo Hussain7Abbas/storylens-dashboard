@@ -8,6 +8,8 @@
 import type { PostKeywordVersionsBodyOneStartingChapter } from './postKeywordVersionsBodyOneStartingChapter';
 import type { PostKeywordVersionsBodyOneEndingChapter } from './postKeywordVersionsBodyOneEndingChapter';
 import type { PostKeywordVersionsBodyOneDescription } from './postKeywordVersionsBodyOneDescription';
+import type { PostKeywordVersionsBodyOneDescriptionAr } from './postKeywordVersionsBodyOneDescriptionAr';
+import type { PostKeywordVersionsBodyOneDescriptionEn } from './postKeywordVersionsBodyOneDescriptionEn';
 import type { PostKeywordVersionsBodyOneCategoryId } from './postKeywordVersionsBodyOneCategoryId';
 import type { PostKeywordVersionsBodyOneNatureId } from './postKeywordVersionsBodyOneNatureId';
 import type { PostKeywordVersionsBodyOneImageId } from './postKeywordVersionsBodyOneImageId';
@@ -20,6 +22,10 @@ export type PostKeywordVersionsBodyOne = {
   endingChapter?: PostKeywordVersionsBodyOneEndingChapter;
   /** @nullable */
   description?: PostKeywordVersionsBodyOneDescription;
+  /** @nullable */
+  descriptionAr?: PostKeywordVersionsBodyOneDescriptionAr;
+  /** @nullable */
+  descriptionEn?: PostKeywordVersionsBodyOneDescriptionEn;
   /** @nullable */
   categoryId?: PostKeywordVersionsBodyOneCategoryId;
   /** @nullable */

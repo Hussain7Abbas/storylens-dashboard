@@ -74,3 +74,29 @@ export function singleName(
 		target: otherLanguage(source),
 	};
 }
+
+export function descriptionKey(
+	language: Language,
+): "descriptionAr" | "descriptionEn" {
+	return language === "ar" ? "descriptionAr" : "descriptionEn";
+}
+
+export function descriptionIn(
+	item:
+		| {
+				descriptionAr?: string | null;
+				descriptionEn?: string | null;
+				description?: string | null;
+		  }
+		| undefined
+		| null,
+	language: Language,
+): string | null {
+	if (!item) return null;
+	if (item[descriptionKey(language)] !== undefined)
+		return item[descriptionKey(language)] || null;
+	return item.description &&
+		(scriptLanguage(item.description) ?? "en") === language
+		? item.description
+		: null;
+}

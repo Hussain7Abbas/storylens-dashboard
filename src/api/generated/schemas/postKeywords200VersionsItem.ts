@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { PostKeywords200VersionsItemDescription } from './postKeywords200VersionsItemDescription';
+import type { PostKeywords200VersionsItemDescriptionAr } from './postKeywords200VersionsItemDescriptionAr';
+import type { PostKeywords200VersionsItemDescriptionEn } from './postKeywords200VersionsItemDescriptionEn';
 import type { PostKeywords200VersionsItemStartingChapter } from './postKeywords200VersionsItemStartingChapter';
 import type { PostKeywords200VersionsItemEndingChapter } from './postKeywords200VersionsItemEndingChapter';
 import type { PostKeywords200VersionsItemCategoryId } from './postKeywords200VersionsItemCategoryId';
@@ -21,6 +23,8 @@ import type { PostKeywords200VersionsItemImage } from './postKeywords200Versions
 export type PostKeywords200VersionsItem = {
   id: string;
   description: PostKeywords200VersionsItemDescription;
+  descriptionAr: PostKeywords200VersionsItemDescriptionAr;
+  descriptionEn: PostKeywords200VersionsItemDescriptionEn;
   startingChapter: PostKeywords200VersionsItemStartingChapter;
   endingChapter: PostKeywords200VersionsItemEndingChapter;
   categoryId: PostKeywords200VersionsItemCategoryId;

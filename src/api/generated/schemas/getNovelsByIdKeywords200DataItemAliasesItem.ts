@@ -8,6 +8,8 @@
 import type { GetNovelsByIdKeywords200DataItemAliasesItemNameAr } from './getNovelsByIdKeywords200DataItemAliasesItemNameAr';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemNameEn } from './getNovelsByIdKeywords200DataItemAliasesItemNameEn';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemDescription } from './getNovelsByIdKeywords200DataItemAliasesItemDescription';
+import type { GetNovelsByIdKeywords200DataItemAliasesItemDescriptionAr } from './getNovelsByIdKeywords200DataItemAliasesItemDescriptionAr';
+import type { GetNovelsByIdKeywords200DataItemAliasesItemDescriptionEn } from './getNovelsByIdKeywords200DataItemAliasesItemDescriptionEn';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemMatchingType } from './getNovelsByIdKeywords200DataItemAliasesItemMatchingType';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemCategoryId } from './getNovelsByIdKeywords200DataItemAliasesItemCategoryId';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemNatureId } from './getNovelsByIdKeywords200DataItemAliasesItemNatureId';
@@ -24,6 +26,8 @@ export type GetNovelsByIdKeywords200DataItemAliasesItem = {
   nameAr: GetNovelsByIdKeywords200DataItemAliasesItemNameAr;
   nameEn: GetNovelsByIdKeywords200DataItemAliasesItemNameEn;
   description: GetNovelsByIdKeywords200DataItemAliasesItemDescription;
+  descriptionAr: GetNovelsByIdKeywords200DataItemAliasesItemDescriptionAr;
+  descriptionEn: GetNovelsByIdKeywords200DataItemAliasesItemDescriptionEn;
   matchingType: GetNovelsByIdKeywords200DataItemAliasesItemMatchingType;
   fuzzyMatchArabicCharacters: boolean;
   overrideStyle: boolean;

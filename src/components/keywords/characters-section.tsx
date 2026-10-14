@@ -44,6 +44,7 @@ import {
 import { PERMISSIONS } from "@/lib/permissions";
 import {
 	bothNames,
+	descriptionIn,
 	LANGUAGE_LABELS,
 	type Language,
 	namesByScript,
@@ -121,7 +122,10 @@ function toRow(keyword: KeywordDetail): Row {
 		],
 		descriptionText: normalizeForSearch(
 			[...versions, ...keyword.aliases]
-				.map((item) => item.description ?? "")
+				.flatMap((item) => [
+					descriptionIn(item, "ar") ?? "",
+					descriptionIn(item, "en") ?? "",
+				])
 				.join(" "),
 		),
 	};
@@ -649,7 +653,7 @@ export function CharactersSection({
 													<StyleChip style={base?.nature} />
 												</td>
 												<td>
-													<Description text={base?.description} />
+													<Description text={descriptionIn(base, language)} />
 												</td>
 												<td className="whitespace-nowrap">
 													{keyword.matchingType === "FULL"
@@ -762,9 +766,10 @@ export function CharactersSection({
 															<td>
 																<Description
 																	text={
-																		version.description ?? base?.description
+																		descriptionIn(version, language) ??
+																		descriptionIn(base, language)
 																	}
-																	inherited={!version.description}
+																	inherited={!descriptionIn(version, language)}
 																/>
 															</td>
 															<td />
@@ -867,8 +872,11 @@ export function CharactersSection({
 														</td>
 														<td>
 															<Description
-																text={alias.description ?? base?.description}
-																inherited={!alias.description}
+																text={
+																	descriptionIn(alias, language) ??
+																	descriptionIn(base, language)
+																}
+																inherited={!descriptionIn(alias, language)}
 															/>
 														</td>
 														<td className="whitespace-nowrap">

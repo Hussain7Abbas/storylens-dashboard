@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { PostKeywordAliasesBodyTwoDescription } from './postKeywordAliasesBodyTwoDescription';
+import type { PostKeywordAliasesBodyTwoDescriptionAr } from './postKeywordAliasesBodyTwoDescriptionAr';
+import type { PostKeywordAliasesBodyTwoDescriptionEn } from './postKeywordAliasesBodyTwoDescriptionEn';
 import type { PostKeywordAliasesBodyTwoCategoryId } from './postKeywordAliasesBodyTwoCategoryId';
 import type { PostKeywordAliasesBodyTwoNatureId } from './postKeywordAliasesBodyTwoNatureId';
 import type { PostKeywordAliasesBodyTwoImageId } from './postKeywordAliasesBodyTwoImageId';
@@ -17,6 +19,10 @@ export type PostKeywordAliasesBodyTwo = {
   keywordId: string;
   /** @nullable */
   description?: PostKeywordAliasesBodyTwoDescription;
+  /** @nullable */
+  descriptionAr?: PostKeywordAliasesBodyTwoDescriptionAr;
+  /** @nullable */
+  descriptionEn?: PostKeywordAliasesBodyTwoDescriptionEn;
   /** @nullable */
   categoryId?: PostKeywordAliasesBodyTwoCategoryId;
   /** @nullable */

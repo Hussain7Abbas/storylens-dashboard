@@ -9,6 +9,8 @@ import type { PostKeywordsBodyOneNameAr } from './postKeywordsBodyOneNameAr';
 import type { PostKeywordsBodyOneNameEn } from './postKeywordsBodyOneNameEn';
 import type { PostKeywordsBodyOneMatchingType } from './postKeywordsBodyOneMatchingType';
 import type { PostKeywordsBodyOneDescription } from './postKeywordsBodyOneDescription';
+import type { PostKeywordsBodyOneDescriptionAr } from './postKeywordsBodyOneDescriptionAr';
+import type { PostKeywordsBodyOneDescriptionEn } from './postKeywordsBodyOneDescriptionEn';
 import type { PostKeywordsBodyOneCategoryId } from './postKeywordsBodyOneCategoryId';
 import type { PostKeywordsBodyOneNatureId } from './postKeywordsBodyOneNatureId';
 import type { PostKeywordsBodyOneImageId } from './postKeywordsBodyOneImageId';
@@ -24,6 +26,10 @@ export type PostKeywordsBodyOne = {
   translationKeywordId?: string;
   /** @nullable */
   description?: PostKeywordsBodyOneDescription;
+  /** @nullable */
+  descriptionAr?: PostKeywordsBodyOneDescriptionAr;
+  /** @nullable */
+  descriptionEn?: PostKeywordsBodyOneDescriptionEn;
   /** @nullable */
   categoryId?: PostKeywordsBodyOneCategoryId;
   /** @nullable */

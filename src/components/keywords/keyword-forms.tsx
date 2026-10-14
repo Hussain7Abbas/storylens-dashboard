@@ -31,6 +31,8 @@ import {
 	styleName,
 } from "@/lib/keyword-details";
 import {
+	descriptionIn,
+	descriptionKey,
 	LANGUAGE_LABELS,
 	type Language,
 	nameIn,
@@ -38,7 +40,8 @@ import {
 } from "@/lib/translation";
 
 type StyleValues = {
-	description: string;
+	descriptionAr: string;
+	descriptionEn: string;
 	categoryId: string;
 	natureId: string;
 	image: PickedImage | null;
@@ -46,6 +49,8 @@ type StyleValues = {
 
 type Styled = {
 	description: string | null;
+	descriptionAr?: string | null;
+	descriptionEn?: string | null;
 	categoryId: string | null;
 	natureId: string | null;
 	image: { id: string; url: string } | null;
@@ -53,7 +58,8 @@ type Styled = {
 
 function styleValues(item: Styled | undefined | null): StyleValues {
 	return {
-		description: item?.description ?? "",
+		descriptionAr: descriptionIn(item, "ar") ?? "",
+		descriptionEn: descriptionIn(item, "en") ?? "",
 		categoryId: item?.categoryId ?? "",
 		natureId: item?.natureId ?? "",
 		image: item?.image ? { id: item.image.id, url: item.image.url } : null,
@@ -62,7 +68,8 @@ function styleValues(item: Styled | undefined | null): StyleValues {
 
 function styleBody(values: StyleValues) {
 	return {
-		description: values.description.trim() || null,
+		descriptionAr: values.descriptionAr.trim() || null,
+		descriptionEn: values.descriptionEn.trim() || null,
 		categoryId: values.categoryId || null,
 		natureId: values.natureId || null,
 		imageId: values.image?.id ?? null,
@@ -72,9 +79,14 @@ function styleBody(values: StyleValues) {
 type Names = { nameAr: string; nameEn: string };
 
 /** The style a picked link hands over; the merge keeps only one row's. */
-function translationStyle(picked: PickedKeyword): StyleValues {
+function translationStyle(
+	picked: PickedKeyword,
+	previous: StyleValues,
+	language: Language,
+): StyleValues {
 	return {
-		description: picked.style.description ?? "",
+		...previous,
+		[descriptionKey(language)]: descriptionIn(picked.style, language) ?? "",
 		categoryId: picked.style.categoryId ?? "",
 		natureId: picked.style.natureId ?? "",
 		image: picked.style.image,
@@ -176,12 +188,14 @@ export type StyleOptions = {
 
 /** Category, nature, description and image, shared by keywords, aliases and versions. */
 function StyleFields({
+	language,
 	values,
 	onChange,
 	options,
 	onUploadingChange,
 	inheritHint,
 }: {
+	language: Language;
 	values: StyleValues;
 	onChange: (values: StyleValues) => void;
 	options: StyleOptions;
@@ -232,9 +246,12 @@ function StyleFields({
 					dir="auto"
 					rows={3}
 					maxLength={5000}
-					value={values.description}
+					value={values[descriptionKey(language)]}
 					onChange={(event) =>
-						onChange({ ...values, description: event.target.value })
+						onChange({
+							...values,
+							[descriptionKey(language)]: event.target.value,
+						})
 					}
 				/>
 			</Field>
@@ -492,7 +509,8 @@ export function KeywordForm({
 													? (nameIn(keyword, item) ?? "")
 													: "",
 										});
-										if (picked) setStyle(translationStyle(picked));
+										if (picked)
+											setStyle(translationStyle(picked, style, other));
 									}}
 									disabled={busy}
 								/>
@@ -527,6 +545,7 @@ export function KeywordForm({
 							/>
 						)}
 						<StyleFields
+							language={tab}
 							values={style}
 							onChange={setStyle}
 							options={options}
@@ -646,7 +665,8 @@ export function AliasForm({
 													? (nameIn(alias, item) ?? "")
 													: "",
 										});
-										if (picked) setStyle(translationStyle(picked));
+										if (picked)
+											setStyle(translationStyle(picked, style, other));
 									}}
 									disabled={busy}
 								/>
@@ -696,6 +716,7 @@ export function AliasForm({
 							</span>
 						</label>
 						<StyleFields
+							language={tab}
 							values={style}
 							onChange={setStyle}
 							options={options}
@@ -797,7 +818,20 @@ export function VersionForm({
 					/>
 				</Field>
 			</div>
+			<Field label="Arabic description">
+				<textarea
+					className="input"
+					dir="rtl"
+					rows={3}
+					maxLength={5000}
+					value={style.descriptionAr}
+					onChange={(event) =>
+						setStyle({ ...style, descriptionAr: event.target.value })
+					}
+				/>
+			</Field>
 			<StyleFields
+				language="en"
 				values={style}
 				onChange={setStyle}
 				options={options}

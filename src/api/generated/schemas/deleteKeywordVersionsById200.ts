@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { DeleteKeywordVersionsById200Description } from './deleteKeywordVersionsById200Description';
+import type { DeleteKeywordVersionsById200DescriptionAr } from './deleteKeywordVersionsById200DescriptionAr';
+import type { DeleteKeywordVersionsById200DescriptionEn } from './deleteKeywordVersionsById200DescriptionEn';
 import type { DeleteKeywordVersionsById200StartingChapter } from './deleteKeywordVersionsById200StartingChapter';
 import type { DeleteKeywordVersionsById200EndingChapter } from './deleteKeywordVersionsById200EndingChapter';
 import type { DeleteKeywordVersionsById200CategoryId } from './deleteKeywordVersionsById200CategoryId';
@@ -21,6 +23,8 @@ import type { DeleteKeywordVersionsById200Image } from './deleteKeywordVersionsB
 export type DeleteKeywordVersionsById200 = {
   id: string;
   description: DeleteKeywordVersionsById200Description;
+  descriptionAr: DeleteKeywordVersionsById200DescriptionAr;
+  descriptionEn: DeleteKeywordVersionsById200DescriptionEn;
   startingChapter: DeleteKeywordVersionsById200StartingChapter;
   endingChapter: DeleteKeywordVersionsById200EndingChapter;
   categoryId: DeleteKeywordVersionsById200CategoryId;

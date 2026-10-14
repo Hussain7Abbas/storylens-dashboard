@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { PostKeywordVersions200Description } from './postKeywordVersions200Description';
+import type { PostKeywordVersions200DescriptionAr } from './postKeywordVersions200DescriptionAr';
+import type { PostKeywordVersions200DescriptionEn } from './postKeywordVersions200DescriptionEn';
 import type { PostKeywordVersions200StartingChapter } from './postKeywordVersions200StartingChapter';
 import type { PostKeywordVersions200EndingChapter } from './postKeywordVersions200EndingChapter';
 import type { PostKeywordVersions200CategoryId } from './postKeywordVersions200CategoryId';
@@ -21,6 +23,8 @@ import type { PostKeywordVersions200Image } from './postKeywordVersions200Image'
 export type PostKeywordVersions200 = {
   id: string;
   description: PostKeywordVersions200Description;
+  descriptionAr: PostKeywordVersions200DescriptionAr;
+  descriptionEn: PostKeywordVersions200DescriptionEn;
   startingChapter: PostKeywordVersions200StartingChapter;
   endingChapter: PostKeywordVersions200EndingChapter;
   categoryId: PostKeywordVersions200CategoryId;

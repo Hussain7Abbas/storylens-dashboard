@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { PutKeywordVersionsById200Description } from './putKeywordVersionsById200Description';
+import type { PutKeywordVersionsById200DescriptionAr } from './putKeywordVersionsById200DescriptionAr';
+import type { PutKeywordVersionsById200DescriptionEn } from './putKeywordVersionsById200DescriptionEn';
 import type { PutKeywordVersionsById200StartingChapter } from './putKeywordVersionsById200StartingChapter';
 import type { PutKeywordVersionsById200EndingChapter } from './putKeywordVersionsById200EndingChapter';
 import type { PutKeywordVersionsById200CategoryId } from './putKeywordVersionsById200CategoryId';
@@ -21,6 +23,8 @@ import type { PutKeywordVersionsById200Image } from './putKeywordVersionsById200
 export type PutKeywordVersionsById200 = {
   id: string;
   description: PutKeywordVersionsById200Description;
+  descriptionAr: PutKeywordVersionsById200DescriptionAr;
+  descriptionEn: PutKeywordVersionsById200DescriptionEn;
   startingChapter: PutKeywordVersionsById200StartingChapter;
   endingChapter: PutKeywordVersionsById200EndingChapter;
   categoryId: PutKeywordVersionsById200CategoryId;
