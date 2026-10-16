@@ -16,6 +16,7 @@ export type DeleteKeywordAliasesById200CategoryAnyOf = {
   nameEn: DeleteKeywordAliasesById200CategoryAnyOfNameEn;
   nameAr: DeleteKeywordAliasesById200CategoryAnyOfNameAr;
   color: string;
+  effect: string;
   description: DeleteKeywordAliasesById200CategoryAnyOfDescription;
   createdAt: DeleteKeywordAliasesById200CategoryAnyOfCreatedAt;
   updatedAt: DeleteKeywordAliasesById200CategoryAnyOfUpdatedAt;

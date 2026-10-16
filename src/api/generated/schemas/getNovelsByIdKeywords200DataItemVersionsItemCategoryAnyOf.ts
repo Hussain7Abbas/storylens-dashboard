@@ -16,6 +16,7 @@ export type GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOf = {
   nameEn: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameEn;
   nameAr: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameAr;
   color: string;
+  effect: string;
   description: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfDescription;
   createdAt: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfCreatedAt;
   updatedAt: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfUpdatedAt;

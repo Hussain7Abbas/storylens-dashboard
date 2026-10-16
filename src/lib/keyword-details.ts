@@ -15,8 +15,11 @@ import type {
 export type KeywordDetail = GetNovelsByIdKeywords200DataItem;
 export type KeywordAlias = GetNovelsByIdKeywords200DataItemAliasesItem;
 export type KeywordVersion = GetNovelsByIdKeywords200DataItemVersionsItem;
-/** Categories and natures share one shape. */
-export type KeywordStyle = GetKeywordCategories200DataItem;
+/** Shared lookup fields used by category and nature controls. */
+export type KeywordStyle = Pick<
+	GetKeywordCategories200DataItem,
+	"id" | "nameAr" | "nameEn" | "color"
+>;
 
 export function sortedVersions(keyword: KeywordDetail): KeywordVersion[] {
 	return [...keyword.versions].sort((a, b) => startOf(a) - startOf(b));
