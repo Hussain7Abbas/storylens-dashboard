@@ -12,6 +12,8 @@ One account (one email, username and password) can have **reader access** (`isUs
 
 The dashboard has no sign-up. The backend seed gives `DASHBOARD_ADMIN_EMAIL` super-admin dashboard access (`make seed-dashboard-admin` in the backend): an existing reader account with that email keeps its password and reader access; otherwise a dashboard-only account is created from `DASHBOARD_ADMIN_USERNAME` and `DASHBOARD_ADMIN_PASSWORD`. Everyone else gets dashboard access on the Users page.
 
+Novel covers and keyword, alias and version images use a 100px drag-and-drop uploader with a centered upload icon, click or keyboard selection, drag feedback, preview and a delete button. Uploads accept one image up to 8 MB and require the image-upload permission. Images upload immediately; save the form to keep the new image or its removal. Failed uploads preserve the previous image.
+
 ## Development
 
 ```bash

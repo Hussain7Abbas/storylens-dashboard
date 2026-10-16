@@ -446,3 +446,94 @@
 		opacity: 0;
 	}
 }
+
+/* Shared single-image upload for novels, keywords, aliases and versions. */
+.image-drop-field {
+	position: relative;
+	min-inline-size: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.image-drop-area {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	inline-size: 100%;
+	block-size: 100px;
+	padding: 8px 40px;
+	border: 1.5px dashed var(--border);
+	border-radius: var(--control-radius);
+	background: var(--surface);
+	color: var(--muted);
+	font: inherit;
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease,
+		box-shadow 150ms ease;
+}
+.image-drop-area:not(:disabled):hover {
+	border-color: var(--accent);
+	background: var(--wash);
+}
+.image-drop-area:not(:disabled)[data-drag="accept"] {
+	border-style: solid;
+	border-color: var(--accent);
+	background: var(--accent-soft);
+	color: var(--accent);
+	box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.image-drop-area:not(:disabled)[data-drag="reject"],
+.image-drop-area:not(:disabled)[data-error] {
+	border-color: var(--error);
+	color: var(--error);
+}
+.image-drop-area:disabled {
+	opacity: 0.6;
+}
+.image-drop-instruction {
+	font-size: 0.75rem;
+	line-height: 1.35;
+	text-align: center;
+	overflow-wrap: anywhere;
+}
+.image-drop-filename {
+	inline-size: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: 0.75rem;
+	line-height: 1.35;
+	text-align: center;
+}
+.image-drop-field > .image-drop-remove {
+	position: absolute;
+	inset-block-start: 4px;
+	inset-inline-end: 4px;
+}
+@media (pointer: coarse) {
+	.image-drop-remove {
+		min-inline-size: 44px;
+		min-block-size: 44px;
+	}
+	.image-drop-area {
+		padding-inline: 48px;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.image-drop-area {
+		transition: none;
+	}
+}
+@media (forced-colors: active) {
+	.image-drop-area:not(:disabled)[data-drag="accept"] {
+		outline: 3px solid Highlight;
+	}
+	.image-drop-area:not(:disabled)[data-drag="reject"],
+	.image-drop-area:not(:disabled)[data-error] {
+		border-style: double;
+	}
+}
