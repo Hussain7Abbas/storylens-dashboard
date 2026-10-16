@@ -8,6 +8,8 @@
 import type { GetNovelsByIdKeywords200DataItemNameAr } from './getNovelsByIdKeywords200DataItemNameAr';
 import type { GetNovelsByIdKeywords200DataItemNameEn } from './getNovelsByIdKeywords200DataItemNameEn';
 import type { GetNovelsByIdKeywords200DataItemMatchingType } from './getNovelsByIdKeywords200DataItemMatchingType';
+import type { GetNovelsByIdKeywords200DataItemWordVfx } from './getNovelsByIdKeywords200DataItemWordVfx';
+import type { GetNovelsByIdKeywords200DataItemWordVfxColor } from './getNovelsByIdKeywords200DataItemWordVfxColor';
 import type { GetNovelsByIdKeywords200DataItemCreatedById } from './getNovelsByIdKeywords200DataItemCreatedById';
 import type { GetNovelsByIdKeywords200DataItemCreatedAt } from './getNovelsByIdKeywords200DataItemCreatedAt';
 import type { GetNovelsByIdKeywords200DataItemUpdatedAt } from './getNovelsByIdKeywords200DataItemUpdatedAt';
@@ -21,6 +23,8 @@ export type GetNovelsByIdKeywords200DataItem = {
   nameEn: GetNovelsByIdKeywords200DataItemNameEn;
   matchingType: GetNovelsByIdKeywords200DataItemMatchingType;
   fuzzyMatchArabicCharacters: boolean;
+  wordVfx: GetNovelsByIdKeywords200DataItemWordVfx;
+  wordVfxColor: GetNovelsByIdKeywords200DataItemWordVfxColor;
   novelId: string;
   createdById: GetNovelsByIdKeywords200DataItemCreatedById;
   createdAt: GetNovelsByIdKeywords200DataItemCreatedAt;

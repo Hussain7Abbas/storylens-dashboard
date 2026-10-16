@@ -16,6 +16,7 @@ export type DeleteKeywordAliasesById200CategoryAnyOf = {
   nameEn: DeleteKeywordAliasesById200CategoryAnyOfNameEn;
   nameAr: DeleteKeywordAliasesById200CategoryAnyOfNameAr;
   color: string;
+  /** @deprecated use Keyword.wordVfx or KeywordAlias.wordVfx. remove-after: 2027-04-30 */
   effect: string;
   description: DeleteKeywordAliasesById200CategoryAnyOfDescription;
   createdAt: DeleteKeywordAliasesById200CategoryAnyOfCreatedAt;

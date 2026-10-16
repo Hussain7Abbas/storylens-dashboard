@@ -11,6 +11,8 @@ import type { DeleteKeywordAliasesById200Description } from './deleteKeywordAlia
 import type { DeleteKeywordAliasesById200DescriptionAr } from './deleteKeywordAliasesById200DescriptionAr';
 import type { DeleteKeywordAliasesById200DescriptionEn } from './deleteKeywordAliasesById200DescriptionEn';
 import type { DeleteKeywordAliasesById200MatchingType } from './deleteKeywordAliasesById200MatchingType';
+import type { DeleteKeywordAliasesById200WordVfx } from './deleteKeywordAliasesById200WordVfx';
+import type { DeleteKeywordAliasesById200WordVfxColor } from './deleteKeywordAliasesById200WordVfxColor';
 import type { DeleteKeywordAliasesById200CategoryId } from './deleteKeywordAliasesById200CategoryId';
 import type { DeleteKeywordAliasesById200NatureId } from './deleteKeywordAliasesById200NatureId';
 import type { DeleteKeywordAliasesById200ImageId } from './deleteKeywordAliasesById200ImageId';
@@ -30,6 +32,8 @@ export type DeleteKeywordAliasesById200 = {
   descriptionEn: DeleteKeywordAliasesById200DescriptionEn;
   matchingType: DeleteKeywordAliasesById200MatchingType;
   fuzzyMatchArabicCharacters: boolean;
+  wordVfx: DeleteKeywordAliasesById200WordVfx;
+  wordVfxColor: DeleteKeywordAliasesById200WordVfxColor;
   overrideStyle: boolean;
   categoryId: DeleteKeywordAliasesById200CategoryId;
   natureId: DeleteKeywordAliasesById200NatureId;

@@ -8,6 +8,8 @@
 import type { PostKeywords200NameAr } from './postKeywords200NameAr';
 import type { PostKeywords200NameEn } from './postKeywords200NameEn';
 import type { PostKeywords200MatchingType } from './postKeywords200MatchingType';
+import type { PostKeywords200WordVfx } from './postKeywords200WordVfx';
+import type { PostKeywords200WordVfxColor } from './postKeywords200WordVfxColor';
 import type { PostKeywords200CreatedById } from './postKeywords200CreatedById';
 import type { PostKeywords200CreatedAt } from './postKeywords200CreatedAt';
 import type { PostKeywords200UpdatedAt } from './postKeywords200UpdatedAt';
@@ -21,6 +23,8 @@ export type PostKeywords200 = {
   nameEn: PostKeywords200NameEn;
   matchingType: PostKeywords200MatchingType;
   fuzzyMatchArabicCharacters: boolean;
+  wordVfx: PostKeywords200WordVfx;
+  wordVfxColor: PostKeywords200WordVfxColor;
   novelId: string;
   createdById: PostKeywords200CreatedById;
   createdAt: PostKeywords200CreatedAt;

@@ -45,3 +45,5 @@ Standalone public repository, also pinned in the Story Lens umbrella at `apps/da
 Keyword/alias descriptions use `descriptionAr`/`descriptionEn` (keywords on their base version), with independent tab values; version forms expose both. Use `descriptionIn()` in `lib/translation.ts` for the selected table language and old shared-field responses. Translation links preserve both descriptions, and shared-field `description` remains an API compatibility field only.
 
 `chapter_cover` is an image AI feature alongside `character_image`; Settings → AI uses the image model for both and `lib/ai-cost.ts` estimates the longer chapter scene brief. Backend migrations seed its editable pricing record.
+
+`chapter_context` is a text feature for structured chapter continuity. Settings → AI discovers its seeded editable pricing record; `FEATURE_PROFILES` estimates its longer structured output. It uses the text model, independently of chapter artwork.

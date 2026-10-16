@@ -8,6 +8,8 @@
 import type { PutKeywordsByIdBodyTwoNameAr } from './putKeywordsByIdBodyTwoNameAr';
 import type { PutKeywordsByIdBodyTwoNameEn } from './putKeywordsByIdBodyTwoNameEn';
 import type { PutKeywordsByIdBodyTwoMatchingType } from './putKeywordsByIdBodyTwoMatchingType';
+import type { PutKeywordsByIdBodyTwoWordVfx } from './putKeywordsByIdBodyTwoWordVfx';
+import type { PutKeywordsByIdBodyTwoWordVfxColor } from './putKeywordsByIdBodyTwoWordVfxColor';
 
 export type PutKeywordsByIdBodyTwo = {
   /** @nullable */
@@ -16,5 +18,8 @@ export type PutKeywordsByIdBodyTwo = {
   nameEn?: PutKeywordsByIdBodyTwoNameEn;
   matchingType?: PutKeywordsByIdBodyTwoMatchingType;
   fuzzyMatchArabicCharacters?: boolean;
+  wordVfx?: PutKeywordsByIdBodyTwoWordVfx;
+  /** @nullable */
+  wordVfxColor?: PutKeywordsByIdBodyTwoWordVfxColor;
   translationKeywordId?: string;
 };

@@ -8,6 +8,8 @@
 import type { PostKeywordsBodyThreeNameAr } from './postKeywordsBodyThreeNameAr';
 import type { PostKeywordsBodyThreeNameEn } from './postKeywordsBodyThreeNameEn';
 import type { PostKeywordsBodyThreeMatchingType } from './postKeywordsBodyThreeMatchingType';
+import type { PostKeywordsBodyThreeWordVfx } from './postKeywordsBodyThreeWordVfx';
+import type { PostKeywordsBodyThreeWordVfxColor } from './postKeywordsBodyThreeWordVfxColor';
 import type { PostKeywordsBodyThreeDescription } from './postKeywordsBodyThreeDescription';
 import type { PostKeywordsBodyThreeDescriptionAr } from './postKeywordsBodyThreeDescriptionAr';
 import type { PostKeywordsBodyThreeDescriptionEn } from './postKeywordsBodyThreeDescriptionEn';
@@ -23,6 +25,9 @@ export type PostKeywordsBodyThree = {
   nameEn?: PostKeywordsBodyThreeNameEn;
   matchingType?: PostKeywordsBodyThreeMatchingType;
   fuzzyMatchArabicCharacters?: boolean;
+  wordVfx?: PostKeywordsBodyThreeWordVfx;
+  /** @nullable */
+  wordVfxColor?: PostKeywordsBodyThreeWordVfxColor;
   translationKeywordId?: string;
   /** @nullable */
   description?: PostKeywordsBodyThreeDescription;

@@ -30,6 +30,7 @@ type Profile = {
 /** Typical tokens per action. `character_image` is the text brief plus one image. */
 export const FEATURE_PROFILES: Record<string, Profile> = {
 	page_summary: { input: 9_000, output: 500 },
+	chapter_context: { input: 15_000, output: 5_000 },
 	keyword_suggestion: { input: 3_000, output: 250 },
 	chapter_extraction: { input: 10_000, output: 1_500 },
 	character_image: { input: 5_000, output: 300, image: true },
