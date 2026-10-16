@@ -43,3 +43,5 @@ Standalone public repository, also pinned in the Story Lens umbrella at `apps/da
 - Keep this file, `README.md` and the umbrella `docs/dashboard.md` current with changes.
 
 Keyword/alias descriptions use `descriptionAr`/`descriptionEn` (keywords on their base version), with independent tab values; version forms expose both. Use `descriptionIn()` in `lib/translation.ts` for the selected table language and old shared-field responses. Translation links preserve both descriptions, and shared-field `description` remains an API compatibility field only.
+
+`chapter_cover` is an image AI feature alongside `character_image`; Settings → AI uses the image model for both and `lib/ai-cost.ts` estimates the longer chapter scene brief. Backend migrations seed its editable pricing record.

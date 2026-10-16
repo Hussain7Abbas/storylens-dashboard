@@ -685,7 +685,8 @@ function FeatureForm({
 	});
 	const set = (key: keyof typeof values) => (value: string | boolean) =>
 		setValues((current) => ({ ...current, [key]: value }));
-	const image = feature.key === "character_image";
+	const image =
+		feature.key === "character_image" || feature.key === "chapter_cover";
 
 	const submit = (event: FormEvent) => {
 		event.preventDefault();

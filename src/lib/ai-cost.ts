@@ -33,6 +33,7 @@ export const FEATURE_PROFILES: Record<string, Profile> = {
 	keyword_suggestion: { input: 3_000, output: 250 },
 	chapter_extraction: { input: 10_000, output: 1_500 },
 	character_image: { input: 5_000, output: 300, image: true },
+	chapter_cover: { input: 16_000, output: 1000, image: true },
 	novel_context: { input: 6_000, output: 400, search: true },
 	selector_detection: { input: 6_000, output: 500 },
 };

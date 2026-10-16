@@ -42,3 +42,5 @@ The server checkout lives at `/srv/storylens-dashboard` on branch `main`. As roo
 ## License
 
 [PolyForm Noncommercial 1.0.0](LICENSE.md). The vendored UI UX Pro Max skill in `.claude/skills/ui-ux-pro-max` is MIT-licensed (see its `LICENSE`).
+
+Settings → AI includes separate prices and limits for character images and cinematic chapter covers, both using the configured image model. Cover estimates include the longer chapter-context brief.
