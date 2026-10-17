@@ -13,6 +13,57 @@ import type {
 export type TextModel = GetAiModels200TextItem;
 export type ImageModel = GetAiModels200ImageItem;
 
+export const REASONING_EFFORTS = [
+	"auto",
+	"none",
+	"minimal",
+	"low",
+	"medium",
+	"high",
+	"xhigh",
+	"max",
+] as const;
+export const IMAGE_QUALITIES = [
+	"auto",
+	"low",
+	"medium",
+	"high",
+	"xhigh",
+	"max",
+] as const;
+export type GenerationSettings = {
+	reasoningEffort: string;
+	reasoningTokenAllowance: number;
+	imageQuality: string;
+};
+export const DEFAULT_GENERATION_SETTINGS: GenerationSettings = {
+	reasoningEffort: "auto",
+	reasoningTokenAllowance: 4096,
+	imageQuality: "auto",
+};
+export function effectiveEffort(value: string, model?: TextModel): string {
+	if (value === "auto" || !model) return value;
+	if (value === "none" && model.reasoningMandatory) return "auto";
+	return model.reasoningEfforts && !model.reasoningEfforts.includes(value)
+		? "auto"
+		: value;
+}
+export function effectiveQuality(value: string, model?: ImageModel): string {
+	return value !== "auto" &&
+		model?.imageQualities &&
+		!model.imageQualities.includes(value)
+		? "auto"
+		: value;
+}
+/** Public rates do not specify tokens per image at each quality/resolution. */
+export function imageCostAtQuality(
+	model: ImageModel,
+	quality: string,
+): number | null {
+	const effective = effectiveQuality(quality, model);
+	return effective === "auto" || effective === "medium" ? model.imageUsd : null;
+}
+
 /** OpenRouter adds about 5.5% when credits are bought. */
 export const OPENROUTER_FEE = 1.055;
 /** Exa web search for novel research: $0.007 per request (5 results). */
@@ -52,14 +103,22 @@ export function estimateActionUsd(
 	feature: string,
 	text: TextModel | undefined,
 	image: ImageModel | undefined,
+	settings: GenerationSettings = DEFAULT_GENERATION_SETTINGS,
 ): number | null {
 	const profile = FEATURE_PROFILES[feature];
 	if (!profile || !text) return null;
-	let cost = textCost(text, profile.input, profile.output);
+	const effort = effectiveEffort(settings.reasoningEffort, text);
+	const allowance =
+		text.reasoningSupported !== false && effort !== "none"
+			? settings.reasoningTokenAllowance
+			: 0;
+	let cost = textCost(text, profile.input, profile.output + allowance);
 	if (profile.search) cost += EXA_SEARCH_USD;
 	if (profile.image) {
-		if (!image || image.imageUsd === null) return null;
-		cost += image.imageUsd + image.requestUsd;
+		if (!image) return null;
+		const imageCost = imageCostAtQuality(image, settings.imageQuality);
+		if (imageCost === null) return null;
+		cost += imageCost + image.requestUsd;
 	}
 	return cost * OPENROUTER_FEE;
 }
@@ -83,8 +142,9 @@ export function estimateFeature(
 	text: TextModel | undefined,
 	image: ImageModel | undefined,
 	lensPriceUsd: number | null,
+	settings: GenerationSettings = DEFAULT_GENERATION_SETTINGS,
 ): FeatureEstimate {
-	const costUsd = estimateActionUsd(feature.key, text, image);
+	const costUsd = estimateActionUsd(feature.key, text, image, settings);
 	const valueUsd = lensPriceUsd === null ? null : feature.lenses * lensPriceUsd;
 	const lensesFor = (target: number | null) =>
 		target === null || lensPriceUsd === null || lensPriceUsd <= 0

@@ -9,6 +9,8 @@ import type { GetAiModels200TextItemContextLength } from './getAiModels200TextIt
 import type { GetAiModels200TextItemWebSearchUsd } from './getAiModels200TextItemWebSearchUsd';
 import type { GetAiModels200TextItemImageUsd } from './getAiModels200TextItemImageUsd';
 import type { GetAiModels200TextItemImageTokens } from './getAiModels200TextItemImageTokens';
+import type { GetAiModels200TextItemReasoningEfforts } from './getAiModels200TextItemReasoningEfforts';
+import type { GetAiModels200TextItemDefaultReasoningEffort } from './getAiModels200TextItemDefaultReasoningEffort';
 
 export type GetAiModels200TextItem = {
   id: string;
@@ -25,4 +27,11 @@ export type GetAiModels200TextItem = {
   /** @nullable */
   imageTokens: GetAiModels200TextItemImageTokens;
   free: boolean;
+  reasoningSupported?: boolean;
+  /** @nullable */
+  reasoningEfforts?: GetAiModels200TextItemReasoningEfforts;
+  reasoningMandatory?: boolean;
+  /** @nullable */
+  defaultReasoningEffort?: GetAiModels200TextItemDefaultReasoningEffort;
+  imageQualities?: string[];
 };

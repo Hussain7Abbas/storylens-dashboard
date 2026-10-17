@@ -8,6 +8,7 @@
 import type { GetKeywords200DataItemNameAr } from './getKeywords200DataItemNameAr';
 import type { GetKeywords200DataItemNameEn } from './getKeywords200DataItemNameEn';
 import type { GetKeywords200DataItemDescription } from './getKeywords200DataItemDescription';
+import type { GetKeywords200DataItemMainThemeColor } from './getKeywords200DataItemMainThemeColor';
 
 export type GetKeywords200DataItem = {
   id: string;
@@ -19,4 +20,6 @@ export type GetKeywords200DataItem = {
   /** @nullable */
   description: GetKeywords200DataItemDescription;
   aliases: string[];
+  /** @nullable */
+  mainThemeColor: GetKeywords200DataItemMainThemeColor;
 };

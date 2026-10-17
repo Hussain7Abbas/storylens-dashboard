@@ -542,6 +542,7 @@ test("character actions add an alias and a version, edit and delete", async ({
 			nameEn: "Mira the Keeper",
 			matchingType: "FULL",
 			fuzzyMatchArabicCharacters: true,
+			mainThemeColor: null,
 		},
 	});
 	expect(requests).toContainEqual(
@@ -598,6 +599,7 @@ test("a new keyword is created with its base details", async ({ page }) => {
 			nameEn: "Old Bell",
 			matchingType: "PARTIAL",
 			fuzzyMatchArabicCharacters: true,
+			mainThemeColor: null,
 			descriptionAr: null,
 			descriptionEn: "Rings at dawn",
 			categoryId: "cat-person",
@@ -630,6 +632,7 @@ test("Arabic names offer alif variant matching, on by default", async ({
 				nameAr: "أمل",
 				nameEn: "Amal",
 				fuzzyMatchArabicCharacters: false,
+				mainThemeColor: null,
 			}),
 		}),
 	);
@@ -649,6 +652,7 @@ test("Arabic names offer alif variant matching, on by default", async ({
 			body: expect.objectContaining({
 				nameAr: "إميرا",
 				fuzzyMatchArabicCharacters: true,
+				mainThemeColor: null,
 			}),
 		}),
 	);
@@ -674,6 +678,7 @@ test("editing keeps a keyword's saved alif variant setting", async ({
 			nameEn: null,
 			matchingType: "PARTIAL",
 			fuzzyMatchArabicCharacters: false,
+			mainThemeColor: null,
 		},
 	});
 });
@@ -840,6 +845,7 @@ test("a keyword's Link tab merges the other language's keyword on save", async (
 			nameEn: null,
 			matchingType: "PARTIAL",
 			fuzzyMatchArabicCharacters: false,
+			mainThemeColor: null,
 			translationKeywordId: KEYWORD_IDS.lanternEn,
 		},
 	});
@@ -1031,5 +1037,67 @@ for (const kind of ["keyword", "alias"] as const) {
 				}),
 			}),
 		);
+	});
+}
+
+for (const kind of ["keyword", "alias"] as const) {
+	test(`the ${kind} Advance section saves and clears Main Theme Color`, async ({
+		page,
+	}) => {
+		const requests = await mockApi(page, { signedIn: true });
+		await page.goto(`/novels/${novels[0]?.id}`);
+		const editName = kind === "keyword" ? "Edit ميرا" : "Edit alias Mira Vale";
+		await page.getByRole("button", { name: editName, exact: true }).click();
+		const dialog = page.getByRole("dialog", {
+			name: kind === "keyword" ? "Edit ميرا" : "Edit alias",
+			exact: true,
+		});
+		const advance = dialog
+			.locator("details")
+			.filter({ has: page.locator("summary", { hasText: "Advance" }) });
+		await expect(advance).not.toHaveAttribute("open", "");
+		await advance.locator("summary").click();
+		await dialog
+			.getByLabel("Main Theme Color", { exact: true })
+			.fill("#123AbC");
+		await expectAccessible(page);
+		await dialog
+			.getByRole("button", { name: "Save changes", exact: true })
+			.click();
+		await expect(dialog).not.toBeVisible();
+		const resource =
+			kind === "keyword"
+				? "/api/admin/keywords/"
+				: "/api/admin/keyword-aliases/";
+		expect(
+			requests.find(
+				(request) =>
+					request.method === "PUT" && request.path.startsWith(resource),
+			)?.body,
+		).toMatchObject({ mainThemeColor: "#123AbC" });
+		await page.getByRole("button", { name: editName, exact: true }).click();
+		await dialog.locator("summary", { hasText: "Advance" }).click();
+		await dialog.getByLabel("Main Theme Color", { exact: true }).fill("red");
+		await dialog
+			.getByRole("button", { name: "Save changes", exact: true })
+			.click();
+		await expect(dialog.getByRole("alert")).toContainText(
+			"six-digit hex color",
+		);
+		await dialog
+			.getByRole("button", { name: "Use inherited color", exact: true })
+			.click();
+		await dialog
+			.getByRole("button", { name: "Save changes", exact: true })
+			.click();
+		await expect(dialog).not.toBeVisible();
+		expect(
+			requests
+				.filter(
+					(request) =>
+						request.method === "PUT" && request.path.startsWith(resource),
+				)
+				.at(-1)?.body,
+		).toMatchObject({ mainThemeColor: null });
 	});
 }

@@ -73,7 +73,13 @@ export function Dialog({
 							icon={<X size={18} strokeWidth={1.75} aria-hidden />}
 						/>
 					</header>
-					<div className="overflow-y-auto px-6 py-5">{children}</div>
+					<section
+						aria-label="Dialog content"
+						tabIndex={open ? 0 : -1}
+						className="overflow-y-auto px-6 py-5"
+					>
+						{children}
+					</section>
 					{footer && (
 						<footer className="flex flex-wrap justify-end gap-2 border-t border-line px-6 py-4">
 							{footer}

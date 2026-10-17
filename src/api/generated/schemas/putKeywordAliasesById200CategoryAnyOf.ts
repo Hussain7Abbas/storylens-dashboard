@@ -7,6 +7,8 @@
  */
 import type { PutKeywordAliasesById200CategoryAnyOfNameEn } from './putKeywordAliasesById200CategoryAnyOfNameEn';
 import type { PutKeywordAliasesById200CategoryAnyOfNameAr } from './putKeywordAliasesById200CategoryAnyOfNameAr';
+import type { PutKeywordAliasesById200CategoryAnyOfWordVfx } from './putKeywordAliasesById200CategoryAnyOfWordVfx';
+import type { PutKeywordAliasesById200CategoryAnyOfWordVfxColor } from './putKeywordAliasesById200CategoryAnyOfWordVfxColor';
 import type { PutKeywordAliasesById200CategoryAnyOfDescription } from './putKeywordAliasesById200CategoryAnyOfDescription';
 import type { PutKeywordAliasesById200CategoryAnyOfCreatedAt } from './putKeywordAliasesById200CategoryAnyOfCreatedAt';
 import type { PutKeywordAliasesById200CategoryAnyOfUpdatedAt } from './putKeywordAliasesById200CategoryAnyOfUpdatedAt';
@@ -16,8 +18,11 @@ export type PutKeywordAliasesById200CategoryAnyOf = {
   nameEn: PutKeywordAliasesById200CategoryAnyOfNameEn;
   nameAr: PutKeywordAliasesById200CategoryAnyOfNameAr;
   color: string;
-  /** @deprecated use Keyword.wordVfx or KeywordAlias.wordVfx. remove-after: 2027-04-30 */
+  /** @deprecated use KeywordCategory.wordVfx. remove-after: 2027-04-30 */
   effect: string;
+  wordVfx: PutKeywordAliasesById200CategoryAnyOfWordVfx;
+  wordVfxColor: PutKeywordAliasesById200CategoryAnyOfWordVfxColor;
+  switchPositionWithNature: boolean;
   description: PutKeywordAliasesById200CategoryAnyOfDescription;
   createdAt: PutKeywordAliasesById200CategoryAnyOfCreatedAt;
   updatedAt: PutKeywordAliasesById200CategoryAnyOfUpdatedAt;

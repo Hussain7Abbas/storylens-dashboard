@@ -10,6 +10,7 @@ import type { PutKeywordsByIdBodyTwoNameEn } from './putKeywordsByIdBodyTwoNameE
 import type { PutKeywordsByIdBodyTwoMatchingType } from './putKeywordsByIdBodyTwoMatchingType';
 import type { PutKeywordsByIdBodyTwoWordVfx } from './putKeywordsByIdBodyTwoWordVfx';
 import type { PutKeywordsByIdBodyTwoWordVfxColor } from './putKeywordsByIdBodyTwoWordVfxColor';
+import type { PutKeywordsByIdBodyTwoMainThemeColor } from './putKeywordsByIdBodyTwoMainThemeColor';
 
 export type PutKeywordsByIdBodyTwo = {
   /** @nullable */
@@ -21,5 +22,7 @@ export type PutKeywordsByIdBodyTwo = {
   wordVfx?: PutKeywordsByIdBodyTwoWordVfx;
   /** @nullable */
   wordVfxColor?: PutKeywordsByIdBodyTwoWordVfxColor;
+  /** @nullable */
+  mainThemeColor?: PutKeywordsByIdBodyTwoMainThemeColor;
   translationKeywordId?: string;
 };

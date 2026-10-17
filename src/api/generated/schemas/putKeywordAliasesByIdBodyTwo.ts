@@ -16,6 +16,7 @@ import type { PutKeywordAliasesByIdBodyTwoNameEn } from './putKeywordAliasesById
 import type { PutKeywordAliasesByIdBodyTwoMatchingType } from './putKeywordAliasesByIdBodyTwoMatchingType';
 import type { PutKeywordAliasesByIdBodyTwoWordVfx } from './putKeywordAliasesByIdBodyTwoWordVfx';
 import type { PutKeywordAliasesByIdBodyTwoWordVfxColor } from './putKeywordAliasesByIdBodyTwoWordVfxColor';
+import type { PutKeywordAliasesByIdBodyTwoMainThemeColor } from './putKeywordAliasesByIdBodyTwoMainThemeColor';
 
 export type PutKeywordAliasesByIdBodyTwo = {
   /** @nullable */
@@ -40,5 +41,7 @@ export type PutKeywordAliasesByIdBodyTwo = {
   wordVfx?: PutKeywordAliasesByIdBodyTwoWordVfx;
   /** @nullable */
   wordVfxColor?: PutKeywordAliasesByIdBodyTwoWordVfxColor;
+  /** @nullable */
+  mainThemeColor?: PutKeywordAliasesByIdBodyTwoMainThemeColor;
   overrideStyle?: boolean;
 };

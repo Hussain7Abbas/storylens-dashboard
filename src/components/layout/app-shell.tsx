@@ -73,7 +73,11 @@ const NAV: NavItem[] = [
 		to: "/settings",
 		label: "Settings",
 		icon: <Settings2 {...ICON} />,
-		permissions: [PERMISSIONS.configs.list, PERMISSIONS.aiPricing.list],
+		permissions: [
+			PERMISSIONS.configs.list,
+			PERMISSIONS.aiPricing.list,
+			PERMISSIONS.keywords.categories,
+		],
 	},
 ];
 

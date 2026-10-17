@@ -1,6 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
 import { errorMessage } from "@/api/axios-instance";
+import { getGetBillingSummaryQueryKey } from "@/api/generated/endpoints/admin-billing";
+import { getGetConfigsQueryKey } from "@/api/generated/endpoints/admin-configs";
 import {
 	getGetUsersByIdLensesQueryKey,
 	useGetUsersByIdLenses,
@@ -16,6 +18,7 @@ import { EmptyState, ErrorState, TableSkeleton } from "@/components/ui/page";
 import { Pagination } from "@/components/ui/pagination";
 import { useToast } from "@/components/ui/toast";
 import { formatDateTime, formatNumber } from "@/lib/format";
+import { useLensInventory } from "@/lib/lens-inventory";
 
 /** The reader a lens dialog is about. */
 export type LensUser = {
@@ -39,6 +42,10 @@ function useRefreshLenses(userId: string) {
 	return () =>
 		Promise.all([
 			queryClient.invalidateQueries({ queryKey: getGetUsersQueryKey() }),
+			queryClient.invalidateQueries({ queryKey: getGetConfigsQueryKey() }),
+			queryClient.invalidateQueries({
+				queryKey: getGetBillingSummaryQueryKey(),
+			}),
 			queryClient.invalidateQueries({
 				queryKey: getGetUsersByIdLensesQueryKey(userId),
 			}),
@@ -53,6 +60,7 @@ export function GiftLensesForm({
 	user: LensUser;
 	onDone: () => void;
 }) {
+	const { balance: available } = useLensInventory();
 	const toast = useToast();
 	const refresh = useRefreshLenses(user.id);
 	// One ID per opened dialog, so a resent gift is not added twice.
@@ -79,6 +87,12 @@ export function GiftLensesForm({
 			setError("Gift between 1 and 100,000 lenses.");
 			return;
 		}
+		if (available !== null && amount > available) {
+			setError(
+				`Only ${formatNumber(available)} lenses are available to gift. Update the balance in Settings → AI.`,
+			);
+			return;
+		}
 		setError("");
 		gift.mutate({
 			id: user.id,
@@ -92,6 +106,11 @@ export function GiftLensesForm({
 
 	return (
 		<form onSubmit={submit} noValidate className="grid gap-4">
+			{available !== null && (
+				<p className="text-sm text-muted">
+					<span>Available to gift: {formatNumber(available)} lenses</span>
+				</p>
+			)}
 			<Field label="Lenses">
 				<input
 					className="input"

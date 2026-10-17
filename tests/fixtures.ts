@@ -18,6 +18,8 @@ export const ALL_PERMISSIONS = [
 	"GET /api/admin/novels/",
 	"GET /api/admin/novels/:id",
 	"GET /api/admin/novels/:id/keywords",
+	"GET /api/admin/novels/:id/chapters",
+	"GET /api/admin/novels/:id/chapters/:chapterId",
 	"POST /api/admin/novels/",
 	"PUT /api/admin/novels/:id",
 	"DELETE /api/admin/novels/:id",
@@ -30,6 +32,7 @@ export const ALL_PERMISSIONS = [
 	"POST /api/admin/keywords/:id/version",
 	"DELETE /api/admin/keywords/:id",
 	"GET /api/admin/keyword-categories/",
+	"PUT /api/admin/keyword-categories/:id",
 	"GET /api/admin/keyword-natures/",
 	"POST /api/admin/keyword-aliases/",
 	"PUT /api/admin/keyword-aliases/:id",
@@ -160,7 +163,7 @@ const json = (route: Route, body: unknown, status = 200) =>
 		body: JSON.stringify(body),
 	});
 
-const NOVEL_ID = "11111111-1111-4111-8111-111111111111";
+export const NOVEL_ID = "11111111-1111-4111-8111-111111111111";
 export const KEYWORD_IDS = {
 	mira: "22222222-2222-4222-8222-222222222222",
 	lanternAr: "33333333-3333-4333-8333-333333333333",
@@ -223,7 +226,13 @@ const style = (id: string, nameEn: string, color: string) => ({
 	updatedAt: now,
 });
 
-export const categories = [style("cat-person", "Person", "#6554c0")];
+export const categories = [
+	{
+		...style("cat-person", "Person", "#6554c0"),
+		wordVfx: "NONE",
+		wordVfxColor: null,
+	},
+];
 export const natures = [style("nat-ally", "Ally", "#26705e")];
 
 function version(
@@ -511,6 +520,11 @@ const textModel = (
 	webSearchUsd: null,
 	imageUsd: null,
 	imageTokens: null,
+	reasoningSupported: true,
+	reasoningEfforts: ["none", "low", "medium", "high"],
+	reasoningMandatory: false,
+	defaultReasoningEffort: "medium",
+	imageQualities: [],
 	free: prompt === 0 && completion === 0,
 });
 const imageModel = (
@@ -528,6 +542,9 @@ const imageModel = (
 	webSearchUsd: null,
 	imageUsd,
 	imageTokens,
+	imageQualities: id.startsWith("openai/")
+		? ["auto", "low", "medium", "high", "xhigh", "max"]
+		: [],
 	free: false,
 });
 
@@ -539,6 +556,12 @@ export const aiModels = {
 		textModel("openai/gpt-5-pro", "OpenAI: GPT-5 Pro", 15, 120),
 	],
 	image: [
+		imageModel(
+			"openai/gpt-image-2.5-sunburst",
+			"OpenAI: GPT Image 2.5 Sunburst",
+			0.03168,
+			1056,
+		),
 		imageModel(
 			"bytedance-seed/seedream-5-0-flash",
 			"ByteDance Seed: Seedream 5.0 Flash",
@@ -615,15 +638,21 @@ export async function mockApi(
 		profileKeywords?: typeof keywordDetails;
 		/** Approvals answer 409: another admin handled the request first. */
 		approveConflict?: boolean;
+		availableLenses?: number;
 	} = {},
 ) {
 	const requestRows = billingRequests();
+	const priceRows = aiPricing.map((feature) => ({ ...feature }));
 	const configRows = [
 		["Lens_Price_USD", "0.01"],
+		["AI_Lens_Balance", String(options.availableLenses ?? 10000)],
 		["Lens_Trial_Gift", "10"],
 		["AI_Cloud_Enabled", "true"],
 		["AI_Text_Model", "google/gemini-2.5-flash"],
 		["AI_Image_Model", "bytedance-seed/seedream-5-0-flash"],
+		["AI_Reasoning_Effort", "none"],
+		["AI_Reasoning_Token_Allowance", "4096"],
+		["AI_Image_Quality", "auto"],
 	].map(([key, value]) => ({
 		id: `config-${key}`,
 		key,
@@ -697,6 +726,11 @@ export async function mockApi(
 				email: user.email,
 			};
 			if (billingAction[2] === "approve") {
+				const stock = configRows.find((row) => row.key === "AI_Lens_Balance");
+				if (stock) {
+					stock.value = String(Number(stock.value) - row.lenses);
+					stock.updatedAt = new Date().toISOString();
+				}
 				Object.assign(row, { status: "APPROVED", reviewedAt: now, reviewedBy });
 				return json(route, {
 					request: row,
@@ -719,7 +753,7 @@ export async function mockApi(
 		if (path === "/api/admin/billing/summary")
 			return json(route, billingSummary);
 		if (path === "/api/admin/ai-pricing/")
-			return json(route, { data: aiPricing });
+			return json(route, { data: priceRows });
 		if (path === "/api/admin/ai-models/") {
 			return json(route, {
 				...aiModels,
@@ -731,8 +765,9 @@ export async function mockApi(
 		}
 		if (path.startsWith("/api/admin/ai-pricing/") && method === "PUT") {
 			const key = path.split("/").at(-1);
-			const feature = aiPricing.find((item) => item.key === key);
-			return json(route, { ...feature, ...(request.postDataJSON() as object) });
+			const feature = priceRows.find((item) => item.key === key);
+			Object.assign(feature ?? {}, request.postDataJSON() as object);
+			return json(route, feature);
 		}
 		const lensRoute = path.match(
 			/^\/api\/admin\/users\/([^/]+)\/lenses(?:\/(gifts|adjustments))?$/,
@@ -779,6 +814,13 @@ export async function mockApi(
 				delta?: number;
 			};
 			const change = body.lenses ?? body.delta ?? 0;
+			if (lensRoute[2] === "gifts") {
+				const stock = configRows.find((row) => row.key === "AI_Lens_Balance");
+				if (stock) {
+					stock.value = String(Number(stock.value) - change);
+					stock.updatedAt = new Date().toISOString();
+				}
+			}
 			return json(route, {
 				transaction: { id: "tx-new", delta: change, balanceAfter: 42 + change },
 				balance: 42 + change,
@@ -906,6 +948,72 @@ export async function mockApi(
 		}
 		if (path === "/api/admin/novels/")
 			return json(route, { data: novels, total: novels.length });
+		if (path === `/api/admin/novels/${NOVEL_ID}/chapters`)
+			return json(route, {
+				data: [
+					{
+						id: "chapter-one",
+						novelId: NOVEL_ID,
+						number: 1,
+						name: "At the gate",
+						imageId: "cover",
+						image: {
+							id: "cover",
+							url: "https://example.com/chapter-cover.png",
+						},
+						createdAt: now,
+						updatedAt: now,
+					},
+					{
+						id: "chapter-two",
+						novelId: NOVEL_ID,
+						number: 2,
+						name: "The journey",
+						imageId: null,
+						image: null,
+						createdAt: now,
+						updatedAt: now,
+					},
+				],
+				total: 2,
+			});
+		if (path === `/api/admin/novels/${NOVEL_ID}/chapters/chapter-one`)
+			return json(route, {
+				id: "chapter-one",
+				novelId: NOVEL_ID,
+				number: 1,
+				name: "At the gate",
+				imageId: "cover",
+				image: { id: "cover", url: "https://example.com/chapter-cover.png" },
+				createdAt: now,
+				updatedAt: now,
+				context: {
+					schemaVersion: 1,
+					summary: "Mira arrives at the lantern gate.",
+					scenes: [
+						{
+							id: "gate",
+							title: "An evening arrival",
+							environment: {
+								location: "Lantern gate",
+								time: "Evening",
+								weather: "Rain",
+								lighting: "Warm lanterns",
+								details: "Cobblestones",
+							},
+							entities: [],
+						},
+					],
+					stateChanges: [],
+				},
+			});
+		if (path === `/api/admin/novels/${NOVEL_ID}/chapters/chapter-two`)
+			return json(route, {
+				id: "chapter-two",
+				number: 2,
+				image: null,
+				context: null,
+			});
 		if (path === `/api/admin/novels/${NOVEL_ID}/keywords`)
 			return json(route, { data: options.profileKeywords ?? keywordDetails });
 		if (path === `/api/admin/novels/${NOVEL_ID}`) return json(route, novels[0]);
@@ -940,7 +1048,11 @@ export async function mockApi(
 			return json(route, { ...keyword, ...(request.postDataJSON() as object) });
 		}
 		if (path === "/api/admin/configs/" && method === "PUT") {
-			const body = request.postDataJSON() as { key: string; value: string };
+			const body = request.postDataJSON() as {
+				key: string;
+				value: string;
+				baseUpdatedAt?: string | null;
+			};
 			if (
 				body.key === "Lens_Price_USD" &&
 				!/^\d{1,4}(\.\d{1,6})?$/.test(body.value)
@@ -957,8 +1069,23 @@ export async function mockApi(
 				);
 			}
 			const row = configRows.find((item) => item.key === body.key);
-			if (row) row.value = body.value;
-			else
+			if (
+				body.key === "AI_Lens_Balance" &&
+				body.baseUpdatedAt !== undefined &&
+				body.baseUpdatedAt !== (row?.updatedAt ?? null)
+			)
+				return json(
+					route,
+					{
+						code: "CONFIG_STALE",
+						message: "The available balance changed. Reload it before saving.",
+					},
+					409,
+				);
+			if (row) {
+				row.value = body.value;
+				row.updatedAt = new Date().toISOString();
+			} else
 				configRows.push({
 					id: `config-${body.key}`,
 					...body,

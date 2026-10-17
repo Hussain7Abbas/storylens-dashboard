@@ -28,6 +28,8 @@ const KNOWN_KEYS: Record<string, string> = {
 		"Extension version waiting for Chrome Web Store review. The backend deploys itself once the store publishes it.",
 	Lens_Price_USD:
 		"Price of one lens in US dollars, up to 6 decimals (default 0.01). Missing or invalid: buying lenses is unavailable.",
+	AI_Lens_Balance:
+		"Remaining whole lenses available for approved sales and dashboard gifts. Edit with the dollar converter in the AI tab; missing means zero.",
 	Lens_Trial_Gift:
 		"Lenses each new registered reader gets once (default 10). 0 gives nothing and shows no celebration.",
 	Lens_Request_Min: "Smallest lens request, in whole lenses (default 100).",
@@ -39,6 +41,12 @@ const KNOWN_KEYS: Record<string, string> = {
 		"OpenRouter model for every text feature and the image brief. Choose it in the AI tab, which shows prices and whether lenses still cover the cost.",
 	AI_Image_Model:
 		"OpenRouter model that draws character images. Choose it in the AI tab.",
+	AI_Reasoning_Effort:
+		"Text reasoning effort: auto, none, minimal, low, medium, high, xhigh or max. Choose it in the AI tab.",
+	AI_Reasoning_Token_Allowance:
+		"Extra completion tokens reserved for thinking, above each feature's output limit (0–32768; default 4096).",
+	AI_Image_Quality:
+		"Image quality: auto, low, medium, high, xhigh or max. Choose it in the AI tab.",
 	Billing_Notify_Email:
 		"Email that receives each new lens request with the reader’s WhatsApp or Telegram contact. Empty: DASHBOARD_ADMIN_EMAIL.",
 	AI_Cloud_Enabled:
@@ -79,7 +87,18 @@ function ConfigForm({
 	const submit = (event: FormEvent) => {
 		event.preventDefault();
 		setError("");
-		save.mutate({ data: { key: key.trim(), value } });
+		save.mutate({
+			data: {
+				key: key.trim(),
+				value,
+				...(key.trim() === "AI_Lens_Balance"
+					? {
+							baseUpdatedAt:
+								typeof config?.updatedAt === "string" ? config.updatedAt : null,
+						}
+					: {}),
+			},
+		});
 	};
 
 	return (

@@ -13,6 +13,7 @@ import type { PostKeywords200AliasesItemDescriptionEn } from './postKeywords200A
 import type { PostKeywords200AliasesItemMatchingType } from './postKeywords200AliasesItemMatchingType';
 import type { PostKeywords200AliasesItemWordVfx } from './postKeywords200AliasesItemWordVfx';
 import type { PostKeywords200AliasesItemWordVfxColor } from './postKeywords200AliasesItemWordVfxColor';
+import type { PostKeywords200AliasesItemMainThemeColor } from './postKeywords200AliasesItemMainThemeColor';
 import type { PostKeywords200AliasesItemCategoryId } from './postKeywords200AliasesItemCategoryId';
 import type { PostKeywords200AliasesItemNatureId } from './postKeywords200AliasesItemNatureId';
 import type { PostKeywords200AliasesItemImageId } from './postKeywords200AliasesItemImageId';
@@ -34,6 +35,7 @@ export type PostKeywords200AliasesItem = {
   fuzzyMatchArabicCharacters: boolean;
   wordVfx: PostKeywords200AliasesItemWordVfx;
   wordVfxColor: PostKeywords200AliasesItemWordVfxColor;
+  mainThemeColor: PostKeywords200AliasesItemMainThemeColor;
   overrideStyle: boolean;
   categoryId: PostKeywords200AliasesItemCategoryId;
   natureId: PostKeywords200AliasesItemNatureId;

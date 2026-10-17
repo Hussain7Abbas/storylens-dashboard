@@ -13,6 +13,7 @@ import type { GetNovelsByIdKeywords200DataItemAliasesItemDescriptionEn } from '.
 import type { GetNovelsByIdKeywords200DataItemAliasesItemMatchingType } from './getNovelsByIdKeywords200DataItemAliasesItemMatchingType';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemWordVfx } from './getNovelsByIdKeywords200DataItemAliasesItemWordVfx';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemWordVfxColor } from './getNovelsByIdKeywords200DataItemAliasesItemWordVfxColor';
+import type { GetNovelsByIdKeywords200DataItemAliasesItemMainThemeColor } from './getNovelsByIdKeywords200DataItemAliasesItemMainThemeColor';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemCategoryId } from './getNovelsByIdKeywords200DataItemAliasesItemCategoryId';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemNatureId } from './getNovelsByIdKeywords200DataItemAliasesItemNatureId';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemImageId } from './getNovelsByIdKeywords200DataItemAliasesItemImageId';
@@ -34,6 +35,7 @@ export type GetNovelsByIdKeywords200DataItemAliasesItem = {
   fuzzyMatchArabicCharacters: boolean;
   wordVfx: GetNovelsByIdKeywords200DataItemAliasesItemWordVfx;
   wordVfxColor: GetNovelsByIdKeywords200DataItemAliasesItemWordVfxColor;
+  mainThemeColor: GetNovelsByIdKeywords200DataItemAliasesItemMainThemeColor;
   overrideStyle: boolean;
   categoryId: GetNovelsByIdKeywords200DataItemAliasesItemCategoryId;
   natureId: GetNovelsByIdKeywords200DataItemAliasesItemNatureId;

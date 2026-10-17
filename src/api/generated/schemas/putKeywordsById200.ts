@@ -8,6 +8,7 @@
 import type { PutKeywordsById200NameAr } from './putKeywordsById200NameAr';
 import type { PutKeywordsById200NameEn } from './putKeywordsById200NameEn';
 import type { PutKeywordsById200Description } from './putKeywordsById200Description';
+import type { PutKeywordsById200MainThemeColor } from './putKeywordsById200MainThemeColor';
 
 export type PutKeywordsById200 = {
   id: string;
@@ -19,4 +20,6 @@ export type PutKeywordsById200 = {
   /** @nullable */
   description: PutKeywordsById200Description;
   aliases: string[];
+  /** @nullable */
+  mainThemeColor: PutKeywordsById200MainThemeColor;
 };

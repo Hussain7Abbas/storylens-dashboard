@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
-import { mockApi } from "./fixtures";
+import { aiModels, mockApi } from "./fixtures";
 
 async function expectAccessible(page: Page) {
 	const results = await new AxeBuilder({ page })
@@ -251,12 +251,12 @@ test("the model pickers show prices and save the choice as a config", async ({
 	await page.goto("/settings?tab=ai");
 	const models = page.getByRole("region", { name: "Models" });
 	await expect(models.getByLabel("Text model", { exact: true })).toHaveValue(
-		"google/gemini-2.5-flash",
+		/Gemini/,
 	);
 	await expect(models).toContainText("$0.30 / 1M tokens");
 	await expect(models).toContainText("$2.50 / 1M tokens");
 	await expect(models.getByLabel("Image model", { exact: true })).toHaveValue(
-		"bytedance-seed/seedream-5-0-flash",
+		/Seedream/,
 	);
 	await expect(models).toContainText("$0.018");
 	await expect(models).toContainText("4,175 image tokens");
@@ -264,10 +264,10 @@ test("the model pickers show prices and save the choice as a config", async ({
 		models.getByRole("row", { name: /Summarize page/ }),
 	).toContainText("Covers the cost");
 
-	await models.getByLabel("Search text models").fill("deepseek");
 	await models
-		.getByLabel("Text model", { exact: true })
-		.selectOption("deepseek/deepseek-v4-flash");
+		.getByRole("combobox", { name: "Text model", exact: true })
+		.fill("deepseek");
+	await models.getByRole("option", { name: /DeepSeek/ }).click();
 	await expect(page.getByText("Text model saved")).toBeVisible();
 	const saved = requests.find(
 		(request) =>
@@ -289,8 +289,9 @@ test("a model that would lose money warns and asks before saving", async ({
 	await page.goto("/settings?tab=ai");
 	const models = page.getByRole("region", { name: "Models" });
 	await models
-		.getByLabel("Text model", { exact: true })
-		.selectOption("openai/gpt-5-pro");
+		.getByRole("combobox", { name: "Text model", exact: true })
+		.fill("GPT-5 Pro");
+	await models.getByRole("option").filter({ hasText: "GPT-5 Pro" }).click();
 	const dialog = page.getByRole("dialog", {
 		name: "Use a model that loses money?",
 	});
@@ -309,12 +310,16 @@ test("a model that would lose money warns and asks before saving", async ({
 		),
 	).toBe(false);
 	await expect(models.getByLabel("Text model", { exact: true })).toHaveValue(
-		"google/gemini-2.5-flash",
+		/Gemini/,
 	);
 
 	await models
-		.getByLabel("Image model", { exact: true })
-		.selectOption("google/gemini-3-pro-image");
+		.getByRole("combobox", { name: "Image model", exact: true })
+		.fill("Gemini 3 Pro Image");
+	await models
+		.getByRole("option")
+		.filter({ hasText: "Gemini 3 Pro Image" })
+		.click();
 	const imageDialog = page.getByRole("dialog", {
 		name: "Use a model that loses money?",
 	});
@@ -326,6 +331,10 @@ test("a model that would lose money warns and asks before saving", async ({
 test("feature prices validate and save", async ({ page }) => {
 	const requests = await mockApi(page, { signedIn: true });
 	await page.goto("/settings?tab=ai");
+	await expect(page.getByRole("form", { name: "Summarize page" })).toHaveCount(
+		0,
+	);
+	await page.getByRole("button", { name: "Edit Summarize page price" }).click();
 	const summary = page.getByRole("form", { name: "Summarize page" });
 	await expect(summary).toContainText("300 actions");
 	await summary.getByLabel("Lenses per action").fill("-1");
@@ -334,6 +343,10 @@ test("feature prices validate and save", async ({ page }) => {
 	await summary.getByLabel("Lenses per action").fill("3");
 	await summary.getByRole("button", { name: "Save" }).click();
 	await expect(page.getByText("Summarize page saved")).toBeVisible();
+	await expect(page.getByRole("dialog")).toHaveCount(0);
+	await expect(page.getByRole("row", { name: /Summarize page/ })).toContainText(
+		"3",
+	);
 	const put = requests.find(
 		(request) => request.path === "/api/admin/ai-pricing/page_summary",
 	);
@@ -381,4 +394,293 @@ test("billing pages fit a 375 px screen", async ({ page }) => {
 		);
 		expect(overflow).toBeLessThanOrEqual(0);
 	}
+});
+
+test("reasoning effort and token allowance save, update estimates and reload", async ({
+	page,
+}) => {
+	const requests = await mockApi(page, { signedIn: true });
+	await page.goto("/settings?tab=ai");
+	const models = page.getByRole("region", { name: "Models" });
+	const row = models.getByRole("row", { name: /Character image/ });
+	await expect(
+		models.getByLabel("Reasoning effort", { exact: true }),
+	).toHaveValue("none");
+	await models
+		.getByLabel("Reasoning effort", { exact: true })
+		.selectOption("medium");
+	const confirm = page.getByRole("dialog", {
+		name: "Use settings that lose money?",
+	});
+	await expect(confirm).toBeVisible();
+	expect(
+		requests.some(
+			(r) => (r.body as { key?: string } | null)?.key === "AI_Reasoning_Effort",
+		),
+	).toBe(false);
+	await confirm.getByRole("button", { name: "Use it anyway" }).click();
+	await expect(page.getByText("Generation setting saved")).toBeVisible();
+	expect(
+		requests.find(
+			(r) =>
+				r.method === "PUT" &&
+				(r.body as { key?: string } | null)?.key === "AI_Reasoning_Effort",
+		)?.body,
+	).toEqual({ key: "AI_Reasoning_Effort", value: "medium" });
+	await expect(row).toContainText("Loses money");
+	await models.getByLabel("Reasoning token allowance").fill("0");
+	await models.getByRole("button", { name: "Save token allowance" }).click();
+	await expect(row).toContainText("Thin margin");
+	expect(
+		requests.find(
+			(r) =>
+				r.method === "PUT" &&
+				(r.body as { key?: string } | null)?.key ===
+					"AI_Reasoning_Token_Allowance",
+		)?.body,
+	).toEqual({ key: "AI_Reasoning_Token_Allowance", value: "0" });
+	await page.reload();
+	await expect(
+		models.getByLabel("Reasoning effort", { exact: true }),
+	).toHaveValue("medium");
+	await expect(models.getByLabel("Reasoning token allowance")).toHaveValue("0");
+	await expectAccessible(page);
+});
+
+test("image quality saves only supported options and hides unpriced estimates", async ({
+	page,
+}) => {
+	const requests = await mockApi(page, { signedIn: true });
+	await page.goto("/settings?tab=ai");
+	const models = page.getByRole("region", { name: "Models" });
+	await expect(
+		models.getByLabel("Image quality", { exact: true }),
+	).toBeDisabled();
+	await models
+		.getByRole("combobox", { name: "Image model", exact: true })
+		.fill("Sunburst");
+	await models.getByRole("option").filter({ hasText: "Sunburst" }).click();
+	await page
+		.getByRole("dialog")
+		.getByRole("button", { name: "Use it anyway" })
+		.click();
+	await expect(page.getByText("Image model saved")).toBeVisible();
+	await models
+		.getByLabel("Image quality", { exact: true })
+		.selectOption("high");
+	await expect(page.getByText("Generation setting saved")).toBeVisible();
+	expect(
+		requests.find(
+			(r) =>
+				r.method === "PUT" &&
+				(r.body as { key?: string } | null)?.key === "AI_Image_Quality",
+		)?.body,
+	).toEqual({ key: "AI_Image_Quality", value: "high" });
+	await expect(models).toContainText(
+		"A reliable image price for this quality is unavailable",
+	);
+	await expect(
+		models.getByRole("row", { name: /Character image/ }),
+	).toContainText("Unknown");
+	await expectAccessible(page);
+});
+
+test("generation controls respect config save permissions", async ({
+	page,
+}) => {
+	await mockApi(page, {
+		signedIn: true,
+		permissions: [
+			"GET /api/admin/configs/",
+			"GET /api/admin/ai-models/",
+			"GET /api/admin/ai-pricing/",
+			"GET /api/admin/billing/summary",
+		],
+	});
+	await page.goto("/settings?tab=ai");
+	await expect(
+		page.getByLabel("Reasoning effort", { exact: true }),
+	).toBeDisabled();
+	await expect(page.getByLabel("Reasoning token allowance")).toBeDisabled();
+	await expect(
+		page.getByLabel("Image quality", { exact: true }),
+	).toBeDisabled();
+});
+
+for (const theme of ["light", "dark"] as const) {
+	test(`generation controls show model capabilities in ${theme} mode`, async ({
+		page,
+	}, testInfo) => {
+		await page.emulateMedia({ colorScheme: theme });
+		await mockApi(page, { signedIn: true });
+		await page.route("**/api/admin/ai-models/**", (route) =>
+			route.fulfill({
+				json: {
+					...aiModels,
+					text: aiModels.text.map((model) => ({
+						...model,
+						reasoningMandatory: true,
+						reasoningEfforts: ["low", "high"],
+					})),
+					selected: {
+						text: "google/gemini-2.5-flash",
+						image: "bytedance-seed/seedream-5-0-flash",
+					},
+				},
+			}),
+		);
+		await page.goto("/settings?tab=ai");
+		const models = page.getByRole("region", { name: "Models" });
+		const effort = models.getByLabel("Reasoning effort", { exact: true });
+		await expect(effort).toHaveValue("auto");
+		expect(await effort.locator("option").allTextContents()).toEqual([
+			"Auto (model default)",
+			"Low",
+			"High",
+		]);
+		await expect(models).toContainText("This model always reasons");
+		await expect(models).toContainText(
+			"The saved effort is unavailable for this model",
+		);
+		await expectAccessible(page);
+		expect(
+			await page.evaluate(
+				() => document.documentElement.scrollWidth <= innerWidth,
+			),
+		).toBe(true);
+		await models.screenshot({
+			path: `/tmp/storylens-generation-${theme}-${testInfo.project.name}.png`,
+		});
+	});
+}
+
+test("available balance converts dollars to whole lenses and saves its revision", async ({
+	page,
+}) => {
+	const requests = await mockApi(page, { signedIn: true });
+	await page.goto("/settings?tab=ai");
+	const balance = page.getByRole("region", { name: "Available lens balance" });
+	await expect(balance).toContainText("10,000");
+	await balance.getByLabel("Balance in dollars").fill("1.005");
+	await expect(
+		balance.getByLabel("Available lenses", { exact: true }),
+	).toHaveValue("100");
+	await balance.getByRole("button", { name: "Save balance" }).click();
+	await expect(page.getByText("Available lens balance saved")).toBeVisible();
+	expect(
+		requests.find(
+			(request) =>
+				request.method === "PUT" &&
+				(request.body as { key?: string } | null)?.key === "AI_Lens_Balance",
+		)?.body,
+	).toEqual({
+		key: "AI_Lens_Balance",
+		value: "100",
+		baseUpdatedAt: "2026-09-28T12:00:00.000Z",
+	});
+	await balance.getByLabel("Available lenses", { exact: true }).fill("42");
+	await expect(balance.getByLabel("Balance in dollars")).toHaveValue(
+		"0.420000",
+	);
+	await expectAccessible(page);
+});
+
+test("a stale balance edit stays visible and requires reloading", async ({
+	page,
+}) => {
+	await mockApi(page, { signedIn: true });
+	await page.route("**/api/admin/configs/", (route) =>
+		route.request().method() === "PUT"
+			? route.fulfill({
+					status: 409,
+					contentType: "application/json",
+					body: JSON.stringify({
+						code: "CONFIG_STALE",
+						message: "The available balance changed. Reload it before saving.",
+					}),
+				})
+			: route.fallback(),
+	);
+	await page.goto("/settings?tab=ai");
+	const balance = page.getByRole("region", { name: "Available lens balance" });
+	await balance.getByLabel("Available lenses", { exact: true }).fill("123");
+	await balance.getByRole("button", { name: "Save balance" }).click();
+	await expect(balance.getByRole("alert")).toContainText("balance changed");
+	await expect(
+		balance.getByLabel("Available lenses", { exact: true }),
+	).toHaveValue("123");
+	await expect(
+		balance.getByRole("button", { name: "Save balance" }),
+	).toBeDisabled();
+	await balance.getByRole("button", { name: "Reload balance" }).click();
+	await expect(
+		balance.getByLabel("Available lenses", { exact: true }),
+	).toHaveValue("10000");
+});
+
+test("gifts and sales validate against available lenses before submitting", async ({
+	page,
+}) => {
+	const requests = await mockApi(page, { signedIn: true, availableLenses: 10 });
+	await page.goto("/users");
+	await page.getByRole("button", { name: "Gift lenses to mira" }).click();
+	const gift = page.getByRole("dialog", { name: "Gift lenses to Mira Vale" });
+	await expect(gift).toContainText("Available to gift: 10 lenses");
+	await gift.getByLabel("Lenses", { exact: true }).fill("11");
+	await gift.getByRole("button", { name: "Gift lenses", exact: true }).click();
+	await expect(gift.getByRole("alert")).toContainText("Only 10 lenses");
+	expect(
+		requests.some((request) => request.path.endsWith("/lenses/gifts")),
+	).toBe(false);
+	await gift.getByRole("button", { name: "Cancel", exact: true }).click();
+	await page.goto("/billing-requests");
+	await page
+		.getByRole("row", { name: /Mira Vale/ })
+		.getByRole("button", { name: "Approve", exact: true })
+		.click();
+	const approve = page.getByRole("dialog", { name: "Approve this request?" });
+	await approve.getByRole("button", { name: "Approve and add lenses" }).click();
+	await expect(approve.getByRole("alert")).toContainText("Only 10 lenses");
+	expect(requests.some((request) => request.path.endsWith("/approve"))).toBe(
+		false,
+	);
+});
+
+test("model search supports keyboard selection, empty results and Escape", async ({
+	page,
+}) => {
+	await mockApi(page, { signedIn: true });
+	await page.goto("/settings?tab=ai");
+	const model = page.getByRole("combobox", { name: "Text model", exact: true });
+	await model.fill("missing provider");
+	await expect(
+		page.getByRole("option", { name: "No matching models" }),
+	).toBeVisible();
+	await model.press("Escape");
+	await expect(model).toHaveValue(/Gemini/);
+	await model.fill("deepseek");
+	await model.press("ArrowDown");
+	await model.press("Enter");
+	await expect(page.getByText("Text model saved")).toBeVisible();
+	await expect(model).toHaveValue(/DeepSeek/);
+	await model.click();
+	await expectAccessible(page);
+});
+
+test("feature editing remains available when the model catalogue fails", async ({
+	page,
+}) => {
+	await mockApi(page, { signedIn: true });
+	await page.route("**/api/admin/ai-models/**", (route) =>
+		route.fulfill({
+			status: 503,
+			contentType: "application/json",
+			body: JSON.stringify({ message: "Model catalogue unavailable" }),
+		}),
+	);
+	await page.goto("/settings?tab=ai");
+	await page.getByRole("button", { name: "Edit Summarize page price" }).click();
+	await expect(
+		page.getByRole("dialog", { name: "Edit Summarize page price" }),
+	).toBeVisible();
 });

@@ -16,6 +16,7 @@ import type { PostKeywordAliasesBodyThreeNameEn } from './postKeywordAliasesBody
 import type { PostKeywordAliasesBodyThreeMatchingType } from './postKeywordAliasesBodyThreeMatchingType';
 import type { PostKeywordAliasesBodyThreeWordVfx } from './postKeywordAliasesBodyThreeWordVfx';
 import type { PostKeywordAliasesBodyThreeWordVfxColor } from './postKeywordAliasesBodyThreeWordVfxColor';
+import type { PostKeywordAliasesBodyThreeMainThemeColor } from './postKeywordAliasesBodyThreeMainThemeColor';
 
 export type PostKeywordAliasesBodyThree = {
   keywordId: string;
@@ -41,5 +42,7 @@ export type PostKeywordAliasesBodyThree = {
   wordVfx?: PostKeywordAliasesBodyThreeWordVfx;
   /** @nullable */
   wordVfxColor?: PostKeywordAliasesBodyThreeWordVfxColor;
+  /** @nullable */
+  mainThemeColor?: PostKeywordAliasesBodyThreeMainThemeColor;
   overrideStyle?: boolean;
 };

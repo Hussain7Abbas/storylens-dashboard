@@ -92,6 +92,13 @@ import type {
   PutKeywordAliasesByIdBodyOne,
   PutKeywordAliasesByIdBodyThree,
   PutKeywordAliasesByIdBodyTwo,
+  PutKeywordCategoriesById200,
+  PutKeywordCategoriesById404,
+  PutKeywordCategoriesById409,
+  PutKeywordCategoriesById500,
+  PutKeywordCategoriesByIdBodyOne,
+  PutKeywordCategoriesByIdBodyThree,
+  PutKeywordCategoriesByIdBodyTwo,
   PutKeywordVersionsById200,
   PutKeywordVersionsById404,
   PutKeywordVersionsById500,
@@ -1118,6 +1125,69 @@ export function useGetKeywordCategories<TData = Awaited<ReturnType<typeof getKey
 
 
 /**
+ * @summary Update category Word VFX
+ */
+export const putKeywordCategoriesById = (
+    id: string,
+    putKeywordCategoriesByIdBody: BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>| PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<PutKeywordCategoriesById200>(
+      {url: `/api/admin/keyword-categories/${id}`, method: 'PUT',
+      data: putKeywordCategoriesByIdBody
+    },
+      options);
+    }
+  
+
+
+export const getPutKeywordCategoriesByIdMutationOptions = <TError = ErrorType<PutKeywordCategoriesById404 | PutKeywordCategoriesById409 | PutKeywordCategoriesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putKeywordCategoriesById>>, TError,{id: string;data: BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof putKeywordCategoriesById>>, TError,{id: string;data: BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>}, TContext> => {
+
+const mutationKey = ['putKeywordCategoriesById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putKeywordCategoriesById>>, {id: string;data: BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putKeywordCategoriesById(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutKeywordCategoriesByIdMutationResult = NonNullable<Awaited<ReturnType<typeof putKeywordCategoriesById>>>
+    export type PutKeywordCategoriesByIdMutationBody = BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>
+    export type PutKeywordCategoriesByIdMutationError = ErrorType<PutKeywordCategoriesById404 | PutKeywordCategoriesById409 | PutKeywordCategoriesById500>
+
+    /**
+ * @summary Update category Word VFX
+ */
+export const usePutKeywordCategoriesById = <TError = ErrorType<PutKeywordCategoriesById404 | PutKeywordCategoriesById409 | PutKeywordCategoriesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putKeywordCategoriesById>>, TError,{id: string;data: BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putKeywordCategoriesById>>,
+        TError,
+        {id: string;data: BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>},
+        TContext
+      > => {
+
+      const mutationOptions = getPutKeywordCategoriesByIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
  * @summary List keyword natures
  */
 export const getKeywordNatures = (

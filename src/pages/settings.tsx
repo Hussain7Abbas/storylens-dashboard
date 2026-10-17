@@ -1,6 +1,7 @@
-import { Cpu, Settings2 } from "lucide-react";
+import { Cpu, Settings2, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { AiSettingsPanel } from "@/components/settings/ai-settings";
+import { CategoryVfxPanel } from "@/components/settings/category-vfx";
 import { Forbidden, PageHeader } from "@/components/ui/page";
 import { useAuth } from "@/lib/auth";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -8,7 +9,7 @@ import { useSearchState } from "@/lib/use-search-state";
 import { ConfigsPanel } from "@/pages/configs";
 
 type Tab = {
-	id: "configs" | "ai";
+	id: "configs" | "ai" | "categories";
 	label: string;
 	icon: ReactNode;
 	permission: string;
@@ -27,6 +28,12 @@ const TABS: Tab[] = [
 		icon: <Cpu size={16} strokeWidth={1.75} aria-hidden />,
 		permission: PERMISSIONS.aiPricing.list,
 	},
+	{
+		id: "categories",
+		label: "Categories",
+		icon: <Sparkles size={16} strokeWidth={1.75} aria-hidden />,
+		permission: PERMISSIONS.keywords.categories,
+	},
 ];
 
 /** Settings: every config, and the AI settings (cloud switch, models, feature prices). */
@@ -41,7 +48,7 @@ export function SettingsPage() {
 		<>
 			<PageHeader
 				title="Settings"
-				description="Key–value configs the API reads at runtime, and Story Lens Cloud AI: models, costs and lens prices."
+				description="Category effects, runtime configs, and Story Lens Cloud AI: models, costs and lens prices."
 			/>
 			<div
 				role="tablist"
@@ -76,7 +83,13 @@ export function SettingsPage() {
 				id="settings-panel"
 				aria-labelledby={`settings-tab-${current.id}`}
 			>
-				{current.id === "configs" ? <ConfigsPanel /> : <AiSettingsPanel />}
+				{current.id === "categories" ? (
+					<CategoryVfxPanel />
+				) : current.id === "configs" ? (
+					<ConfigsPanel />
+				) : (
+					<AiSettingsPanel />
+				)}
 			</div>
 		</>
 	);

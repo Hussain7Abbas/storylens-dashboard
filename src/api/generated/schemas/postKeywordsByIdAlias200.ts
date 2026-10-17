@@ -8,6 +8,7 @@
 import type { PostKeywordsByIdAlias200NameAr } from './postKeywordsByIdAlias200NameAr';
 import type { PostKeywordsByIdAlias200NameEn } from './postKeywordsByIdAlias200NameEn';
 import type { PostKeywordsByIdAlias200Description } from './postKeywordsByIdAlias200Description';
+import type { PostKeywordsByIdAlias200MainThemeColor } from './postKeywordsByIdAlias200MainThemeColor';
 
 export type PostKeywordsByIdAlias200 = {
   id: string;
@@ -19,4 +20,6 @@ export type PostKeywordsByIdAlias200 = {
   /** @nullable */
   description: PostKeywordsByIdAlias200Description;
   aliases: string[];
+  /** @nullable */
+  mainThemeColor: PostKeywordsByIdAlias200MainThemeColor;
 };

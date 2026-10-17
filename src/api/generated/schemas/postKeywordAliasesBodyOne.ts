@@ -16,6 +16,7 @@ import type { PostKeywordAliasesBodyOneNameEn } from './postKeywordAliasesBodyOn
 import type { PostKeywordAliasesBodyOneMatchingType } from './postKeywordAliasesBodyOneMatchingType';
 import type { PostKeywordAliasesBodyOneWordVfx } from './postKeywordAliasesBodyOneWordVfx';
 import type { PostKeywordAliasesBodyOneWordVfxColor } from './postKeywordAliasesBodyOneWordVfxColor';
+import type { PostKeywordAliasesBodyOneMainThemeColor } from './postKeywordAliasesBodyOneMainThemeColor';
 
 export type PostKeywordAliasesBodyOne = {
   keywordId: string;
@@ -41,5 +42,7 @@ export type PostKeywordAliasesBodyOne = {
   wordVfx?: PostKeywordAliasesBodyOneWordVfx;
   /** @nullable */
   wordVfxColor?: PostKeywordAliasesBodyOneWordVfxColor;
+  /** @nullable */
+  mainThemeColor?: PostKeywordAliasesBodyOneMainThemeColor;
   overrideStyle?: boolean;
 };

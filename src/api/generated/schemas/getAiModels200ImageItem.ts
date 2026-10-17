@@ -9,6 +9,8 @@ import type { GetAiModels200ImageItemContextLength } from './getAiModels200Image
 import type { GetAiModels200ImageItemWebSearchUsd } from './getAiModels200ImageItemWebSearchUsd';
 import type { GetAiModels200ImageItemImageUsd } from './getAiModels200ImageItemImageUsd';
 import type { GetAiModels200ImageItemImageTokens } from './getAiModels200ImageItemImageTokens';
+import type { GetAiModels200ImageItemReasoningEfforts } from './getAiModels200ImageItemReasoningEfforts';
+import type { GetAiModels200ImageItemDefaultReasoningEffort } from './getAiModels200ImageItemDefaultReasoningEffort';
 
 export type GetAiModels200ImageItem = {
   id: string;
@@ -25,4 +27,11 @@ export type GetAiModels200ImageItem = {
   /** @nullable */
   imageTokens: GetAiModels200ImageItemImageTokens;
   free: boolean;
+  reasoningSupported?: boolean;
+  /** @nullable */
+  reasoningEfforts?: GetAiModels200ImageItemReasoningEfforts;
+  reasoningMandatory?: boolean;
+  /** @nullable */
+  defaultReasoningEffort?: GetAiModels200ImageItemDefaultReasoningEffort;
+  imageQualities?: string[];
 };

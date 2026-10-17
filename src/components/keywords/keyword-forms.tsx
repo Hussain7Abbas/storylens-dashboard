@@ -388,6 +388,51 @@ function FuzzyArabicToggle({
 	);
 }
 
+/** Clearing the override restores the inherited keyword/category color. */
+function MainThemeColorField({
+	value,
+	onChange,
+}: {
+	value: string;
+	onChange: (value: string) => void;
+}) {
+	return (
+		<details className="rounded-lg border border-line p-3">
+			<summary className="cursor-pointer text-sm font-semibold">
+				Advance
+			</summary>
+			<div className="mt-3 grid gap-3">
+				<Field
+					label="Main Theme Color"
+					hint="Override the category color for this word. Leave empty to inherit; aliases inherit their keyword’s color first."
+				>
+					<input
+						className="input font-mono"
+						placeholder="Inherit category color"
+						value={value}
+						onChange={(event) => onChange(event.target.value)}
+					/>
+				</Field>
+				<div className="flex flex-wrap items-center gap-3">
+					<label className="flex items-center gap-2 text-sm">
+						<span>Color picker</span>
+						<input
+							type="color"
+							aria-label="Choose main theme color"
+							className="h-10 w-14 cursor-pointer rounded border border-line bg-surface"
+							value={/^#[0-9a-f]{6}$/i.test(value) ? value : "#6554c0"}
+							onChange={(event) => onChange(event.target.value)}
+						/>
+					</label>
+					<Button disabled={!value} onClick={() => onChange("")}>
+						Use inherited color
+					</Button>
+				</div>
+			</div>
+		</details>
+	);
+}
+
 /**
  * Names and matching of the keyword, plus its base version's details. Without
  * `keyword` it creates one in `novelId`, base version included.
@@ -417,6 +462,9 @@ export function KeywordForm({
 	const [fuzzyMatchArabicCharacters, setFuzzyMatchArabicCharacters] = useState(
 		keyword?.fuzzyMatchArabicCharacters ?? true,
 	);
+	const [mainThemeColor, setMainThemeColor] = useState(
+		keyword?.mainThemeColor ?? "",
+	);
 	const [style, setStyle] = useState(styleValues(base));
 	const [translation, setTranslation] = useState<PickedKeyword | null>(null);
 	const [uploading, setUploading] = useState(false);
@@ -436,6 +484,10 @@ export function KeywordForm({
 		const nameAr = saved.nameAr.trim() || null;
 		const nameEn = saved.nameEn.trim() || null;
 		if (!nameAr && !nameEn) return setError("Enter an Arabic or English name.");
+		if (mainThemeColor && !/^#[0-9a-f]{6}$/i.test(mainThemeColor))
+			return setError(
+				"Main Theme Color must be a six-digit hex color, such as #6554c0.",
+			);
 		const matchingType = fullWord ? ("FULL" as const) : ("PARTIAL" as const);
 		if (!keyword) {
 			await run(
@@ -446,6 +498,7 @@ export function KeywordForm({
 						nameEn,
 						matchingType,
 						fuzzyMatchArabicCharacters,
+						mainThemeColor: mainThemeColor || null,
 						translationKeywordId: translation?.id,
 						...styleBody(style),
 					}),
@@ -459,6 +512,7 @@ export function KeywordForm({
 				nameEn,
 				matchingType,
 				fuzzyMatchArabicCharacters,
+				mainThemeColor: mainThemeColor || null,
 				translationKeywordId: translation?.id,
 			});
 			if (base) await putKeywordVersionsById(base.id, styleBody(style));
@@ -554,6 +608,10 @@ export function KeywordForm({
 					</>
 				)}
 			/>
+			<MainThemeColorField
+				value={mainThemeColor}
+				onChange={setMainThemeColor}
+			/>
 		</FormShell>
 	);
 }
@@ -586,6 +644,9 @@ export function AliasForm({
 	const [overrideStyle, setOverrideStyle] = useState(
 		alias?.overrideStyle ?? false,
 	);
+	const [mainThemeColor, setMainThemeColor] = useState(
+		alias?.mainThemeColor ?? "",
+	);
 	const [style, setStyle] = useState(styleValues(alias));
 	const [translation, setTranslation] = useState<PickedKeyword | null>(null);
 	const [uploading, setUploading] = useState(false);
@@ -604,11 +665,16 @@ export function AliasForm({
 		const nameAr = saved.nameAr.trim() || null;
 		const nameEn = saved.nameEn.trim() || null;
 		if (!nameAr && !nameEn) return setError("Enter an Arabic or English name.");
+		if (mainThemeColor && !/^#[0-9a-f]{6}$/i.test(mainThemeColor))
+			return setError(
+				"Main Theme Color must be a six-digit hex color, such as #6554c0.",
+			);
 		const body = {
 			nameAr,
 			nameEn,
 			matchingType: fullWord ? ("FULL" as const) : ("PARTIAL" as const),
 			fuzzyMatchArabicCharacters,
+			mainThemeColor: mainThemeColor || null,
 			overrideStyle,
 			translationAliasId: translation?.id,
 			...styleBody(style),
@@ -725,6 +791,10 @@ export function AliasForm({
 						/>
 					</>
 				)}
+			/>
+			<MainThemeColorField
+				value={mainThemeColor}
+				onChange={setMainThemeColor}
 			/>
 		</FormShell>
 	);

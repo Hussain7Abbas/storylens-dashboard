@@ -7,6 +7,8 @@
  */
 import type { GetKeywordCategories200DataItemNameEn } from './getKeywordCategories200DataItemNameEn';
 import type { GetKeywordCategories200DataItemNameAr } from './getKeywordCategories200DataItemNameAr';
+import type { GetKeywordCategories200DataItemWordVfx } from './getKeywordCategories200DataItemWordVfx';
+import type { GetKeywordCategories200DataItemWordVfxColor } from './getKeywordCategories200DataItemWordVfxColor';
 import type { GetKeywordCategories200DataItemDescription } from './getKeywordCategories200DataItemDescription';
 import type { GetKeywordCategories200DataItemCreatedAt } from './getKeywordCategories200DataItemCreatedAt';
 import type { GetKeywordCategories200DataItemUpdatedAt } from './getKeywordCategories200DataItemUpdatedAt';
@@ -16,8 +18,11 @@ export type GetKeywordCategories200DataItem = {
   nameEn: GetKeywordCategories200DataItemNameEn;
   nameAr: GetKeywordCategories200DataItemNameAr;
   color: string;
-  /** @deprecated use Keyword.wordVfx or KeywordAlias.wordVfx. remove-after: 2027-04-30 */
+  /** @deprecated use KeywordCategory.wordVfx. remove-after: 2027-04-30 */
   effect: string;
+  wordVfx: GetKeywordCategories200DataItemWordVfx;
+  wordVfxColor: GetKeywordCategories200DataItemWordVfxColor;
+  switchPositionWithNature: boolean;
   description: GetKeywordCategories200DataItemDescription;
   createdAt: GetKeywordCategories200DataItemCreatedAt;
   updatedAt: GetKeywordCategories200DataItemUpdatedAt;

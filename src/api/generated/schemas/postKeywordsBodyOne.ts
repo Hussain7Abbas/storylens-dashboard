@@ -10,6 +10,7 @@ import type { PostKeywordsBodyOneNameEn } from './postKeywordsBodyOneNameEn';
 import type { PostKeywordsBodyOneMatchingType } from './postKeywordsBodyOneMatchingType';
 import type { PostKeywordsBodyOneWordVfx } from './postKeywordsBodyOneWordVfx';
 import type { PostKeywordsBodyOneWordVfxColor } from './postKeywordsBodyOneWordVfxColor';
+import type { PostKeywordsBodyOneMainThemeColor } from './postKeywordsBodyOneMainThemeColor';
 import type { PostKeywordsBodyOneDescription } from './postKeywordsBodyOneDescription';
 import type { PostKeywordsBodyOneDescriptionAr } from './postKeywordsBodyOneDescriptionAr';
 import type { PostKeywordsBodyOneDescriptionEn } from './postKeywordsBodyOneDescriptionEn';
@@ -28,6 +29,8 @@ export type PostKeywordsBodyOne = {
   wordVfx?: PostKeywordsBodyOneWordVfx;
   /** @nullable */
   wordVfxColor?: PostKeywordsBodyOneWordVfxColor;
+  /** @nullable */
+  mainThemeColor?: PostKeywordsBodyOneMainThemeColor;
   translationKeywordId?: string;
   /** @nullable */
   description?: PostKeywordsBodyOneDescription;

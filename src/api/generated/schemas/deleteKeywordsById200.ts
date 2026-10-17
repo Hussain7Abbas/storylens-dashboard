@@ -8,6 +8,7 @@
 import type { DeleteKeywordsById200NameAr } from './deleteKeywordsById200NameAr';
 import type { DeleteKeywordsById200NameEn } from './deleteKeywordsById200NameEn';
 import type { DeleteKeywordsById200Description } from './deleteKeywordsById200Description';
+import type { DeleteKeywordsById200MainThemeColor } from './deleteKeywordsById200MainThemeColor';
 
 export type DeleteKeywordsById200 = {
   id: string;
@@ -19,4 +20,6 @@ export type DeleteKeywordsById200 = {
   /** @nullable */
   description: DeleteKeywordsById200Description;
   aliases: string[];
+  /** @nullable */
+  mainThemeColor: DeleteKeywordsById200MainThemeColor;
 };

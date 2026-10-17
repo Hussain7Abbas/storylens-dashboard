@@ -8,6 +8,7 @@
 import type { PostKeywordsByIdLink200NameAr } from './postKeywordsByIdLink200NameAr';
 import type { PostKeywordsByIdLink200NameEn } from './postKeywordsByIdLink200NameEn';
 import type { PostKeywordsByIdLink200Description } from './postKeywordsByIdLink200Description';
+import type { PostKeywordsByIdLink200MainThemeColor } from './postKeywordsByIdLink200MainThemeColor';
 
 export type PostKeywordsByIdLink200 = {
   id: string;
@@ -19,4 +20,6 @@ export type PostKeywordsByIdLink200 = {
   /** @nullable */
   description: PostKeywordsByIdLink200Description;
   aliases: string[];
+  /** @nullable */
+  mainThemeColor: PostKeywordsByIdLink200MainThemeColor;
 };

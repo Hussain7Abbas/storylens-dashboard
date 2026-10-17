@@ -34,6 +34,13 @@ import type {
   GetNovelsById200,
   GetNovelsById404,
   GetNovelsById500,
+  GetNovelsByIdChapters200,
+  GetNovelsByIdChapters404,
+  GetNovelsByIdChapters500,
+  GetNovelsByIdChaptersByChapterId200,
+  GetNovelsByIdChaptersByChapterId404,
+  GetNovelsByIdChaptersByChapterId500,
+  GetNovelsByIdChaptersParams,
   GetNovelsByIdKeywords200,
   GetNovelsByIdKeywords404,
   GetNovelsByIdKeywords500,
@@ -514,6 +521,205 @@ export function useGetNovelsByIdKeywords<TData = Awaited<ReturnType<typeof getNo
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetNovelsByIdKeywordsQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary List a novel’s chapters and artwork without context payloads
+ */
+export const getNovelsByIdChapters = (
+    id: string,
+    params?: GetNovelsByIdChaptersParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<GetNovelsByIdChapters200>(
+      {url: `/api/admin/novels/${id}/chapters`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+  
+
+
+
+export const getGetNovelsByIdChaptersQueryKey = (id?: string,
+    params?: GetNovelsByIdChaptersParams,) => {
+    return [
+    `/api/admin/novels/${id}/chapters`, ...(params ? [params]: [])
+    ] as const;
+    }
+
+    
+export const getGetNovelsByIdChaptersQueryOptions = <TData = Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError = ErrorType<GetNovelsByIdChapters404 | GetNovelsByIdChapters500>>(id: string,
+    params?: GetNovelsByIdChaptersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetNovelsByIdChaptersQueryKey(id,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNovelsByIdChapters>>> = ({ signal }) => getNovelsByIdChapters(id,params, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetNovelsByIdChaptersQueryResult = NonNullable<Awaited<ReturnType<typeof getNovelsByIdChapters>>>
+export type GetNovelsByIdChaptersQueryError = ErrorType<GetNovelsByIdChapters404 | GetNovelsByIdChapters500>
+
+
+export function useGetNovelsByIdChapters<TData = Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError = ErrorType<GetNovelsByIdChapters404 | GetNovelsByIdChapters500>>(
+ id: string,
+    params: undefined |  GetNovelsByIdChaptersParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNovelsByIdChapters>>,
+          TError,
+          Awaited<ReturnType<typeof getNovelsByIdChapters>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetNovelsByIdChapters<TData = Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError = ErrorType<GetNovelsByIdChapters404 | GetNovelsByIdChapters500>>(
+ id: string,
+    params?: GetNovelsByIdChaptersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNovelsByIdChapters>>,
+          TError,
+          Awaited<ReturnType<typeof getNovelsByIdChapters>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetNovelsByIdChapters<TData = Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError = ErrorType<GetNovelsByIdChapters404 | GetNovelsByIdChapters500>>(
+ id: string,
+    params?: GetNovelsByIdChaptersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List a novel’s chapters and artwork without context payloads
+ */
+
+export function useGetNovelsByIdChapters<TData = Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError = ErrorType<GetNovelsByIdChapters404 | GetNovelsByIdChapters500>>(
+ id: string,
+    params?: GetNovelsByIdChaptersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChapters>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetNovelsByIdChaptersQueryOptions(id,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary View a chapter’s artwork and structured context
+ */
+export const getNovelsByIdChaptersByChapterId = (
+    id: string,
+    chapterId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<GetNovelsByIdChaptersByChapterId200>(
+      {url: `/api/admin/novels/${id}/chapters/${chapterId}`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+
+
+export const getGetNovelsByIdChaptersByChapterIdQueryKey = (id?: string,
+    chapterId?: string,) => {
+    return [
+    `/api/admin/novels/${id}/chapters/${chapterId}`
+    ] as const;
+    }
+
+    
+export const getGetNovelsByIdChaptersByChapterIdQueryOptions = <TData = Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError = ErrorType<GetNovelsByIdChaptersByChapterId404 | GetNovelsByIdChaptersByChapterId500>>(id: string,
+    chapterId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetNovelsByIdChaptersByChapterIdQueryKey(id,chapterId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>> = ({ signal }) => getNovelsByIdChaptersByChapterId(id,chapterId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id && chapterId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetNovelsByIdChaptersByChapterIdQueryResult = NonNullable<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>>
+export type GetNovelsByIdChaptersByChapterIdQueryError = ErrorType<GetNovelsByIdChaptersByChapterId404 | GetNovelsByIdChaptersByChapterId500>
+
+
+export function useGetNovelsByIdChaptersByChapterId<TData = Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError = ErrorType<GetNovelsByIdChaptersByChapterId404 | GetNovelsByIdChaptersByChapterId500>>(
+ id: string,
+    chapterId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>,
+          TError,
+          Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetNovelsByIdChaptersByChapterId<TData = Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError = ErrorType<GetNovelsByIdChaptersByChapterId404 | GetNovelsByIdChaptersByChapterId500>>(
+ id: string,
+    chapterId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>,
+          TError,
+          Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetNovelsByIdChaptersByChapterId<TData = Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError = ErrorType<GetNovelsByIdChaptersByChapterId404 | GetNovelsByIdChaptersByChapterId500>>(
+ id: string,
+    chapterId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary View a chapter’s artwork and structured context
+ */
+
+export function useGetNovelsByIdChaptersByChapterId<TData = Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError = ErrorType<GetNovelsByIdChaptersByChapterId404 | GetNovelsByIdChaptersByChapterId500>>(
+ id: string,
+    chapterId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNovelsByIdChaptersByChapterId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetNovelsByIdChaptersByChapterIdQueryOptions(id,chapterId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

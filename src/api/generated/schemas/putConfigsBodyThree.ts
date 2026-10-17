@@ -5,8 +5,11 @@
  * Development documentation
  * OpenAPI spec version: 0.0.0
  */
+import type { PutConfigsBodyThreeBaseUpdatedAt } from './putConfigsBodyThreeBaseUpdatedAt';
 
 export type PutConfigsBodyThree = {
   key: string;
   value: string;
+  /** @nullable */
+  baseUpdatedAt?: PutConfigsBodyThreeBaseUpdatedAt;
 };

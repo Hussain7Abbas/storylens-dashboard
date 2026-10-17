@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, RefreshCw } from "lucide-react";
-import { type FormEvent, useMemo, useState } from "react";
+import { AlertTriangle, Pencil, RefreshCw } from "lucide-react";
+import { type FormEvent, useState } from "react";
 import { errorMessage } from "@/api/axios-instance";
 import {
 	getAiModels,
@@ -22,17 +22,25 @@ import type {
 } from "@/api/generated/schemas";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { LensPrice } from "@/components/ui/lens-coin";
 import { ErrorState, TableSkeleton } from "@/components/ui/page";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useToast } from "@/components/ui/toast";
 import {
+	effectiveEffort,
+	effectiveQuality,
 	estimateFeature,
 	type FeatureEstimate,
 	formatSmallUsd,
+	type GenerationSettings,
 	HEALTHY_MARGIN,
+	IMAGE_QUALITIES,
 	type ImageModel,
+	imageCostAtQuality,
 	perMillion,
+	REASONING_EFFORTS,
 	requiredLensPrice,
 	type TextModel,
 } from "@/lib/ai-cost";
@@ -40,6 +48,7 @@ import { useAuth } from "@/lib/auth";
 import { formatDateTime, formatNumber } from "@/lib/format";
 import { formatLensPrice, formatUsd } from "@/lib/money";
 import { PERMISSIONS } from "@/lib/permissions";
+import { LensBalanceCard } from "./lens-balance";
 
 type Feature = GetAiPricing200DataItem;
 type Stats = GetBillingSummary200AiFeaturesItem;
@@ -151,7 +160,7 @@ function CloudSwitch() {
 	);
 }
 
-/** A searchable native select of OpenRouter models. */
+/** Search within the model dropdown itself. */
 function ModelPicker<M extends TextModel | ImageModel>({
 	label,
 	models,
@@ -167,49 +176,23 @@ function ModelPicker<M extends TextModel | ImageModel>({
 	disabled: boolean;
 	onChange: (id: string) => void;
 }) {
-	const [filter, setFilter] = useState("");
-	const query = filter.trim().toLowerCase();
-	const shown = models.filter(
-		(model) =>
-			model.id === value ||
-			!query ||
-			model.id.toLowerCase().includes(query) ||
-			model.name.toLowerCase().includes(query),
-	);
 	const missing = value !== "" && !models.some((model) => model.id === value);
-	const id = label.toLowerCase().replace(/\s+/g, "-");
 	return (
 		<div className="grid gap-2">
-			<label htmlFor={id} className="text-sm font-medium">
-				{label}
-			</label>
-			<input
-				className="input"
-				type="search"
-				aria-label={`Search ${label.toLowerCase()}s`}
-				placeholder={`Search ${models.length} models`}
-				value={filter}
-				onChange={(event) => setFilter(event.target.value)}
-			/>
-			<select
-				id={id}
-				className="input"
+			<SearchableSelect
+				label={label}
 				value={value}
 				disabled={disabled}
-				onChange={(event) => onChange(event.target.value)}
-			>
-				{missing && (
-					<option value={value}>{value} (not listed by OpenRouter)</option>
-				)}
-				{shown.map((model) => (
-					<option key={model.id} value={model.id}>
-						{`${model.name} — ${describe(model)}`}
-					</option>
-				))}
-			</select>
+				onChange={onChange}
+				options={models.map((model) => ({
+					value: model.id,
+					label: `${model.name} — ${describe(model)}`,
+					search: model.id,
+				}))}
+			/>
 			{missing && (
 				<p className="text-sm text-danger" role="note">
-					<span>OpenRouter no longer lists this model; pick another one.</span>
+					OpenRouter no longer lists this model; pick another one.
 				</p>
 			)}
 		</div>
@@ -244,18 +227,24 @@ function TextPricing({ model }: { model?: TextModel }) {
 	);
 }
 
-function ImagePricing({ model }: { model?: ImageModel }) {
+function ImagePricing({
+	model,
+	quality,
+}: {
+	model?: ImageModel;
+	quality: string;
+}) {
 	if (!model) return null;
 	return (
 		<dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
 			<div>
 				<dt className="text-muted">Per image (estimate)</dt>
-				<dd>{formatSmallUsd(model.imageUsd)}</dd>
+				<dd>{formatSmallUsd(imageCostAtQuality(model, quality))}</dd>
 			</div>
 			<div>
 				<dt className="text-muted">Assumes</dt>
 				<dd>
-					{model.imageTokens
+					{model.imageTokens && imageCostAtQuality(model, quality) !== null
 						? `${formatNumber(model.imageTokens)} image tokens`
 						: "—"}
 				</dd>
@@ -266,16 +255,19 @@ function ImagePricing({ model }: { model?: ImageModel }) {
 
 /** Estimated cost of each feature with the chosen models against what its lenses are worth. */
 function CostTable({
+	onEdit,
 	estimates,
 	names,
 	stats,
 	lensPriceUsd,
 }: {
+	onEdit: (key: string) => void;
 	estimates: FeatureEstimate[];
 	names: Record<string, string>;
 	stats: Stats[];
 	lensPriceUsd: number | null;
 }) {
+	const { can } = useAuth();
 	const needed = requiredLensPrice(estimates);
 	const losing = estimates.filter((estimate) => estimate.verdict === "loss");
 	const increase =
@@ -345,6 +337,7 @@ function CostTable({
 							<th scope="col">Real average (30 days)</th>
 							<th scope="col">Status</th>
 							<th scope="col">Suggested lenses</th>
+							<th scope="col">Actions</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -383,6 +376,20 @@ function CostTable({
 											? "—"
 											: `${formatNumber(estimate.breakEvenLenses)} to break even · ${formatNumber(estimate.healthyLenses ?? 0)} for ${HEALTHY_MARGIN}×`}
 									</td>
+									<td data-label="Actions">
+										{can(PERMISSIONS.aiPricing.update) && (
+											<Button
+												variant="ghost"
+												iconOnly
+												aria-label={`Edit ${names[estimate.key] ?? estimate.key} price`}
+												title="Edit feature"
+												icon={
+													<Pencil size={16} strokeWidth={1.75} aria-hidden />
+												}
+												onClick={() => onEdit(estimate.key)}
+											/>
+										)}
+									</td>
 								</tr>
 							);
 						})}
@@ -392,8 +399,9 @@ function CostTable({
 			<p className="text-xs text-muted">
 				<span>
 					Estimates use typical requests (for example 10,000 input tokens for a
-					chapter) and include OpenRouter's ~5.5% fee; real averages come from
-					recorded actions.
+					chapter) and include the reasoning token allowance and OpenRouter's
+					~5.5% fee; real averages include previous models/settings and come
+					from recorded actions.
 				</span>
 			</p>
 		</div>
@@ -402,9 +410,11 @@ function CostTable({
 
 /** Picks the text and image models (configs `AI_Text_Model`, `AI_Image_Model`). */
 function ModelsCard({
+	onEdit,
 	features,
 	stats,
 }: {
+	onEdit: (key: string) => void;
 	features: Feature[];
 	stats: Stats[];
 }) {
@@ -415,20 +425,33 @@ function ModelsCard({
 	const models = useGetAiModels(undefined, {
 		query: { staleTime: 5 * 60_000 },
 	});
-	const [preview, setPreview] = useState<{ text?: string; image?: string }>({});
+	const [preview, setPreview] = useState<{
+		text?: string;
+		image?: string;
+		reasoningEffort?: string;
+		imageQuality?: string;
+		reasoningTokenAllowance?: number;
+	}>({});
+	const [allowanceDraft, setAllowanceDraft] = useState<string | null>(null);
 	const [confirming, setConfirming] = useState<{
 		key: string;
 		model: string;
 		losing: string[];
+		setting?: boolean;
 	} | null>(null);
 	const [error, setError] = useState("");
 	const [refreshing, setRefreshing] = useState(false);
 	const save = useSaveConfig((key) => {
 		toast.success(
-			key === "AI_Text_Model" ? "Text model saved" : "Image model saved",
+			key === "AI_Text_Model"
+				? "Text model saved"
+				: key === "AI_Image_Model"
+					? "Image model saved"
+					: "Generation setting saved",
 		);
 		setConfirming(null);
 		setPreview({});
+		setAllowanceDraft(null);
 	}, setError);
 
 	const lensPrice = value("Lens_Price_USD");
@@ -446,20 +469,26 @@ function ModelsCard({
 		DEFAULT_IMAGE_MODEL;
 	const textModel = models.data?.text.find((model) => model.id === textId);
 	const imageModel = models.data?.image.find((model) => model.id === imageId);
+	const settings: GenerationSettings = {
+		reasoningEffort:
+			preview.reasoningEffort ?? value("AI_Reasoning_Effort") ?? "auto",
+		imageQuality: preview.imageQuality ?? value("AI_Image_Quality") ?? "auto",
+		reasoningTokenAllowance:
+			preview.reasoningTokenAllowance ??
+			Number(value("AI_Reasoning_Token_Allowance") || 4096),
+	};
+	const effort = effectiveEffort(settings.reasoningEffort, textModel);
+	const quality = effectiveQuality(settings.imageQuality, imageModel);
 	const names = Object.fromEntries(
 		features.map((feature) => [feature.key, feature.nameEn]),
 	);
 
 	const estimatesFor = (text?: TextModel, image?: ImageModel) =>
 		features.map((feature) =>
-			estimateFeature(feature, text, image, lensPriceUsd),
+			estimateFeature(feature, text, image, lensPriceUsd, settings),
 		);
-	const estimates = useMemo(
-		() =>
-			features.map((feature) =>
-				estimateFeature(feature, textModel, imageModel, lensPriceUsd),
-			),
-		[features, textModel, imageModel, lensPriceUsd],
+	const estimates = features.map((feature) =>
+		estimateFeature(feature, textModel, imageModel, lensPriceUsd, settings),
 	);
 
 	const choose = (kind: "text" | "image", id: string) => {
@@ -482,6 +511,28 @@ function ModelsCard({
 		else save.mutate({ data: { key, value: id } });
 	};
 
+	const chooseSetting = (
+		key: string,
+		field: keyof GenerationSettings,
+		next: string,
+	) => {
+		setError("");
+		const updated = {
+			...settings,
+			[field]: field === "reasoningTokenAllowance" ? Number(next) : next,
+		};
+		setPreview((current) => ({ ...current, [field]: updated[field] }));
+		const losing = features
+			.map((feature) =>
+				estimateFeature(feature, textModel, imageModel, lensPriceUsd, updated),
+			)
+			.filter((estimate) => estimate.verdict === "loss")
+			.map((estimate) => names[estimate.key] ?? estimate.key);
+		if (losing.length)
+			setConfirming({ key, model: next, losing, setting: true });
+		else save.mutate({ data: { key, value: next } });
+	};
+
 	const refresh = async () => {
 		setRefreshing(true);
 		try {
@@ -500,7 +551,7 @@ function ModelsCard({
 			? "free"
 			: `${formatSmallUsd(model.promptPerMillionUsd)} in / ${formatSmallUsd(model.completionPerMillionUsd)} out per 1M`;
 	const describeImage = (model: ImageModel) =>
-		`~${formatSmallUsd(model.imageUsd)} per image`;
+		`~${formatSmallUsd(model.imageUsd)} per image (baseline)`;
 
 	return (
 		<section className="card grid gap-5 p-5" aria-labelledby="models-heading">
@@ -512,8 +563,9 @@ function ModelsCard({
 					<p className="text-sm text-muted">
 						<span>
 							Every text feature and the image brief use the text model;
-							character images use the image model. Choosing one saves it at
-							once and readers use it on their next action.
+							character images and chapter covers use the image model. Choosing
+							a setting saves it at once and readers use it on their next
+							action.
 						</span>
 					</p>
 				</div>
@@ -535,7 +587,7 @@ function ModelsCard({
 			) : (
 				<>
 					<div className="grid gap-5 lg:grid-cols-2">
-						<div className="grid gap-3">
+						<div className="grid content-start gap-3">
 							<ModelPicker
 								label="Text model"
 								models={models.data.text}
@@ -545,8 +597,98 @@ function ModelsCard({
 								onChange={(id) => choose("text", id)}
 							/>
 							<TextPricing model={textModel} />
+							<Field
+								label="Reasoning effort"
+								hint={
+									textModel?.reasoningMandatory
+										? "This model always reasons. Auto uses its default effort."
+										: "Auto uses the model default. Thinking tokens are billed as output."
+								}
+							>
+								<select
+									className="input"
+									value={effort}
+									disabled={
+										!canSave ||
+										save.isPending ||
+										textModel?.reasoningSupported === false
+									}
+									onChange={(event) =>
+										chooseSetting(
+											"AI_Reasoning_Effort",
+											"reasoningEffort",
+											event.target.value,
+										)
+									}
+								>
+									{REASONING_EFFORTS.filter(
+										(level) =>
+											level === "auto" ||
+											((!textModel?.reasoningMandatory || level !== "none") &&
+												(!textModel?.reasoningEfforts ||
+													textModel.reasoningEfforts.includes(level))),
+									).map((level) => (
+										<option key={level} value={level}>
+											{level === "auto"
+												? "Auto (model default)"
+												: level === "none"
+													? "None (off)"
+													: level === "xhigh"
+														? "Extra high"
+														: level.charAt(0).toUpperCase() + level.slice(1)}
+										</option>
+									))}
+								</select>
+							</Field>
+							{effort !== settings.reasoningEffort && (
+								<p className="text-sm text-muted">
+									<span>
+										The saved effort is unavailable for this model; using its
+										default.
+									</span>
+								</p>
+							)}
+							<form
+								className="grid gap-2"
+								onSubmit={(event) => {
+									event.preventDefault();
+									chooseSetting(
+										"AI_Reasoning_Token_Allowance",
+										"reasoningTokenAllowance",
+										allowanceDraft ?? String(settings.reasoningTokenAllowance),
+									);
+								}}
+							>
+								<Field
+									label="Reasoning token allowance"
+									hint="Extra tokens above each feature’s answer limit (0–32,768). Estimates include the full allowance; actual thinking can use less."
+								>
+									<input
+										className="input"
+										type="number"
+										min="0"
+										max="32768"
+										step="1"
+										required
+										value={
+											allowanceDraft ?? String(settings.reasoningTokenAllowance)
+										}
+										disabled={!canSave || save.isPending}
+										onChange={(event) => setAllowanceDraft(event.target.value)}
+									/>
+								</Field>
+								<Button
+									type="submit"
+									variant="secondary"
+									disabled={
+										!canSave || save.isPending || allowanceDraft === null
+									}
+								>
+									Save token allowance
+								</Button>
+							</form>
 						</div>
-						<div className="grid gap-3">
+						<div className="grid content-start gap-3">
 							<ModelPicker
 								label="Image model"
 								models={models.data.image}
@@ -555,7 +697,63 @@ function ModelsCard({
 								disabled={!canSave || save.isPending}
 								onChange={(id) => choose("image", id)}
 							/>
-							<ImagePricing model={imageModel} />
+							<ImagePricing model={imageModel} quality={quality} />
+							<Field
+								label="Image quality"
+								hint={
+									imageModel?.imageQualities?.length === 0
+										? "This model does not expose a quality control; it uses its own default."
+										: "Applies to character images and chapter covers. Higher quality can increase cost and generation time."
+								}
+							>
+								<select
+									className="input"
+									value={quality}
+									disabled={
+										!canSave ||
+										save.isPending ||
+										imageModel?.imageQualities?.length === 0
+									}
+									onChange={(event) =>
+										chooseSetting(
+											"AI_Image_Quality",
+											"imageQuality",
+											event.target.value,
+										)
+									}
+								>
+									{IMAGE_QUALITIES.filter(
+										(level) =>
+											level === "auto" ||
+											!imageModel?.imageQualities ||
+											imageModel.imageQualities.includes(level),
+									).map((level) => (
+										<option key={level} value={level}>
+											{level === "auto"
+												? "Auto (model default)"
+												: level === "xhigh"
+													? "Extra high"
+													: level.charAt(0).toUpperCase() + level.slice(1)}
+										</option>
+									))}
+								</select>
+							</Field>
+							{quality !== settings.imageQuality && (
+								<p className="text-sm text-muted">
+									<span>
+										The saved quality is unavailable for this model; using its
+										default.
+									</span>
+								</p>
+							)}
+							<p className="text-xs text-muted">
+								<span>
+									{imageModel &&
+									imageCostAtQuality(imageModel, quality) === null
+										? "A reliable image price for this quality is unavailable. Image feature estimates and suggested lens prices are hidden; use recorded costs after testing this setting."
+										: "Image prices use baseline token assumptions, not a guaranteed quote for Auto quality. Reference images, size and quality can change the final cost."}
+								</span>
+							</p>
 						</div>
 					</div>
 					<p className="text-xs text-muted">
@@ -565,14 +763,15 @@ function ModelsCard({
 							confirm the model works.
 						</span>
 					</p>
-					<CostTable
-						estimates={estimates}
-						names={names}
-						stats={stats}
-						lensPriceUsd={lensPriceUsd}
-					/>
 				</>
 			)}
+			<CostTable
+				onEdit={onEdit}
+				estimates={estimates}
+				names={names}
+				stats={stats}
+				lensPriceUsd={lensPriceUsd}
+			/>
 			{error && (
 				<p className="field-error" role="alert">
 					{error}
@@ -580,7 +779,11 @@ function ModelsCard({
 			)}
 			<ConfirmDialog
 				open={confirming !== null}
-				title="Use a model that loses money?"
+				title={
+					confirming?.setting
+						? "Use settings that lose money?"
+						: "Use a model that loses money?"
+				}
 				confirmLabel="Use it anyway"
 				busy={save.isPending}
 				error={error}
@@ -596,9 +799,15 @@ function ModelsCard({
 				}
 			>
 				<span>
-					With <code>{confirming?.model}</code>, these features would cost more
-					than their lenses are worth: {confirming?.losing.join(", ")}. Raise
-					the lens price or those features' lenses afterwards.
+					With{" "}
+					<code>
+						{confirming?.setting
+							? `${confirming.key}=${confirming.model}`
+							: confirming?.model}
+					</code>
+					, these features would cost more than their lenses are worth:{" "}
+					{confirming?.losing.join(", ")}. Raise the lens price or those
+					features' lenses afterwards.
 				</span>
 			</ConfirmDialog>
 		</section>
@@ -651,11 +860,13 @@ function RealMargin({
 }
 
 function FeatureForm({
+	onDone,
 	feature,
 	stats,
 	priceUsd,
 	canEdit,
 }: {
+	onDone: () => void;
 	feature: Feature;
 	stats?: Stats;
 	priceUsd: number | null;
@@ -679,6 +890,7 @@ function FeatureForm({
 					queryKey: getGetAiPricingQueryKey(),
 				});
 				toast.success(`${values.nameEn} saved`);
+				onDone();
 			},
 			onError: (cause) => setError(errorMessage(cause)),
 		},
@@ -725,7 +937,7 @@ function FeatureForm({
 		<form
 			onSubmit={submit}
 			noValidate
-			className="card grid gap-4 p-5"
+			className="grid gap-4"
 			aria-labelledby={`feature-${feature.key}`}
 		>
 			<div className="flex flex-wrap items-start justify-between gap-3">
@@ -749,7 +961,10 @@ function FeatureForm({
 				lenses={Number(values.lenses) || 0}
 				priceUsd={priceUsd}
 			/>
-			<fieldset disabled={!canEdit} className="grid gap-4 sm:grid-cols-2">
+			<fieldset
+				disabled={!canEdit || save.isPending}
+				className="grid gap-4 sm:grid-cols-2"
+			>
 				<Field label="English name">
 					<input
 						className="input"
@@ -801,7 +1016,10 @@ function FeatureForm({
 						onChange={(event) => set("maxPromptChars")(event.target.value)}
 					/>
 				</Field>
-				<Field label={image ? "Brief limit (tokens)" : "Answer limit (tokens)"}>
+				<Field
+					label={image ? "Brief limit (tokens)" : "Answer limit (tokens)"}
+					hint="The reasoning token allowance is added to this limit when thinking is enabled; the provider shares the combined budget between thinking and the answer."
+				>
 					<input
 						className="input"
 						type="number"
@@ -830,6 +1048,7 @@ function FeatureForm({
 
 /** Settings → AI: the cloud switch, models with their cost check, and each feature's price. */
 export function AiSettingsPanel() {
+	const [editing, setEditing] = useState<Feature | null>(null);
 	const { can } = useAuth();
 	const pricing = useGetAiPricing();
 	const summary = useGetBillingSummary(
@@ -845,7 +1064,12 @@ export function AiSettingsPanel() {
 
 	return (
 		<div className="grid gap-4">
-			{can(PERMISSIONS.configs.list) && <CloudSwitch />}
+			{can(PERMISSIONS.configs.list) && (
+				<>
+					<CloudSwitch />
+					<LensBalanceCard />
+				</>
+			)}
 			{pricing.error ? (
 				<ErrorState
 					error={pricing.error}
@@ -855,23 +1079,52 @@ export function AiSettingsPanel() {
 				<div className="card">
 					<TableSkeleton rows={4} columns={4} />
 				</div>
+			) : can(PERMISSIONS.aiModels.list) ? (
+				<ModelsCard
+					features={pricing.data.data}
+					stats={stats}
+					onEdit={(key) =>
+						setEditing(
+							pricing.data.data.find((feature) => feature.key === key) ?? null,
+						)
+					}
+				/>
 			) : (
-				<>
-					{can(PERMISSIONS.aiModels.list) && (
-						<ModelsCard features={pricing.data.data} stats={stats} />
-					)}
-					<h2 className="mt-2 text-base font-semibold">Feature prices</h2>
-					{pricing.data.data.map((feature) => (
-						<FeatureForm
-							key={`${feature.key}-${String(feature.updatedAt)}`}
-							feature={feature}
-							stats={stats.find((row) => row.feature === feature.key)}
-							priceUsd={priceUsd}
-							canEdit={can(PERMISSIONS.aiPricing.update)}
-						/>
-					))}
-				</>
+				<section className="card p-5">
+					<CostTable
+						estimates={pricing.data.data.map((feature) =>
+							estimateFeature(feature, undefined, undefined, priceUsd),
+						)}
+						names={Object.fromEntries(
+							pricing.data.data.map((feature) => [feature.key, feature.nameEn]),
+						)}
+						stats={stats}
+						lensPriceUsd={priceUsd}
+						onEdit={(key) =>
+							setEditing(
+								pricing.data.data.find((feature) => feature.key === key) ??
+									null,
+							)
+						}
+					/>
+				</section>
 			)}
+			<Dialog
+				open={editing !== null}
+				title={`Edit ${editing?.nameEn ?? "feature"} price`}
+				onClose={() => setEditing(null)}
+			>
+				{editing && (
+					<FeatureForm
+						key={editing.key}
+						feature={editing}
+						stats={stats.find((row) => row.feature === editing.key)}
+						priceUsd={priceUsd}
+						canEdit={can(PERMISSIONS.aiPricing.update)}
+						onDone={() => setEditing(null)}
+					/>
+				)}
+			</Dialog>
 		</div>
 	);
 }

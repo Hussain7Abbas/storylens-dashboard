@@ -9,6 +9,7 @@ import {
 	usePostBillingRequestsByIdApprove,
 	usePostBillingRequestsByIdReject,
 } from "@/api/generated/endpoints/admin-billing";
+import { getGetConfigsQueryKey } from "@/api/generated/endpoints/admin-configs";
 import type {
 	GetBillingRequests200DataItem,
 	GetBillingRequestsStatus,
@@ -29,6 +30,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/lib/auth";
 import { formatDateTime, formatNumber } from "@/lib/format";
+import { useLensInventory } from "@/lib/lens-inventory";
 import { formatLensPrice, formatUsd } from "@/lib/money";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useSearchState } from "@/lib/use-search-state";
@@ -195,6 +197,7 @@ function RejectForm({
 }
 
 export function BillingRequestsPage() {
+	const { balance: available } = useLensInventory();
 	const { can } = useAuth();
 	const toast = useToast();
 	const queryClient = useQueryClient();
@@ -223,6 +226,7 @@ export function BillingRequestsPage() {
 		mutation: {
 			onSuccess: async (result) => {
 				await Promise.all([
+					queryClient.invalidateQueries({ queryKey: getGetConfigsQueryKey() }),
 					queryClient.invalidateQueries({
 						queryKey: getGetBillingRequestsQueryKey(),
 					}),
@@ -451,7 +455,16 @@ export function BillingRequestsPage() {
 				busy={approve.isPending}
 				error={approveError}
 				onClose={closeApprove}
-				onConfirm={() => approving && approve.mutate({ id: approving.id })}
+				onConfirm={() => {
+					if (!approving) return;
+					if (available !== null && approving.lenses > available) {
+						setApproveError(
+							`Only ${formatNumber(available)} lenses are available to sell. Update the balance in Settings → AI.`,
+						);
+						return;
+					}
+					approve.mutate({ id: approving.id });
+				}}
 			>
 				{approving && (
 					<>
@@ -474,6 +487,11 @@ export function BillingRequestsPage() {
 						</p>
 						<p className="mt-2">
 							<span>Only approve after you have received the payment.</span>
+							{available !== null && (
+								<span className="mt-2 block">
+									Available to sell: {formatNumber(available)} lenses.
+								</span>
+							)}
 						</p>
 					</>
 				)}

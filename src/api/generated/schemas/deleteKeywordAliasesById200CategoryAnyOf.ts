@@ -7,6 +7,8 @@
  */
 import type { DeleteKeywordAliasesById200CategoryAnyOfNameEn } from './deleteKeywordAliasesById200CategoryAnyOfNameEn';
 import type { DeleteKeywordAliasesById200CategoryAnyOfNameAr } from './deleteKeywordAliasesById200CategoryAnyOfNameAr';
+import type { DeleteKeywordAliasesById200CategoryAnyOfWordVfx } from './deleteKeywordAliasesById200CategoryAnyOfWordVfx';
+import type { DeleteKeywordAliasesById200CategoryAnyOfWordVfxColor } from './deleteKeywordAliasesById200CategoryAnyOfWordVfxColor';
 import type { DeleteKeywordAliasesById200CategoryAnyOfDescription } from './deleteKeywordAliasesById200CategoryAnyOfDescription';
 import type { DeleteKeywordAliasesById200CategoryAnyOfCreatedAt } from './deleteKeywordAliasesById200CategoryAnyOfCreatedAt';
 import type { DeleteKeywordAliasesById200CategoryAnyOfUpdatedAt } from './deleteKeywordAliasesById200CategoryAnyOfUpdatedAt';
@@ -16,8 +18,11 @@ export type DeleteKeywordAliasesById200CategoryAnyOf = {
   nameEn: DeleteKeywordAliasesById200CategoryAnyOfNameEn;
   nameAr: DeleteKeywordAliasesById200CategoryAnyOfNameAr;
   color: string;
-  /** @deprecated use Keyword.wordVfx or KeywordAlias.wordVfx. remove-after: 2027-04-30 */
+  /** @deprecated use KeywordCategory.wordVfx. remove-after: 2027-04-30 */
   effect: string;
+  wordVfx: DeleteKeywordAliasesById200CategoryAnyOfWordVfx;
+  wordVfxColor: DeleteKeywordAliasesById200CategoryAnyOfWordVfxColor;
+  switchPositionWithNature: boolean;
   description: DeleteKeywordAliasesById200CategoryAnyOfDescription;
   createdAt: DeleteKeywordAliasesById200CategoryAnyOfCreatedAt;
   updatedAt: DeleteKeywordAliasesById200CategoryAnyOfUpdatedAt;

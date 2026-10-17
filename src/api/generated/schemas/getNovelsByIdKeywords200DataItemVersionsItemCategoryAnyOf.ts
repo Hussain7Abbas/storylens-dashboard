@@ -7,6 +7,8 @@
  */
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameEn } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameEn';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameAr } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameAr';
+import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfWordVfx } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfWordVfx';
+import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfWordVfxColor } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfWordVfxColor';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfDescription } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfDescription';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfCreatedAt } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfCreatedAt';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfUpdatedAt } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfUpdatedAt';
@@ -16,8 +18,11 @@ export type GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOf = {
   nameEn: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameEn;
   nameAr: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfNameAr;
   color: string;
-  /** @deprecated use Keyword.wordVfx or KeywordAlias.wordVfx. remove-after: 2027-04-30 */
+  /** @deprecated use KeywordCategory.wordVfx. remove-after: 2027-04-30 */
   effect: string;
+  wordVfx: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfWordVfx;
+  wordVfxColor: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfWordVfxColor;
+  switchPositionWithNature: boolean;
   description: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfDescription;
   createdAt: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfCreatedAt;
   updatedAt: GetNovelsByIdKeywords200DataItemVersionsItemCategoryAnyOfUpdatedAt;
