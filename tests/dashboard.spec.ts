@@ -605,6 +605,7 @@ test("a new keyword is created with its base details", async ({ page }) => {
 			categoryId: "cat-person",
 			natureId: null,
 			imageId: null,
+			imagePrompt: null,
 		},
 	});
 });

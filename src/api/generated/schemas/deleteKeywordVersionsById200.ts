@@ -12,6 +12,7 @@ import type { DeleteKeywordVersionsById200StartingChapter } from './deleteKeywor
 import type { DeleteKeywordVersionsById200EndingChapter } from './deleteKeywordVersionsById200EndingChapter';
 import type { DeleteKeywordVersionsById200CategoryId } from './deleteKeywordVersionsById200CategoryId';
 import type { DeleteKeywordVersionsById200NatureId } from './deleteKeywordVersionsById200NatureId';
+import type { DeleteKeywordVersionsById200ImagePrompt } from './deleteKeywordVersionsById200ImagePrompt';
 import type { DeleteKeywordVersionsById200ImageId } from './deleteKeywordVersionsById200ImageId';
 import type { DeleteKeywordVersionsById200CreatedById } from './deleteKeywordVersionsById200CreatedById';
 import type { DeleteKeywordVersionsById200CreatedAt } from './deleteKeywordVersionsById200CreatedAt';
@@ -29,6 +30,7 @@ export type DeleteKeywordVersionsById200 = {
   endingChapter: DeleteKeywordVersionsById200EndingChapter;
   categoryId: DeleteKeywordVersionsById200CategoryId;
   natureId: DeleteKeywordVersionsById200NatureId;
+  imagePrompt: DeleteKeywordVersionsById200ImagePrompt;
   imageId: DeleteKeywordVersionsById200ImageId;
   keywordId: string;
   createdById: DeleteKeywordVersionsById200CreatedById;

@@ -10,6 +10,7 @@ import type { PostKeywordAliasesBodyTwoDescriptionAr } from './postKeywordAliase
 import type { PostKeywordAliasesBodyTwoDescriptionEn } from './postKeywordAliasesBodyTwoDescriptionEn';
 import type { PostKeywordAliasesBodyTwoCategoryId } from './postKeywordAliasesBodyTwoCategoryId';
 import type { PostKeywordAliasesBodyTwoNatureId } from './postKeywordAliasesBodyTwoNatureId';
+import type { PostKeywordAliasesBodyTwoImagePrompt } from './postKeywordAliasesBodyTwoImagePrompt';
 import type { PostKeywordAliasesBodyTwoImageId } from './postKeywordAliasesBodyTwoImageId';
 import type { PostKeywordAliasesBodyTwoNameAr } from './postKeywordAliasesBodyTwoNameAr';
 import type { PostKeywordAliasesBodyTwoNameEn } from './postKeywordAliasesBodyTwoNameEn';
@@ -30,6 +31,8 @@ export type PostKeywordAliasesBodyTwo = {
   categoryId?: PostKeywordAliasesBodyTwoCategoryId;
   /** @nullable */
   natureId?: PostKeywordAliasesBodyTwoNatureId;
+  /** @nullable */
+  imagePrompt?: PostKeywordAliasesBodyTwoImagePrompt;
   /** @nullable */
   imageId?: PostKeywordAliasesBodyTwoImageId;
   translationAliasId?: string;

@@ -16,6 +16,7 @@ import type { DeleteKeywordAliasesById200WordVfxColor } from './deleteKeywordAli
 import type { DeleteKeywordAliasesById200MainThemeColor } from './deleteKeywordAliasesById200MainThemeColor';
 import type { DeleteKeywordAliasesById200CategoryId } from './deleteKeywordAliasesById200CategoryId';
 import type { DeleteKeywordAliasesById200NatureId } from './deleteKeywordAliasesById200NatureId';
+import type { DeleteKeywordAliasesById200ImagePrompt } from './deleteKeywordAliasesById200ImagePrompt';
 import type { DeleteKeywordAliasesById200ImageId } from './deleteKeywordAliasesById200ImageId';
 import type { DeleteKeywordAliasesById200CreatedById } from './deleteKeywordAliasesById200CreatedById';
 import type { DeleteKeywordAliasesById200CreatedAt } from './deleteKeywordAliasesById200CreatedAt';
@@ -39,6 +40,7 @@ export type DeleteKeywordAliasesById200 = {
   overrideStyle: boolean;
   categoryId: DeleteKeywordAliasesById200CategoryId;
   natureId: DeleteKeywordAliasesById200NatureId;
+  imagePrompt: DeleteKeywordAliasesById200ImagePrompt;
   imageId: DeleteKeywordAliasesById200ImageId;
   keywordId: string;
   createdById: DeleteKeywordAliasesById200CreatedById;

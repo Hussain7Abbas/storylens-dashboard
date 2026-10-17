@@ -77,6 +77,7 @@ const NAV: NavItem[] = [
 			PERMISSIONS.configs.list,
 			PERMISSIONS.aiPricing.list,
 			PERMISSIONS.keywords.categories,
+			PERMISSIONS.keywords.natures,
 		],
 	},
 ];

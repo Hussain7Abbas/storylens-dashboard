@@ -537,3 +537,107 @@
 		border-style: double;
 	}
 }
+
+/* Saved image prompts: compact editing with a focus-accessible copy action. */
+.image-prompt-editor {
+	position: relative;
+	min-inline-size: 0;
+}
+.image-prompt-textarea {
+	box-sizing: border-box;
+	display: block;
+	block-size: 100px;
+	min-block-size: 100px;
+	padding-inline-end: 48px;
+	padding-block-end: 36px;
+	resize: none;
+	overflow: hidden;
+}
+.image-prompt-editor[data-expanded="true"] .image-prompt-textarea {
+	block-size: 320px;
+	min-block-size: 160px;
+	padding-block-end: 12px;
+	resize: vertical;
+	overflow: auto;
+}
+.image-prompt-copy {
+	position: absolute;
+	inset-block-start: 6px;
+	inset-inline-end: 6px;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 150ms ease;
+}
+.image-prompt-editor:hover .image-prompt-copy,
+.image-prompt-editor:focus-within .image-prompt-copy {
+	opacity: 1;
+	pointer-events: auto;
+}
+.image-prompt-fade {
+	position: absolute;
+	inset-inline: 1px;
+	inset-block-end: 1px;
+	block-size: 44px;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	border-radius: 0 0 var(--control-radius) var(--control-radius);
+	background: linear-gradient(to bottom, transparent, var(--surface) 75%);
+	pointer-events: none;
+}
+.image-prompt-expand {
+	pointer-events: auto;
+	min-block-size: 28px;
+	margin-block-end: 3px;
+	padding-block: 2px;
+}
+@media (hover: none), (pointer: coarse) {
+	.image-prompt-copy {
+		opacity: 1;
+		pointer-events: auto;
+		min-inline-size: 44px;
+		min-block-size: 44px;
+	}
+	.image-prompt-textarea {
+		padding-inline-end: 56px;
+	}
+	.image-prompt-expand {
+		min-block-size: 44px;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.image-prompt-copy {
+		transition: none;
+	}
+}
+@media (forced-colors: active) {
+	.image-prompt-fade {
+		background: Canvas;
+		border-block-start: 1px solid CanvasText;
+	}
+}
+
+/* Color evaluation surfaces remain fixed so both themes can be compared together. */
+.lookup-preview {
+	border: 1px solid var(--border);
+	border-radius: var(--control-radius);
+	padding: 1rem;
+	forced-color-adjust: none;
+}
+.lookup-preview-light {
+	background: #f7f7fb;
+	color: #202132;
+}
+.lookup-preview-dark {
+	background: #171820;
+	color: #eeeff6;
+}
+.lookup-preview-dot {
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin-inline-end: 0.4rem;
+	border-radius: 50%;
+	background: currentColor;
+	vertical-align: middle;
+}

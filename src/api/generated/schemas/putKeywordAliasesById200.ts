@@ -16,6 +16,7 @@ import type { PutKeywordAliasesById200WordVfxColor } from './putKeywordAliasesBy
 import type { PutKeywordAliasesById200MainThemeColor } from './putKeywordAliasesById200MainThemeColor';
 import type { PutKeywordAliasesById200CategoryId } from './putKeywordAliasesById200CategoryId';
 import type { PutKeywordAliasesById200NatureId } from './putKeywordAliasesById200NatureId';
+import type { PutKeywordAliasesById200ImagePrompt } from './putKeywordAliasesById200ImagePrompt';
 import type { PutKeywordAliasesById200ImageId } from './putKeywordAliasesById200ImageId';
 import type { PutKeywordAliasesById200CreatedById } from './putKeywordAliasesById200CreatedById';
 import type { PutKeywordAliasesById200CreatedAt } from './putKeywordAliasesById200CreatedAt';
@@ -39,6 +40,7 @@ export type PutKeywordAliasesById200 = {
   overrideStyle: boolean;
   categoryId: PutKeywordAliasesById200CategoryId;
   natureId: PutKeywordAliasesById200NatureId;
+  imagePrompt: PutKeywordAliasesById200ImagePrompt;
   imageId: PutKeywordAliasesById200ImageId;
   keywordId: string;
   createdById: PutKeywordAliasesById200CreatedById;

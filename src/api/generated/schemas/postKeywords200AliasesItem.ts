@@ -16,6 +16,7 @@ import type { PostKeywords200AliasesItemWordVfxColor } from './postKeywords200Al
 import type { PostKeywords200AliasesItemMainThemeColor } from './postKeywords200AliasesItemMainThemeColor';
 import type { PostKeywords200AliasesItemCategoryId } from './postKeywords200AliasesItemCategoryId';
 import type { PostKeywords200AliasesItemNatureId } from './postKeywords200AliasesItemNatureId';
+import type { PostKeywords200AliasesItemImagePrompt } from './postKeywords200AliasesItemImagePrompt';
 import type { PostKeywords200AliasesItemImageId } from './postKeywords200AliasesItemImageId';
 import type { PostKeywords200AliasesItemCreatedById } from './postKeywords200AliasesItemCreatedById';
 import type { PostKeywords200AliasesItemCreatedAt } from './postKeywords200AliasesItemCreatedAt';
@@ -39,6 +40,7 @@ export type PostKeywords200AliasesItem = {
   overrideStyle: boolean;
   categoryId: PostKeywords200AliasesItemCategoryId;
   natureId: PostKeywords200AliasesItemNatureId;
+  imagePrompt: PostKeywords200AliasesItemImagePrompt;
   imageId: PostKeywords200AliasesItemImageId;
   keywordId: string;
   createdById: PostKeywords200AliasesItemCreatedById;

@@ -21,6 +21,7 @@ export type PickedStyle = {
 	description: string | null;
 	descriptionAr?: string | null;
 	descriptionEn?: string | null;
+	imagePrompt?: string | null;
 	categoryId: string | null;
 	natureId: string | null;
 	image: { id: string; url: string } | null;
@@ -62,6 +63,7 @@ function styleOf(row: {
 	description?: string | null;
 	descriptionAr?: string | null;
 	descriptionEn?: string | null;
+	imagePrompt?: string | null;
 	categoryId?: string | null;
 	natureId?: string | null;
 	image?: { id: string; url: string } | null;
@@ -69,6 +71,7 @@ function styleOf(row: {
 	return {
 		description: row.description ?? null,
 		descriptionAr: row.descriptionAr,
+		imagePrompt: row.imagePrompt,
 		descriptionEn: row.descriptionEn,
 		categoryId: row.categoryId ?? null,
 		natureId: row.natureId ?? null,

@@ -12,6 +12,7 @@ import type { PostKeywordVersionsBodyOneDescriptionAr } from './postKeywordVersi
 import type { PostKeywordVersionsBodyOneDescriptionEn } from './postKeywordVersionsBodyOneDescriptionEn';
 import type { PostKeywordVersionsBodyOneCategoryId } from './postKeywordVersionsBodyOneCategoryId';
 import type { PostKeywordVersionsBodyOneNatureId } from './postKeywordVersionsBodyOneNatureId';
+import type { PostKeywordVersionsBodyOneImagePrompt } from './postKeywordVersionsBodyOneImagePrompt';
 import type { PostKeywordVersionsBodyOneImageId } from './postKeywordVersionsBodyOneImageId';
 
 export type PostKeywordVersionsBodyOne = {
@@ -30,6 +31,8 @@ export type PostKeywordVersionsBodyOne = {
   categoryId?: PostKeywordVersionsBodyOneCategoryId;
   /** @nullable */
   natureId?: PostKeywordVersionsBodyOneNatureId;
+  /** @nullable */
+  imagePrompt?: PostKeywordVersionsBodyOneImagePrompt;
   /** @nullable */
   imageId?: PostKeywordVersionsBodyOneImageId;
 };

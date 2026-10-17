@@ -5,11 +5,22 @@
  * Development documentation
  * OpenAPI spec version: 0.0.0
  */
+import type { PutKeywordCategoriesByIdBodyOneNameEn } from './putKeywordCategoriesByIdBodyOneNameEn';
+import type { PutKeywordCategoriesByIdBodyOneNameAr } from './putKeywordCategoriesByIdBodyOneNameAr';
+import type { PutKeywordCategoriesByIdBodyOneDescription } from './putKeywordCategoriesByIdBodyOneDescription';
 import type { PutKeywordCategoriesByIdBodyOneWordVfx } from './putKeywordCategoriesByIdBodyOneWordVfx';
 import type { PutKeywordCategoriesByIdBodyOneWordVfxColor } from './putKeywordCategoriesByIdBodyOneWordVfxColor';
 
 export type PutKeywordCategoriesByIdBodyOne = {
   baseUpdatedAt: string;
+  /** @nullable */
+  nameEn?: PutKeywordCategoriesByIdBodyOneNameEn;
+  /** @nullable */
+  nameAr?: PutKeywordCategoriesByIdBodyOneNameAr;
+  /** @nullable */
+  description?: PutKeywordCategoriesByIdBodyOneDescription;
+  /** @pattern ^#[0-9A-Fa-f]{6}$ */
+  color?: string;
   wordVfx?: PutKeywordCategoriesByIdBodyOneWordVfx;
   /** @nullable */
   wordVfxColor?: PutKeywordCategoriesByIdBodyOneWordVfxColor;

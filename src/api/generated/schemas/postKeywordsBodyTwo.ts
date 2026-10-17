@@ -16,6 +16,7 @@ import type { PostKeywordsBodyTwoDescriptionAr } from './postKeywordsBodyTwoDesc
 import type { PostKeywordsBodyTwoDescriptionEn } from './postKeywordsBodyTwoDescriptionEn';
 import type { PostKeywordsBodyTwoCategoryId } from './postKeywordsBodyTwoCategoryId';
 import type { PostKeywordsBodyTwoNatureId } from './postKeywordsBodyTwoNatureId';
+import type { PostKeywordsBodyTwoImagePrompt } from './postKeywordsBodyTwoImagePrompt';
 import type { PostKeywordsBodyTwoImageId } from './postKeywordsBodyTwoImageId';
 
 export type PostKeywordsBodyTwo = {
@@ -42,6 +43,8 @@ export type PostKeywordsBodyTwo = {
   categoryId?: PostKeywordsBodyTwoCategoryId;
   /** @nullable */
   natureId?: PostKeywordsBodyTwoNatureId;
+  /** @nullable */
+  imagePrompt?: PostKeywordsBodyTwoImagePrompt;
   /** @nullable */
   imageId?: PostKeywordsBodyTwoImageId;
 };

@@ -12,6 +12,7 @@ import type { PostKeywordVersionsBodyThreeDescriptionAr } from './postKeywordVer
 import type { PostKeywordVersionsBodyThreeDescriptionEn } from './postKeywordVersionsBodyThreeDescriptionEn';
 import type { PostKeywordVersionsBodyThreeCategoryId } from './postKeywordVersionsBodyThreeCategoryId';
 import type { PostKeywordVersionsBodyThreeNatureId } from './postKeywordVersionsBodyThreeNatureId';
+import type { PostKeywordVersionsBodyThreeImagePrompt } from './postKeywordVersionsBodyThreeImagePrompt';
 import type { PostKeywordVersionsBodyThreeImageId } from './postKeywordVersionsBodyThreeImageId';
 
 export type PostKeywordVersionsBodyThree = {
@@ -30,6 +31,8 @@ export type PostKeywordVersionsBodyThree = {
   categoryId?: PostKeywordVersionsBodyThreeCategoryId;
   /** @nullable */
   natureId?: PostKeywordVersionsBodyThreeNatureId;
+  /** @nullable */
+  imagePrompt?: PostKeywordVersionsBodyThreeImagePrompt;
   /** @nullable */
   imageId?: PostKeywordVersionsBodyThreeImageId;
 };

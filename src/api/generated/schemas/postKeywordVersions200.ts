@@ -12,6 +12,7 @@ import type { PostKeywordVersions200StartingChapter } from './postKeywordVersion
 import type { PostKeywordVersions200EndingChapter } from './postKeywordVersions200EndingChapter';
 import type { PostKeywordVersions200CategoryId } from './postKeywordVersions200CategoryId';
 import type { PostKeywordVersions200NatureId } from './postKeywordVersions200NatureId';
+import type { PostKeywordVersions200ImagePrompt } from './postKeywordVersions200ImagePrompt';
 import type { PostKeywordVersions200ImageId } from './postKeywordVersions200ImageId';
 import type { PostKeywordVersions200CreatedById } from './postKeywordVersions200CreatedById';
 import type { PostKeywordVersions200CreatedAt } from './postKeywordVersions200CreatedAt';
@@ -29,6 +30,7 @@ export type PostKeywordVersions200 = {
   endingChapter: PostKeywordVersions200EndingChapter;
   categoryId: PostKeywordVersions200CategoryId;
   natureId: PostKeywordVersions200NatureId;
+  imagePrompt: PostKeywordVersions200ImagePrompt;
   imageId: PostKeywordVersions200ImageId;
   keywordId: string;
   createdById: PostKeywordVersions200CreatedById;

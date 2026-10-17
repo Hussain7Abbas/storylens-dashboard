@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Link2 } from "lucide-react";
+import { Check, Copy, Link2, Maximize2, Minimize2 } from "lucide-react";
 import { type FormEvent, type ReactNode, useId, useState } from "react";
 import { errorMessage } from "@/api/axios-instance";
 import {
@@ -45,10 +45,12 @@ type StyleValues = {
 	categoryId: string;
 	natureId: string;
 	image: PickedImage | null;
+	imagePrompt: string;
 };
 
 type Styled = {
 	description: string | null;
+	imagePrompt?: string | null;
 	descriptionAr?: string | null;
 	descriptionEn?: string | null;
 	categoryId: string | null;
@@ -60,6 +62,7 @@ function styleValues(item: Styled | undefined | null): StyleValues {
 	return {
 		descriptionAr: descriptionIn(item, "ar") ?? "",
 		descriptionEn: descriptionIn(item, "en") ?? "",
+		imagePrompt: item?.imagePrompt ?? "",
 		categoryId: item?.categoryId ?? "",
 		natureId: item?.natureId ?? "",
 		image: item?.image ? { id: item.image.id, url: item.image.url } : null,
@@ -73,6 +76,7 @@ function styleBody(values: StyleValues) {
 		categoryId: values.categoryId || null,
 		natureId: values.natureId || null,
 		imageId: values.image?.id ?? null,
+		imagePrompt: values.imagePrompt.trim() || null,
 	};
 }
 
@@ -90,6 +94,7 @@ function translationStyle(
 		categoryId: picked.style.categoryId ?? "",
 		natureId: picked.style.natureId ?? "",
 		image: picked.style.image,
+		imagePrompt: picked.style.imagePrompt ?? "",
 	};
 }
 
@@ -255,6 +260,10 @@ function StyleFields({
 					}
 				/>
 			</Field>
+			<ImagePromptField
+				value={values.imagePrompt}
+				onChange={(imagePrompt) => onChange({ ...values, imagePrompt })}
+			/>
 			<ImageField
 				label="Image"
 				value={values.image}
@@ -262,6 +271,97 @@ function StyleFields({
 				onUploadingChange={onUploadingChange}
 			/>
 		</>
+	);
+}
+
+function ImagePromptField({
+	value,
+	onChange,
+}: {
+	value: string;
+	onChange: (value: string) => void;
+}) {
+	const toast = useToast();
+	const id = useId();
+	const [expanded, setExpanded] = useState(false);
+	const [copiedValue, setCopiedValue] = useState<string>();
+	return (
+		<details className="rounded-lg border border-line p-3">
+			<summary className="cursor-pointer text-sm font-semibold">
+				<span>Image Prompt</span>
+			</summary>
+			<div className="mt-3 grid gap-2">
+				<label className="field-label" htmlFor={id}>
+					Image Prompt
+				</label>
+				<div className="image-prompt-editor" data-expanded={expanded}>
+					<textarea
+						id={id}
+						aria-describedby={`${id}-hint`}
+						className="input image-prompt-textarea"
+						dir="auto"
+						maxLength={180000}
+						value={value}
+						onChange={(event) => onChange(event.target.value)}
+					/>
+					<Button
+						iconOnly
+						disabled={!value.trim()}
+						className="image-prompt-copy"
+						aria-label="Copy prompt"
+						title="Copy prompt"
+						icon={
+							copiedValue === value ? (
+								<Check size={16} strokeWidth={1.75} aria-hidden />
+							) : (
+								<Copy size={16} strokeWidth={1.75} aria-hidden />
+							)
+						}
+						onClick={async () => {
+							try {
+								await navigator.clipboard.writeText(value);
+								setCopiedValue(value);
+								toast.success("Image prompt copied");
+							} catch {
+								toast.error(
+									"Could not copy the image prompt. Select and copy the text below.",
+								);
+							}
+						}}
+					/>
+					{!expanded && (
+						<div className="image-prompt-fade">
+							<Button
+								variant="ghost"
+								className="image-prompt-expand"
+								aria-expanded={false}
+								aria-controls={id}
+								icon={<Maximize2 size={14} strokeWidth={1.75} aria-hidden />}
+								onClick={() => setExpanded(true)}
+							>
+								Expand
+							</Button>
+						</div>
+					)}
+				</div>
+				{expanded && (
+					<Button
+						variant="ghost"
+						className="justify-self-end"
+						aria-expanded={true}
+						aria-controls={id}
+						icon={<Minimize2 size={14} strokeWidth={1.75} aria-hidden />}
+						onClick={() => setExpanded(false)}
+					>
+						Collapse
+					</Button>
+				)}
+				<p id={`${id}-hint`} className="field-hint">
+					Saved with this image and used for future AI image generation. Edit it
+					before regenerating.
+				</p>
+			</div>
+		</details>
 	);
 }
 

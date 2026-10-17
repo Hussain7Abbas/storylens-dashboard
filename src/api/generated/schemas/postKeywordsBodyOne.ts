@@ -16,6 +16,7 @@ import type { PostKeywordsBodyOneDescriptionAr } from './postKeywordsBodyOneDesc
 import type { PostKeywordsBodyOneDescriptionEn } from './postKeywordsBodyOneDescriptionEn';
 import type { PostKeywordsBodyOneCategoryId } from './postKeywordsBodyOneCategoryId';
 import type { PostKeywordsBodyOneNatureId } from './postKeywordsBodyOneNatureId';
+import type { PostKeywordsBodyOneImagePrompt } from './postKeywordsBodyOneImagePrompt';
 import type { PostKeywordsBodyOneImageId } from './postKeywordsBodyOneImageId';
 
 export type PostKeywordsBodyOne = {
@@ -42,6 +43,8 @@ export type PostKeywordsBodyOne = {
   categoryId?: PostKeywordsBodyOneCategoryId;
   /** @nullable */
   natureId?: PostKeywordsBodyOneNatureId;
+  /** @nullable */
+  imagePrompt?: PostKeywordsBodyOneImagePrompt;
   /** @nullable */
   imageId?: PostKeywordsBodyOneImageId;
 };

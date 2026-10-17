@@ -32,9 +32,10 @@ const KNOWN_KEYS: Record<string, string> = {
 		"Remaining whole lenses available for approved sales and dashboard gifts. Edit with the dollar converter in the AI tab; missing means zero.",
 	Lens_Trial_Gift:
 		"Lenses each new registered reader gets once (default 10). 0 gives nothing and shows no celebration.",
-	Lens_Request_Min: "Smallest lens request, in whole lenses (default 100).",
+	Lens_Request_Min:
+		"Legacy setting; requests now have a fixed minimum of 500 lenses.",
 	Lens_Request_Max:
-		"Largest lens request, in whole lenses (default and maximum 50000).",
+		"Legacy setting; requests now allow up to 2147483647 lenses (PostgreSQL Int).",
 	Lens_Pending_Requests_Max:
 		"Pending lens requests one reader may have at a time, 1–20 (default 3).",
 	AI_Text_Model:

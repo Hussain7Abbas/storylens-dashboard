@@ -16,6 +16,7 @@ import type { GetNovelsByIdKeywords200DataItemAliasesItemWordVfxColor } from './
 import type { GetNovelsByIdKeywords200DataItemAliasesItemMainThemeColor } from './getNovelsByIdKeywords200DataItemAliasesItemMainThemeColor';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemCategoryId } from './getNovelsByIdKeywords200DataItemAliasesItemCategoryId';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemNatureId } from './getNovelsByIdKeywords200DataItemAliasesItemNatureId';
+import type { GetNovelsByIdKeywords200DataItemAliasesItemImagePrompt } from './getNovelsByIdKeywords200DataItemAliasesItemImagePrompt';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemImageId } from './getNovelsByIdKeywords200DataItemAliasesItemImageId';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemCreatedById } from './getNovelsByIdKeywords200DataItemAliasesItemCreatedById';
 import type { GetNovelsByIdKeywords200DataItemAliasesItemCreatedAt } from './getNovelsByIdKeywords200DataItemAliasesItemCreatedAt';
@@ -39,6 +40,7 @@ export type GetNovelsByIdKeywords200DataItemAliasesItem = {
   overrideStyle: boolean;
   categoryId: GetNovelsByIdKeywords200DataItemAliasesItemCategoryId;
   natureId: GetNovelsByIdKeywords200DataItemAliasesItemNatureId;
+  imagePrompt: GetNovelsByIdKeywords200DataItemAliasesItemImagePrompt;
   imageId: GetNovelsByIdKeywords200DataItemAliasesItemImageId;
   keywordId: string;
   createdById: GetNovelsByIdKeywords200DataItemAliasesItemCreatedById;

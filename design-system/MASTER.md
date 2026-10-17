@@ -17,3 +17,5 @@ A UI UX Pro Max query (`admin dashboard user management roles permissions --desi
 - Tables sit inside cards, scroll horizontally inside the card on small screens, and use uppercase muted headers, row hover wash and tabular numbers.
 - Badges: iris for dashboard/portal emphasis, warning for missing data (no role, no AI context), neutral otherwise. HTTP methods in the permission matrix use GET success, POST accent, PUT warning, DELETE error, always with the method text so colour is not the only signal.
 - Forms keep visible labels, hints and inline errors (`Field`), native dialogs with Escape and focus return, and toasts announced through an `aria-live` region.
+
+- Lookup add/edit forms in Settings show two fixed evaluation surfaces together: light canvas/ink `#f7f7fb`/`#202132`, dark canvas/ink `#171820`/`#eeeff6`. These deliberately stay fixed across dashboard themes and preserve chosen colors in forced colors so admins can evaluate the same color on both. They are the exception to theme-relative component colors; explanatory labels and numeric contrast feedback remain readable independently of the chosen color.

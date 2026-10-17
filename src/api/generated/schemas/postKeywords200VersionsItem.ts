@@ -12,6 +12,7 @@ import type { PostKeywords200VersionsItemStartingChapter } from './postKeywords2
 import type { PostKeywords200VersionsItemEndingChapter } from './postKeywords200VersionsItemEndingChapter';
 import type { PostKeywords200VersionsItemCategoryId } from './postKeywords200VersionsItemCategoryId';
 import type { PostKeywords200VersionsItemNatureId } from './postKeywords200VersionsItemNatureId';
+import type { PostKeywords200VersionsItemImagePrompt } from './postKeywords200VersionsItemImagePrompt';
 import type { PostKeywords200VersionsItemImageId } from './postKeywords200VersionsItemImageId';
 import type { PostKeywords200VersionsItemCreatedById } from './postKeywords200VersionsItemCreatedById';
 import type { PostKeywords200VersionsItemCreatedAt } from './postKeywords200VersionsItemCreatedAt';
@@ -29,6 +30,7 @@ export type PostKeywords200VersionsItem = {
   endingChapter: PostKeywords200VersionsItemEndingChapter;
   categoryId: PostKeywords200VersionsItemCategoryId;
   natureId: PostKeywords200VersionsItemNatureId;
+  imagePrompt: PostKeywords200VersionsItemImagePrompt;
   imageId: PostKeywords200VersionsItemImageId;
   keywordId: string;
   createdById: PostKeywords200VersionsItemCreatedById;

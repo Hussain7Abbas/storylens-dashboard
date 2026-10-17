@@ -39,8 +39,13 @@ export const PERMISSIONS = {
 		alias: "POST /api/admin/keywords/:id/alias",
 		version: "POST /api/admin/keywords/:id/version",
 		categories: "GET /api/admin/keyword-categories/",
+		createCategory: "POST /api/admin/keyword-categories/",
 		updateCategory: "PUT /api/admin/keyword-categories/:id",
+		deleteCategory: "DELETE /api/admin/keyword-categories/:id",
 		natures: "GET /api/admin/keyword-natures/",
+		createNature: "POST /api/admin/keyword-natures/",
+		updateNature: "PUT /api/admin/keyword-natures/:id",
+		deleteNature: "DELETE /api/admin/keyword-natures/:id",
 	},
 	aliases: {
 		create: "POST /api/admin/keyword-aliases/",

@@ -12,6 +12,7 @@ import type { PutKeywordVersionsByIdBodyThreeDescriptionAr } from './putKeywordV
 import type { PutKeywordVersionsByIdBodyThreeDescriptionEn } from './putKeywordVersionsByIdBodyThreeDescriptionEn';
 import type { PutKeywordVersionsByIdBodyThreeCategoryId } from './putKeywordVersionsByIdBodyThreeCategoryId';
 import type { PutKeywordVersionsByIdBodyThreeNatureId } from './putKeywordVersionsByIdBodyThreeNatureId';
+import type { PutKeywordVersionsByIdBodyThreeImagePrompt } from './putKeywordVersionsByIdBodyThreeImagePrompt';
 import type { PutKeywordVersionsByIdBodyThreeImageId } from './putKeywordVersionsByIdBodyThreeImageId';
 
 export type PutKeywordVersionsByIdBodyThree = {
@@ -29,6 +30,8 @@ export type PutKeywordVersionsByIdBodyThree = {
   categoryId?: PutKeywordVersionsByIdBodyThreeCategoryId;
   /** @nullable */
   natureId?: PutKeywordVersionsByIdBodyThreeNatureId;
+  /** @nullable */
+  imagePrompt?: PutKeywordVersionsByIdBodyThreeImagePrompt;
   /** @nullable */
   imageId?: PutKeywordVersionsByIdBodyThreeImageId;
 };

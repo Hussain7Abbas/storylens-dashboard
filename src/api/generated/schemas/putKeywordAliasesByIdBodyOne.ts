@@ -10,6 +10,7 @@ import type { PutKeywordAliasesByIdBodyOneDescriptionAr } from './putKeywordAlia
 import type { PutKeywordAliasesByIdBodyOneDescriptionEn } from './putKeywordAliasesByIdBodyOneDescriptionEn';
 import type { PutKeywordAliasesByIdBodyOneCategoryId } from './putKeywordAliasesByIdBodyOneCategoryId';
 import type { PutKeywordAliasesByIdBodyOneNatureId } from './putKeywordAliasesByIdBodyOneNatureId';
+import type { PutKeywordAliasesByIdBodyOneImagePrompt } from './putKeywordAliasesByIdBodyOneImagePrompt';
 import type { PutKeywordAliasesByIdBodyOneImageId } from './putKeywordAliasesByIdBodyOneImageId';
 import type { PutKeywordAliasesByIdBodyOneNameAr } from './putKeywordAliasesByIdBodyOneNameAr';
 import type { PutKeywordAliasesByIdBodyOneNameEn } from './putKeywordAliasesByIdBodyOneNameEn';
@@ -29,6 +30,8 @@ export type PutKeywordAliasesByIdBodyOne = {
   categoryId?: PutKeywordAliasesByIdBodyOneCategoryId;
   /** @nullable */
   natureId?: PutKeywordAliasesByIdBodyOneNatureId;
+  /** @nullable */
+  imagePrompt?: PutKeywordAliasesByIdBodyOneImagePrompt;
   /** @nullable */
   imageId?: PutKeywordAliasesByIdBodyOneImageId;
   translationAliasId?: string;

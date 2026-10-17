@@ -231,13 +231,14 @@ for (const theme of ["light", "dark"] as const) {
 		expect(box?.height).toBe(100);
 		expect(box?.x).toBeGreaterThanOrEqual(0);
 		expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(375);
+		// A touch-generated hover can already use the accent border after opening the form.
 		const initial = await area.evaluate(
-			(element) => getComputedStyle(element).borderColor,
+			(element) => getComputedStyle(element).boxShadow,
 		);
 		await area.dispatchEvent("dragenter", { dataTransfer: await drag(page) });
 		await expect
 			.poll(() =>
-				area.evaluate((element) => getComputedStyle(element).borderColor),
+				area.evaluate((element) => getComputedStyle(element).boxShadow),
 			)
 			.not.toBe(initial);
 		await expect(area).toHaveCSS("border-top-style", "solid");
@@ -252,5 +253,81 @@ for (const theme of ["light", "dark"] as const) {
 			.withTags(["wcag2a", "wcag2aa", "wcag21aa"])
 			.analyze();
 		expect(accessibility.violations).toEqual([]);
+	});
+}
+
+for (const kind of ["keyword", "alias", "version"] as const) {
+	test(`${kind} saves an editable image prompt from a collapsed section`, async ({
+		page,
+	}, testInfo) => {
+		const requests = await mockApi(page, { signedIn: true });
+		const dialog = await openImageForm(page, kind);
+		const prompt = dialog.getByLabel("Image Prompt", { exact: true });
+		await expect(prompt).not.toBeVisible();
+		await dialog
+			.locator("summary")
+			.filter({ hasText: /^Image Prompt$/ })
+			.click();
+		await expect(prompt).toBeVisible();
+		await expect(prompt).toHaveCSS("height", "100px");
+		await prompt.fill("Watercolor portrait. Silver hair, green cloak.");
+		const copy = dialog.getByRole("button", {
+			name: "Copy prompt",
+			exact: true,
+		});
+		await expect(copy).toHaveText("");
+		const editor = dialog.locator(".image-prompt-editor");
+		const section = dialog
+			.locator("summary")
+			.filter({ hasText: /^Image Prompt$/ });
+		if (testInfo.project.name === "chromium") {
+			await section.focus();
+			await page.mouse.move(0, 0);
+			await expect(copy).toHaveCSS("opacity", "0");
+			await editor.hover();
+			await expect(copy).toHaveCSS("opacity", "1");
+			await section.focus();
+			await page.mouse.move(0, 0);
+			await copy.focus();
+			await expect(copy).toHaveCSS("opacity", "1");
+		} else await expect(copy).toHaveCSS("opacity", "1");
+		await dialog.getByRole("button", { name: "Expand", exact: true }).click();
+		await expect(prompt).toHaveCSS("height", "320px");
+		await expect(
+			dialog.getByRole("button", { name: "Collapse", exact: true }),
+		).toHaveAttribute("aria-expanded", "true");
+		await dialog.getByRole("button", { name: "Collapse", exact: true }).click();
+		await expect(prompt).toHaveCSS("height", "100px");
+		await page.emulateMedia({ reducedMotion: "reduce" });
+		await expect(copy).toHaveCSS("transition-property", "none");
+
+		await expect(
+			dialog.getByRole("button", { name: "Copy prompt", exact: true }),
+		).toBeVisible();
+		if (kind === "keyword")
+			await dialog.screenshot({
+				path: testInfo.outputPath("image-prompt.png"),
+			});
+		await dialog
+			.getByRole("button", { name: "Save changes", exact: true })
+			.click();
+		await expect(
+			page.getByText(
+				kind === "keyword"
+					? "Keyword updated"
+					: kind === "alias"
+						? "Alias updated"
+						: "Version updated",
+				{ exact: true },
+			),
+		).toBeVisible();
+		expect(
+			requests.some(
+				(request) =>
+					request.method === "PUT" &&
+					(request.body as { imagePrompt?: string })?.imagePrompt ===
+						"Watercolor portrait. Silver hair, green cloak.",
+			),
+		).toBe(true);
 	});
 }

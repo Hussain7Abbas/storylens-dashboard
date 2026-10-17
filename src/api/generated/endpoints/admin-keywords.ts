@@ -28,6 +28,14 @@ import type {
   DeleteKeywordAliasesById200,
   DeleteKeywordAliasesById404,
   DeleteKeywordAliasesById500,
+  DeleteKeywordCategoriesById200,
+  DeleteKeywordCategoriesById404,
+  DeleteKeywordCategoriesById500,
+  DeleteKeywordCategoriesByIdParams,
+  DeleteKeywordNaturesById200,
+  DeleteKeywordNaturesById404,
+  DeleteKeywordNaturesById500,
+  DeleteKeywordNaturesByIdParams,
   DeleteKeywordVersionsById200,
   DeleteKeywordVersionsById404,
   DeleteKeywordVersionsById500,
@@ -50,6 +58,18 @@ import type {
   PostKeywordAliasesBodyOne,
   PostKeywordAliasesBodyThree,
   PostKeywordAliasesBodyTwo,
+  PostKeywordCategories200,
+  PostKeywordCategories404,
+  PostKeywordCategories500,
+  PostKeywordCategoriesBodyOne,
+  PostKeywordCategoriesBodyThree,
+  PostKeywordCategoriesBodyTwo,
+  PostKeywordNatures200,
+  PostKeywordNatures404,
+  PostKeywordNatures500,
+  PostKeywordNaturesBodyOne,
+  PostKeywordNaturesBodyThree,
+  PostKeywordNaturesBodyTwo,
   PostKeywordVersions200,
   PostKeywordVersions404,
   PostKeywordVersions500,
@@ -99,6 +119,13 @@ import type {
   PutKeywordCategoriesByIdBodyOne,
   PutKeywordCategoriesByIdBodyThree,
   PutKeywordCategoriesByIdBodyTwo,
+  PutKeywordNaturesById200,
+  PutKeywordNaturesById404,
+  PutKeywordNaturesById409,
+  PutKeywordNaturesById500,
+  PutKeywordNaturesByIdBodyOne,
+  PutKeywordNaturesByIdBodyThree,
+  PutKeywordNaturesByIdBodyTwo,
   PutKeywordVersionsById200,
   PutKeywordVersionsById404,
   PutKeywordVersionsById500,
@@ -1125,7 +1152,70 @@ export function useGetKeywordCategories<TData = Awaited<ReturnType<typeof getKey
 
 
 /**
- * @summary Update category Word VFX
+ * @summary Create keyword category
+ */
+export const postKeywordCategories = (
+    postKeywordCategoriesBody: BodyType<PostKeywordCategoriesBodyOne | PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree>| PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PostKeywordCategories200>(
+      {url: `/api/admin/keyword-categories/`, method: 'POST',
+      data: postKeywordCategoriesBody, signal
+    },
+      options);
+    }
+  
+
+
+export const getPostKeywordCategoriesMutationOptions = <TError = ErrorType<PostKeywordCategories404 | PostKeywordCategories500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postKeywordCategories>>, TError,{data: BodyType<PostKeywordCategoriesBodyOne | PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postKeywordCategories>>, TError,{data: BodyType<PostKeywordCategoriesBodyOne | PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree>}, TContext> => {
+
+const mutationKey = ['postKeywordCategories'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postKeywordCategories>>, {data: BodyType<PostKeywordCategoriesBodyOne | PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postKeywordCategories(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostKeywordCategoriesMutationResult = NonNullable<Awaited<ReturnType<typeof postKeywordCategories>>>
+    export type PostKeywordCategoriesMutationBody = BodyType<PostKeywordCategoriesBodyOne | PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree>
+    export type PostKeywordCategoriesMutationError = ErrorType<PostKeywordCategories404 | PostKeywordCategories500>
+
+    /**
+ * @summary Create keyword category
+ */
+export const usePostKeywordCategories = <TError = ErrorType<PostKeywordCategories404 | PostKeywordCategories500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postKeywordCategories>>, TError,{data: BodyType<PostKeywordCategoriesBodyOne | PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postKeywordCategories>>,
+        TError,
+        {data: BodyType<PostKeywordCategoriesBodyOne | PostKeywordCategoriesBodyTwo | PostKeywordCategoriesBodyThree>},
+        TContext
+      > => {
+
+      const mutationOptions = getPostKeywordCategoriesMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * @summary Update keyword category
  */
 export const putKeywordCategoriesById = (
     id: string,
@@ -1172,7 +1262,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PutKeywordCategoriesByIdMutationError = ErrorType<PutKeywordCategoriesById404 | PutKeywordCategoriesById409 | PutKeywordCategoriesById500>
 
     /**
- * @summary Update category Word VFX
+ * @summary Update keyword category
  */
 export const usePutKeywordCategoriesById = <TError = ErrorType<PutKeywordCategoriesById404 | PutKeywordCategoriesById409 | PutKeywordCategoriesById500>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putKeywordCategoriesById>>, TError,{id: string;data: BodyType<PutKeywordCategoriesByIdBodyOne | PutKeywordCategoriesByIdBodyTwo | PutKeywordCategoriesByIdBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
@@ -1184,6 +1274,69 @@ export const usePutKeywordCategoriesById = <TError = ErrorType<PutKeywordCategor
       > => {
 
       const mutationOptions = getPutKeywordCategoriesByIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * @summary Delete keyword category, optionally replacing linked data
+ */
+export const deleteKeywordCategoriesById = (
+    id: string,
+    params?: DeleteKeywordCategoriesByIdParams,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<DeleteKeywordCategoriesById200>(
+      {url: `/api/admin/keyword-categories/${id}`, method: 'DELETE',
+        params
+    },
+      options);
+    }
+  
+
+
+export const getDeleteKeywordCategoriesByIdMutationOptions = <TError = ErrorType<DeleteKeywordCategoriesById404 | DeleteKeywordCategoriesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteKeywordCategoriesById>>, TError,{id: string;params?: DeleteKeywordCategoriesByIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteKeywordCategoriesById>>, TError,{id: string;params?: DeleteKeywordCategoriesByIdParams}, TContext> => {
+
+const mutationKey = ['deleteKeywordCategoriesById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteKeywordCategoriesById>>, {id: string;params?: DeleteKeywordCategoriesByIdParams}> = (props) => {
+          const {id,params} = props ?? {};
+
+          return  deleteKeywordCategoriesById(id,params,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteKeywordCategoriesByIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteKeywordCategoriesById>>>
+    
+    export type DeleteKeywordCategoriesByIdMutationError = ErrorType<DeleteKeywordCategoriesById404 | DeleteKeywordCategoriesById500>
+
+    /**
+ * @summary Delete keyword category, optionally replacing linked data
+ */
+export const useDeleteKeywordCategoriesById = <TError = ErrorType<DeleteKeywordCategoriesById404 | DeleteKeywordCategoriesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteKeywordCategoriesById>>, TError,{id: string;params?: DeleteKeywordCategoriesByIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteKeywordCategoriesById>>,
+        TError,
+        {id: string;params?: DeleteKeywordCategoriesByIdParams},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteKeywordCategoriesByIdMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -1279,3 +1432,193 @@ export function useGetKeywordNatures<TData = Awaited<ReturnType<typeof getKeywor
 
 
 
+/**
+ * @summary Create keyword nature
+ */
+export const postKeywordNatures = (
+    postKeywordNaturesBody: BodyType<PostKeywordNaturesBodyOne | PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree>| PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PostKeywordNatures200>(
+      {url: `/api/admin/keyword-natures/`, method: 'POST',
+      data: postKeywordNaturesBody, signal
+    },
+      options);
+    }
+  
+
+
+export const getPostKeywordNaturesMutationOptions = <TError = ErrorType<PostKeywordNatures404 | PostKeywordNatures500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postKeywordNatures>>, TError,{data: BodyType<PostKeywordNaturesBodyOne | PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postKeywordNatures>>, TError,{data: BodyType<PostKeywordNaturesBodyOne | PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree>}, TContext> => {
+
+const mutationKey = ['postKeywordNatures'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postKeywordNatures>>, {data: BodyType<PostKeywordNaturesBodyOne | PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postKeywordNatures(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostKeywordNaturesMutationResult = NonNullable<Awaited<ReturnType<typeof postKeywordNatures>>>
+    export type PostKeywordNaturesMutationBody = BodyType<PostKeywordNaturesBodyOne | PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree>
+    export type PostKeywordNaturesMutationError = ErrorType<PostKeywordNatures404 | PostKeywordNatures500>
+
+    /**
+ * @summary Create keyword nature
+ */
+export const usePostKeywordNatures = <TError = ErrorType<PostKeywordNatures404 | PostKeywordNatures500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postKeywordNatures>>, TError,{data: BodyType<PostKeywordNaturesBodyOne | PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postKeywordNatures>>,
+        TError,
+        {data: BodyType<PostKeywordNaturesBodyOne | PostKeywordNaturesBodyTwo | PostKeywordNaturesBodyThree>},
+        TContext
+      > => {
+
+      const mutationOptions = getPostKeywordNaturesMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * @summary Update keyword nature
+ */
+export const putKeywordNaturesById = (
+    id: string,
+    putKeywordNaturesByIdBody: BodyType<PutKeywordNaturesByIdBodyOne | PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree>| PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<PutKeywordNaturesById200>(
+      {url: `/api/admin/keyword-natures/${id}`, method: 'PUT',
+      data: putKeywordNaturesByIdBody
+    },
+      options);
+    }
+  
+
+
+export const getPutKeywordNaturesByIdMutationOptions = <TError = ErrorType<PutKeywordNaturesById404 | PutKeywordNaturesById409 | PutKeywordNaturesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putKeywordNaturesById>>, TError,{id: string;data: BodyType<PutKeywordNaturesByIdBodyOne | PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof putKeywordNaturesById>>, TError,{id: string;data: BodyType<PutKeywordNaturesByIdBodyOne | PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree>}, TContext> => {
+
+const mutationKey = ['putKeywordNaturesById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putKeywordNaturesById>>, {id: string;data: BodyType<PutKeywordNaturesByIdBodyOne | PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putKeywordNaturesById(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutKeywordNaturesByIdMutationResult = NonNullable<Awaited<ReturnType<typeof putKeywordNaturesById>>>
+    export type PutKeywordNaturesByIdMutationBody = BodyType<PutKeywordNaturesByIdBodyOne | PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree>
+    export type PutKeywordNaturesByIdMutationError = ErrorType<PutKeywordNaturesById404 | PutKeywordNaturesById409 | PutKeywordNaturesById500>
+
+    /**
+ * @summary Update keyword nature
+ */
+export const usePutKeywordNaturesById = <TError = ErrorType<PutKeywordNaturesById404 | PutKeywordNaturesById409 | PutKeywordNaturesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putKeywordNaturesById>>, TError,{id: string;data: BodyType<PutKeywordNaturesByIdBodyOne | PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putKeywordNaturesById>>,
+        TError,
+        {id: string;data: BodyType<PutKeywordNaturesByIdBodyOne | PutKeywordNaturesByIdBodyTwo | PutKeywordNaturesByIdBodyThree>},
+        TContext
+      > => {
+
+      const mutationOptions = getPutKeywordNaturesByIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * @summary Delete keyword nature, optionally replacing linked data
+ */
+export const deleteKeywordNaturesById = (
+    id: string,
+    params?: DeleteKeywordNaturesByIdParams,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<DeleteKeywordNaturesById200>(
+      {url: `/api/admin/keyword-natures/${id}`, method: 'DELETE',
+        params
+    },
+      options);
+    }
+  
+
+
+export const getDeleteKeywordNaturesByIdMutationOptions = <TError = ErrorType<DeleteKeywordNaturesById404 | DeleteKeywordNaturesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteKeywordNaturesById>>, TError,{id: string;params?: DeleteKeywordNaturesByIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteKeywordNaturesById>>, TError,{id: string;params?: DeleteKeywordNaturesByIdParams}, TContext> => {
+
+const mutationKey = ['deleteKeywordNaturesById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteKeywordNaturesById>>, {id: string;params?: DeleteKeywordNaturesByIdParams}> = (props) => {
+          const {id,params} = props ?? {};
+
+          return  deleteKeywordNaturesById(id,params,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteKeywordNaturesByIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteKeywordNaturesById>>>
+    
+    export type DeleteKeywordNaturesByIdMutationError = ErrorType<DeleteKeywordNaturesById404 | DeleteKeywordNaturesById500>
+
+    /**
+ * @summary Delete keyword nature, optionally replacing linked data
+ */
+export const useDeleteKeywordNaturesById = <TError = ErrorType<DeleteKeywordNaturesById404 | DeleteKeywordNaturesById500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteKeywordNaturesById>>, TError,{id: string;params?: DeleteKeywordNaturesByIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteKeywordNaturesById>>,
+        TError,
+        {id: string;params?: DeleteKeywordNaturesByIdParams},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteKeywordNaturesByIdMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    

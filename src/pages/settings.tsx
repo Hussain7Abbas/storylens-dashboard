@@ -1,7 +1,10 @@
-import { Cpu, Settings2, Sparkles } from "lucide-react";
+import { Cpu, Palette, Settings2, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { AiSettingsPanel } from "@/components/settings/ai-settings";
-import { CategoryVfxPanel } from "@/components/settings/category-vfx";
+import {
+	CategoriesPanel,
+	NaturesPanel,
+} from "@/components/settings/lookup-settings";
 import { Forbidden, PageHeader } from "@/components/ui/page";
 import { useAuth } from "@/lib/auth";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -9,7 +12,7 @@ import { useSearchState } from "@/lib/use-search-state";
 import { ConfigsPanel } from "@/pages/configs";
 
 type Tab = {
-	id: "configs" | "ai" | "categories";
+	id: "configs" | "ai" | "categories" | "natures";
 	label: string;
 	icon: ReactNode;
 	permission: string;
@@ -34,6 +37,12 @@ const TABS: Tab[] = [
 		icon: <Sparkles size={16} strokeWidth={1.75} aria-hidden />,
 		permission: PERMISSIONS.keywords.categories,
 	},
+	{
+		id: "natures",
+		label: "Natures",
+		icon: <Palette size={16} strokeWidth={1.75} aria-hidden />,
+		permission: PERMISSIONS.keywords.natures,
+	},
 ];
 
 /** Settings: every config, and the AI settings (cloud switch, models, feature prices). */
@@ -48,12 +57,12 @@ export function SettingsPage() {
 		<>
 			<PageHeader
 				title="Settings"
-				description="Category effects, runtime configs, and Story Lens Cloud AI: models, costs and lens prices."
+				description="Categories, natures, runtime configs, and Story Lens Cloud AI: models, costs and lens prices."
 			/>
 			<div
 				role="tablist"
 				aria-label="Settings sections"
-				className="mb-4 flex gap-1 border-b border-line"
+				className="mb-4 flex flex-wrap gap-1 border-b border-line"
 			>
 				{tabs.map((tab) => {
 					const selected = tab.id === current.id;
@@ -84,7 +93,9 @@ export function SettingsPage() {
 				aria-labelledby={`settings-tab-${current.id}`}
 			>
 				{current.id === "categories" ? (
-					<CategoryVfxPanel />
+					<CategoriesPanel />
+				) : current.id === "natures" ? (
+					<NaturesPanel />
 				) : current.id === "configs" ? (
 					<ConfigsPanel />
 				) : (
