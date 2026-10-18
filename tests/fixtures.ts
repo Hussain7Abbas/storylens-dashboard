@@ -1,5 +1,30 @@
 import type { Page, Route } from "@playwright/test";
 
+export const aiInstructions = {
+	prompts: {
+		keywordPrompt: "Describe names and relationships.",
+		imagePrompt: "Draw an original portrait.",
+		chapterCoverPrompt: "Draw a cinematic chapter scene.",
+		chapterContextPrompt: "Extract faithful visual continuity.",
+		pageSummaryPrompt: "Summarize concisely and accurately.",
+	},
+	defaults: {
+		keywordPrompt: "Describe names and relationships.",
+		imagePrompt: "Draw an original portrait.",
+		chapterCoverPrompt: "Draw a cinematic chapter scene.",
+		chapterContextPrompt: "Extract faithful visual continuity.",
+		pageSummaryPrompt: "Summarize concisely and accurately.",
+	},
+	revisions: {
+		keywordPrompt: null as string | null,
+		imagePrompt: null as string | null,
+		chapterCoverPrompt: null as string | null,
+		chapterContextPrompt: null as string | null,
+		pageSummaryPrompt: null as string | null,
+	},
+	maxLength: 20000,
+};
+
 // Minimal mocked dashboard API. Paths match `/api/admin/...` on any origin.
 export const ALL_PERMISSIONS = [
 	"GET /api/admin/stats/",
@@ -60,6 +85,7 @@ export const ALL_PERMISSIONS = [
 	"GET /api/admin/ai-pricing/",
 	"PUT /api/admin/ai-pricing/:key",
 	"GET /api/admin/ai-models/",
+	"GET /api/admin/ai-instructions/",
 ];
 
 const now = "2026-09-28T12:00:00.000Z";
@@ -757,6 +783,8 @@ export async function mockApi(
 		}
 		if (path === "/api/admin/billing/summary")
 			return json(route, billingSummary);
+		if (path === "/api/admin/ai-instructions/")
+			return json(route, aiInstructions);
 		if (path === "/api/admin/ai-pricing/")
 			return json(route, { data: priceRows });
 		if (path === "/api/admin/ai-models/") {

@@ -174,38 +174,62 @@ test("nature stale edit keeps draft and deletion failure keeps replacement dialo
 	await expect(dialog.getByLabel("Replacement", { exact: true })).toBeVisible();
 });
 
-test("deletion sends the selected replacement only after confirmation", async ({
-	page,
-}) => {
-	await mockApi(page, { signedIn: true, permissions: ALL_PERMISSIONS });
-	await page.route("**/api/admin/keyword-categories/", (route) =>
-		route.fulfill({
-			json: {
-				data: [
-					...categories,
-					{ ...categories[0], id: "cat-place", nameEn: "Place" },
-				],
+for (const kind of ["category", "nature"] as const) {
+	const plural = kind === "category" ? "categories" : "natures";
+	const rows = kind === "category" ? categories : natures;
+	const source = rows[0];
+	test(`${kind} deletion sends the selected replacement only after confirmation`, async ({
+		page,
+	}) => {
+		if (!source) throw new Error("lookup fixture missing");
+		await mockApi(page, { signedIn: true, permissions: ALL_PERMISSIONS });
+		await page.route(`**/api/admin/keyword-${plural}/`, (route) =>
+			route.fulfill({
+				json: {
+					data: [
+						...rows,
+						{ ...source, id: "replacement", nameEn: "Destination" },
+					],
+				},
+			}),
+		);
+		let deleted = "";
+		await page.route(
+			`**/api/admin/keyword-${plural}/${source.id}**`,
+			async (route) => {
+				deleted = route.request().url();
+				expect(route.request().method()).toBe("DELETE");
+				await route.fulfill({ json: source });
 			},
-		}),
-	);
-	let deleted = "";
-	await page.route(
-		"**/api/admin/keyword-categories/cat-person**",
-		async (route) => {
-			deleted = route.request().url();
-			await route.fulfill({ json: categories[0] });
-		},
-	);
-	await page.goto("/settings?tab=categories");
-	await page.getByRole("button", { name: "Delete category Person" }).click();
-	expect(deleted).toBe("");
-	const dialog = page.getByRole("dialog");
-	await dialog
-		.getByLabel("Replacement", { exact: true })
-		.selectOption("cat-place");
-	await dialog
-		.getByRole("button", { name: "Delete category", exact: true })
-		.click();
-	await expect(dialog).not.toBeVisible();
-	expect(new URL(deleted).searchParams.get("replacementId")).toBe("cat-place");
-});
+		);
+		await page.goto(`/settings?tab=${plural}`);
+		await page
+			.getByRole("button", { name: `Delete ${kind} ${source.nameEn}` })
+			.click();
+		expect(deleted).toBe("");
+		const dialog = page.getByRole("dialog");
+		const replacement = dialog.getByLabel("Replacement", { exact: true });
+		await expect(
+			replacement.getByRole("option", { name: source.nameEn }),
+		).toHaveCount(0);
+		await replacement.selectOption("replacement");
+		const bounds = await dialog.boundingBox();
+		const viewport = page.viewportSize();
+		expect(bounds).not.toBeNull();
+		expect(viewport).not.toBeNull();
+		if (!bounds || !viewport) throw new Error("dialog geometry missing");
+		expect(
+			Math.abs(bounds.x + bounds.width / 2 - viewport.width / 2),
+		).toBeLessThan(2);
+		expect(
+			Math.abs(bounds.y + bounds.height / 2 - viewport.height / 2),
+		).toBeLessThan(2);
+		await dialog
+			.getByRole("button", { name: `Delete ${kind}`, exact: true })
+			.click();
+		await expect(dialog).not.toBeVisible();
+		expect(new URL(deleted).searchParams.get("replacementId")).toBe(
+			"replacement",
+		);
+	});
+}

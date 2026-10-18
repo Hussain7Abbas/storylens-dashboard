@@ -24,6 +24,16 @@ type Config = GetConfigs200DataItem;
 
 // Keys the backend reads; shown as hints when adding a config.
 const KNOWN_KEYS: Record<string, string> = {
+	AI_Chapter_Context_Prompt:
+		"Shared chapter-context instructions; edit in Settings → AI. Blank uses the default, maximum 20,000 characters.",
+	AI_Page_Summary_Prompt:
+		"Shared page-summary instructions; edit in Settings → AI. Blank uses the default, maximum 20,000 characters.",
+	AI_Keyword_Prompt:
+		"Shared keyword instructions; edit in Settings → AI. Blank uses the default, maximum 20,000 characters.",
+	AI_Image_Prompt:
+		"Shared character image instructions; edit in Settings → AI. Blank uses the default, maximum 20,000 characters.",
+	AI_Chapter_Cover_Prompt:
+		"Shared chapter cover instructions; edit in Settings → AI. Blank uses the default, maximum 20,000 characters.",
 	Review_Version:
 		"Extension version waiting for Chrome Web Store review. The backend deploys itself once the store publishes it.",
 	Lens_Price_USD:

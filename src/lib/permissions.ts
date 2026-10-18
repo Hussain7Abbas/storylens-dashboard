@@ -72,6 +72,9 @@ export const PERMISSIONS = {
 		list: "GET /api/admin/ai-pricing/",
 		update: "PUT /api/admin/ai-pricing/:key",
 	},
+	aiPrompts: {
+		read: "GET /api/admin/ai-instructions/",
+	},
 	aiModels: {
 		list: "GET /api/admin/ai-models/",
 	},

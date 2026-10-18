@@ -48,6 +48,7 @@ import { useAuth } from "@/lib/auth";
 import { formatDateTime, formatNumber } from "@/lib/format";
 import { formatLensPrice, formatUsd } from "@/lib/money";
 import { PERMISSIONS } from "@/lib/permissions";
+import { AiPromptsCard } from "./ai-prompts";
 import { LensBalanceCard } from "./lens-balance";
 
 type Feature = GetAiPricing200DataItem;
@@ -1050,7 +1051,9 @@ function FeatureForm({
 export function AiSettingsPanel() {
 	const [editing, setEditing] = useState<Feature | null>(null);
 	const { can } = useAuth();
-	const pricing = useGetAiPricing();
+	const pricing = useGetAiPricing({
+		query: { enabled: can(PERMISSIONS.aiPricing.list) },
+	});
 	const summary = useGetBillingSummary(
 		{ days: 30 },
 		{ query: { enabled: can(PERMISSIONS.billing.summary) } },
@@ -1070,7 +1073,8 @@ export function AiSettingsPanel() {
 					<LensBalanceCard />
 				</>
 			)}
-			{pricing.error ? (
+			{can(PERMISSIONS.aiPrompts.read) && <AiPromptsCard />}
+			{!can(PERMISSIONS.aiPricing.list) ? null : pricing.error ? (
 				<ErrorState
 					error={pricing.error}
 					onRetry={() => void pricing.refetch()}

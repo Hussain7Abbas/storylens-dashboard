@@ -5,295 +5,613 @@
  * Development documentation
  * OpenAPI spec version: 0.0.0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  MutationFunction,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseMutationOptions,
-  UseMutationResult,
-  UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+	DataTag,
+	DefinedInitialDataOptions,
+	DefinedUseQueryResult,
+	MutationFunction,
+	QueryClient,
+	QueryFunction,
+	QueryKey,
+	UndefinedInitialDataOptions,
+	UseMutationOptions,
+	UseMutationResult,
+	UseQueryOptions,
+	UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
-  GetAiModels200,
-  GetAiModels404,
-  GetAiModels500,
-  GetAiModelsParams,
-  GetAiPricing200,
-  GetAiPricing404,
-  GetAiPricing500,
-  PutAiPricingByKey200,
-  PutAiPricingByKey404,
-  PutAiPricingByKey500,
-  PutAiPricingByKeyBodyOne,
-  PutAiPricingByKeyBodyThree,
-  PutAiPricingByKeyBodyTwo
-} from '../schemas';
+	GetAiInstructions200,
+	GetAiInstructions404,
+	GetAiInstructions500,
+	GetAiModels200,
+	GetAiModels404,
+	GetAiModels500,
+	GetAiModelsParams,
+	GetAiPricing200,
+	GetAiPricing404,
+	GetAiPricing500,
+	PutAiPricingByKey200,
+	PutAiPricingByKey404,
+	PutAiPricingByKey500,
+	PutAiPricingByKeyBodyOne,
+	PutAiPricingByKeyBodyThree,
+	PutAiPricingByKeyBodyTwo,
+} from "../schemas";
 
-import { customInstance } from '../../axios-instance';
-import type { ErrorType , BodyType } from '../../axios-instance';
-
-
+import { customInstance } from "../../axios-instance";
+import type { ErrorType, BodyType } from "../../axios-instance";
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
 
 /**
  * @summary List AI feature prices
  */
 export const getAiPricing = (
-    
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+	options?: SecondParameter<typeof customInstance>,
+	signal?: AbortSignal,
 ) => {
-      
-      
-      return customInstance<GetAiPricing200>(
-      {url: `/api/admin/ai-pricing/`, method: 'GET', signal
-    },
-      options);
-    }
-  
-
-
+	return customInstance<GetAiPricing200>(
+		{ url: `/api/admin/ai-pricing/`, method: "GET", signal },
+		options,
+	);
+};
 
 export const getGetAiPricingQueryKey = () => {
-    return [
-    `/api/admin/ai-pricing/`
-    ] as const;
-    }
+	return [`/api/admin/ai-pricing/`] as const;
+};
 
-    
-export const getGetAiPricingQueryOptions = <TData = Awaited<ReturnType<typeof getAiPricing>>, TError = ErrorType<GetAiPricing404 | GetAiPricing500>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
+export const getGetAiPricingQueryOptions = <
+	TData = Awaited<ReturnType<typeof getAiPricing>>,
+	TError = ErrorType<GetAiPricing404 | GetAiPricing500>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+	const queryKey = queryOptions?.queryKey ?? getGetAiPricingQueryKey();
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAiPricingQueryKey();
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getAiPricing>>> = ({
+		signal,
+	}) => getAiPricing(requestOptions, signal);
 
-  
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof getAiPricing>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAiPricing>>> = ({ signal }) => getAiPricing(requestOptions, signal);
+export type GetAiPricingQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getAiPricing>>
+>;
+export type GetAiPricingQueryError = ErrorType<
+	GetAiPricing404 | GetAiPricing500
+>;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetAiPricingQueryResult = NonNullable<Awaited<ReturnType<typeof getAiPricing>>>
-export type GetAiPricingQueryError = ErrorType<GetAiPricing404 | GetAiPricing500>
-
-
-export function useGetAiPricing<TData = Awaited<ReturnType<typeof getAiPricing>>, TError = ErrorType<GetAiPricing404 | GetAiPricing500>>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAiPricing>>,
-          TError,
-          Awaited<ReturnType<typeof getAiPricing>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAiPricing<TData = Awaited<ReturnType<typeof getAiPricing>>, TError = ErrorType<GetAiPricing404 | GetAiPricing500>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAiPricing>>,
-          TError,
-          Awaited<ReturnType<typeof getAiPricing>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAiPricing<TData = Awaited<ReturnType<typeof getAiPricing>>, TError = ErrorType<GetAiPricing404 | GetAiPricing500>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAiPricing<
+	TData = Awaited<ReturnType<typeof getAiPricing>>,
+	TError = ErrorType<GetAiPricing404 | GetAiPricing500>,
+>(
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAiPricing>>,
+					TError,
+					Awaited<ReturnType<typeof getAiPricing>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAiPricing<
+	TData = Awaited<ReturnType<typeof getAiPricing>>,
+	TError = ErrorType<GetAiPricing404 | GetAiPricing500>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAiPricing>>,
+					TError,
+					Awaited<ReturnType<typeof getAiPricing>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAiPricing<
+	TData = Awaited<ReturnType<typeof getAiPricing>>,
+	TError = ErrorType<GetAiPricing404 | GetAiPricing500>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary List AI feature prices
  */
 
-export function useGetAiPricing<TData = Awaited<ReturnType<typeof getAiPricing>>, TError = ErrorType<GetAiPricing404 | GetAiPricing500>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetAiPricing<
+	TData = Awaited<ReturnType<typeof getAiPricing>>,
+	TError = ErrorType<GetAiPricing404 | GetAiPricing500>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiPricing>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetAiPricingQueryOptions(options);
 
-  const queryOptions = getGetAiPricingQueryOptions(options)
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+	query.queryKey = queryOptions.queryKey;
 
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
+	return query;
 }
-
-
-
 
 /**
  * @summary Update an AI feature price
  */
 export const putAiPricingByKey = (
-    key: string,
-    putAiPricingByKeyBody: BodyType<PutAiPricingByKeyBodyOne | PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree>| PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree,
- options?: SecondParameter<typeof customInstance>,) => {
-      
-      
-      return customInstance<PutAiPricingByKey200>(
-      {url: `/api/admin/ai-pricing/${key}`, method: 'PUT',
-      data: putAiPricingByKeyBody
-    },
-      options);
-    }
-  
+	key: string,
+	putAiPricingByKeyBody:
+		| BodyType<
+				| PutAiPricingByKeyBodyOne
+				| PutAiPricingByKeyBodyTwo
+				| PutAiPricingByKeyBodyThree
+		  >
+		| PutAiPricingByKeyBodyTwo
+		| PutAiPricingByKeyBodyThree,
+	options?: SecondParameter<typeof customInstance>,
+) => {
+	return customInstance<PutAiPricingByKey200>(
+		{
+			url: `/api/admin/ai-pricing/${key}`,
+			method: "PUT",
+			data: putAiPricingByKeyBody,
+		},
+		options,
+	);
+};
 
+export const getPutAiPricingByKeyMutationOptions = <
+	TError = ErrorType<PutAiPricingByKey404 | PutAiPricingByKey500>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof putAiPricingByKey>>,
+		TError,
+		{
+			key: string;
+			data: BodyType<
+				| PutAiPricingByKeyBodyOne
+				| PutAiPricingByKeyBodyTwo
+				| PutAiPricingByKeyBodyThree
+			>;
+		},
+		TContext
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof putAiPricingByKey>>,
+	TError,
+	{
+		key: string;
+		data: BodyType<
+			| PutAiPricingByKeyBodyOne
+			| PutAiPricingByKeyBodyTwo
+			| PutAiPricingByKeyBodyThree
+		>;
+	},
+	TContext
+> => {
+	const mutationKey = ["putAiPricingByKey"];
+	const { mutation: mutationOptions, request: requestOptions } = options
+		? options.mutation &&
+			"mutationKey" in options.mutation &&
+			options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey }, request: undefined };
 
-export const getPutAiPricingByKeyMutationOptions = <TError = ErrorType<PutAiPricingByKey404 | PutAiPricingByKey500>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putAiPricingByKey>>, TError,{key: string;data: BodyType<PutAiPricingByKeyBodyOne | PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof putAiPricingByKey>>, TError,{key: string;data: BodyType<PutAiPricingByKeyBodyOne | PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree>}, TContext> => {
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof putAiPricingByKey>>,
+		{
+			key: string;
+			data: BodyType<
+				| PutAiPricingByKeyBodyOne
+				| PutAiPricingByKeyBodyTwo
+				| PutAiPricingByKeyBodyThree
+			>;
+		}
+	> = (props) => {
+		const { key, data } = props ?? {};
 
-const mutationKey = ['putAiPricingByKey'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
+		return putAiPricingByKey(key, data, requestOptions);
+	};
 
-      
+	return { mutationFn, ...mutationOptions };
+};
 
+export type PutAiPricingByKeyMutationResult = NonNullable<
+	Awaited<ReturnType<typeof putAiPricingByKey>>
+>;
+export type PutAiPricingByKeyMutationBody = BodyType<
+	| PutAiPricingByKeyBodyOne
+	| PutAiPricingByKeyBodyTwo
+	| PutAiPricingByKeyBodyThree
+>;
+export type PutAiPricingByKeyMutationError = ErrorType<
+	PutAiPricingByKey404 | PutAiPricingByKey500
+>;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putAiPricingByKey>>, {key: string;data: BodyType<PutAiPricingByKeyBodyOne | PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree>}> = (props) => {
-          const {key,data} = props ?? {};
-
-          return  putAiPricingByKey(key,data,requestOptions)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutAiPricingByKeyMutationResult = NonNullable<Awaited<ReturnType<typeof putAiPricingByKey>>>
-    export type PutAiPricingByKeyMutationBody = BodyType<PutAiPricingByKeyBodyOne | PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree>
-    export type PutAiPricingByKeyMutationError = ErrorType<PutAiPricingByKey404 | PutAiPricingByKey500>
-
-    /**
+/**
  * @summary Update an AI feature price
  */
-export const usePutAiPricingByKey = <TError = ErrorType<PutAiPricingByKey404 | PutAiPricingByKey500>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putAiPricingByKey>>, TError,{key: string;data: BodyType<PutAiPricingByKeyBodyOne | PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree>}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putAiPricingByKey>>,
-        TError,
-        {key: string;data: BodyType<PutAiPricingByKeyBodyOne | PutAiPricingByKeyBodyTwo | PutAiPricingByKeyBodyThree>},
-        TContext
-      > => {
+export const usePutAiPricingByKey = <
+	TError = ErrorType<PutAiPricingByKey404 | PutAiPricingByKey500>,
+	TContext = unknown,
+>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof putAiPricingByKey>>,
+			TError,
+			{
+				key: string;
+				data: BodyType<
+					| PutAiPricingByKeyBodyOne
+					| PutAiPricingByKeyBodyTwo
+					| PutAiPricingByKeyBodyThree
+				>;
+			},
+			TContext
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseMutationResult<
+	Awaited<ReturnType<typeof putAiPricingByKey>>,
+	TError,
+	{
+		key: string;
+		data: BodyType<
+			| PutAiPricingByKeyBodyOne
+			| PutAiPricingByKeyBodyTwo
+			| PutAiPricingByKeyBodyThree
+		>;
+	},
+	TContext
+> => {
+	const mutationOptions = getPutAiPricingByKeyMutationOptions(options);
 
-      const mutationOptions = getPutAiPricingByKeyMutationOptions(options);
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Read shared AI instruction templates and defaults
+ */
+export const getAiInstructions = (
+	options?: SecondParameter<typeof customInstance>,
+	signal?: AbortSignal,
+) => {
+	return customInstance<GetAiInstructions200>(
+		{ url: `/api/admin/ai-instructions/`, method: "GET", signal },
+		options,
+	);
+};
 
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+export const getGetAiInstructionsQueryKey = () => {
+	return [`/api/admin/ai-instructions/`] as const;
+};
+
+export const getGetAiInstructionsQueryOptions = <
+	TData = Awaited<ReturnType<typeof getAiInstructions>>,
+	TError = ErrorType<GetAiInstructions404 | GetAiInstructions500>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<
+			Awaited<ReturnType<typeof getAiInstructions>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetAiInstructionsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getAiInstructions>>
+	> = ({ signal }) => getAiInstructions(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof getAiInstructions>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAiInstructionsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getAiInstructions>>
+>;
+export type GetAiInstructionsQueryError = ErrorType<
+	GetAiInstructions404 | GetAiInstructions500
+>;
+
+export function useGetAiInstructions<
+	TData = Awaited<ReturnType<typeof getAiInstructions>>,
+	TError = ErrorType<GetAiInstructions404 | GetAiInstructions500>,
+>(
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAiInstructions>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAiInstructions>>,
+					TError,
+					Awaited<ReturnType<typeof getAiInstructions>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAiInstructions<
+	TData = Awaited<ReturnType<typeof getAiInstructions>>,
+	TError = ErrorType<GetAiInstructions404 | GetAiInstructions500>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAiInstructions>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAiInstructions>>,
+					TError,
+					Awaited<ReturnType<typeof getAiInstructions>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAiInstructions<
+	TData = Awaited<ReturnType<typeof getAiInstructions>>,
+	TError = ErrorType<GetAiInstructions404 | GetAiInstructions500>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAiInstructions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Read shared AI instruction templates and defaults
+ */
+
+export function useGetAiInstructions<
+	TData = Awaited<ReturnType<typeof getAiInstructions>>,
+	TError = ErrorType<GetAiInstructions404 | GetAiInstructions500>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getAiInstructions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetAiInstructionsQueryOptions(options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+/**
  * @summary List OpenRouter models with prices
  */
 export const getAiModels = (
-    params?: GetAiModelsParams,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+	params?: GetAiModelsParams,
+	options?: SecondParameter<typeof customInstance>,
+	signal?: AbortSignal,
 ) => {
-      
-      
-      return customInstance<GetAiModels200>(
-      {url: `/api/admin/ai-models/`, method: 'GET',
-        params, signal
-    },
-      options);
-    }
-  
+	return customInstance<GetAiModels200>(
+		{ url: `/api/admin/ai-models/`, method: "GET", params, signal },
+		options,
+	);
+};
 
+export const getGetAiModelsQueryKey = (params?: GetAiModelsParams) => {
+	return [`/api/admin/ai-models/`, ...(params ? [params] : [])] as const;
+};
 
-
-export const getGetAiModelsQueryKey = (params?: GetAiModelsParams,) => {
-    return [
-    `/api/admin/ai-models/`, ...(params ? [params]: [])
-    ] as const;
-    }
-
-    
-export const getGetAiModelsQueryOptions = <TData = Awaited<ReturnType<typeof getAiModels>>, TError = ErrorType<GetAiModels404 | GetAiModels500>>(params?: GetAiModelsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetAiModelsQueryOptions = <
+	TData = Awaited<ReturnType<typeof getAiModels>>,
+	TError = ErrorType<GetAiModels404 | GetAiModels500>,
+>(
+	params?: GetAiModelsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
 ) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+	const queryKey = queryOptions?.queryKey ?? getGetAiModelsQueryKey(params);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAiModelsQueryKey(params);
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getAiModels>>> = ({
+		signal,
+	}) => getAiModels(params, requestOptions, signal);
 
-  
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof getAiModels>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAiModels>>> = ({ signal }) => getAiModels(params, requestOptions, signal);
+export type GetAiModelsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getAiModels>>
+>;
+export type GetAiModelsQueryError = ErrorType<GetAiModels404 | GetAiModels500>;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetAiModelsQueryResult = NonNullable<Awaited<ReturnType<typeof getAiModels>>>
-export type GetAiModelsQueryError = ErrorType<GetAiModels404 | GetAiModels500>
-
-
-export function useGetAiModels<TData = Awaited<ReturnType<typeof getAiModels>>, TError = ErrorType<GetAiModels404 | GetAiModels500>>(
- params: undefined |  GetAiModelsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAiModels>>,
-          TError,
-          Awaited<ReturnType<typeof getAiModels>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAiModels<TData = Awaited<ReturnType<typeof getAiModels>>, TError = ErrorType<GetAiModels404 | GetAiModels500>>(
- params?: GetAiModelsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAiModels>>,
-          TError,
-          Awaited<ReturnType<typeof getAiModels>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAiModels<TData = Awaited<ReturnType<typeof getAiModels>>, TError = ErrorType<GetAiModels404 | GetAiModels500>>(
- params?: GetAiModelsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAiModels<
+	TData = Awaited<ReturnType<typeof getAiModels>>,
+	TError = ErrorType<GetAiModels404 | GetAiModels500>,
+>(
+	params: undefined | GetAiModelsParams,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAiModels>>,
+					TError,
+					Awaited<ReturnType<typeof getAiModels>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAiModels<
+	TData = Awaited<ReturnType<typeof getAiModels>>,
+	TError = ErrorType<GetAiModels404 | GetAiModels500>,
+>(
+	params?: GetAiModelsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getAiModels>>,
+					TError,
+					Awaited<ReturnType<typeof getAiModels>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAiModels<
+	TData = Awaited<ReturnType<typeof getAiModels>>,
+	TError = ErrorType<GetAiModels404 | GetAiModels500>,
+>(
+	params?: GetAiModelsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary List OpenRouter models with prices
  */
 
-export function useGetAiModels<TData = Awaited<ReturnType<typeof getAiModels>>, TError = ErrorType<GetAiModels404 | GetAiModels500>>(
- params?: GetAiModelsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetAiModels<
+	TData = Awaited<ReturnType<typeof getAiModels>>,
+	TError = ErrorType<GetAiModels404 | GetAiModels500>,
+>(
+	params?: GetAiModelsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getAiModels>>, TError, TData>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetAiModelsQueryOptions(params, options);
 
-  const queryOptions = getGetAiModelsQueryOptions(params,options)
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+	query.queryKey = queryOptions.queryKey;
 
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
+	return query;
 }
-
-
-
-

@@ -15,7 +15,7 @@ type Tab = {
 	id: "configs" | "ai" | "categories" | "natures";
 	label: string;
 	icon: ReactNode;
-	permission: string;
+	permissions: readonly string[];
 };
 
 const TABS: Tab[] = [
@@ -23,25 +23,25 @@ const TABS: Tab[] = [
 		id: "configs",
 		label: "Configs",
 		icon: <Settings2 size={16} strokeWidth={1.75} aria-hidden />,
-		permission: PERMISSIONS.configs.list,
+		permissions: [PERMISSIONS.configs.list],
 	},
 	{
 		id: "ai",
 		label: "AI",
 		icon: <Cpu size={16} strokeWidth={1.75} aria-hidden />,
-		permission: PERMISSIONS.aiPricing.list,
+		permissions: [PERMISSIONS.aiPricing.list, PERMISSIONS.aiPrompts.read],
 	},
 	{
 		id: "categories",
 		label: "Categories",
 		icon: <Sparkles size={16} strokeWidth={1.75} aria-hidden />,
-		permission: PERMISSIONS.keywords.categories,
+		permissions: [PERMISSIONS.keywords.categories],
 	},
 	{
 		id: "natures",
 		label: "Natures",
 		icon: <Palette size={16} strokeWidth={1.75} aria-hidden />,
-		permission: PERMISSIONS.keywords.natures,
+		permissions: [PERMISSIONS.keywords.natures],
 	},
 ];
 
@@ -49,7 +49,7 @@ const TABS: Tab[] = [
 export function SettingsPage() {
 	const { can } = useAuth();
 	const { values, set } = useSearchState(["tab"] as const);
-	const tabs = TABS.filter((tab) => can(tab.permission));
+	const tabs = TABS.filter((tab) => tab.permissions.some(can));
 	const current = tabs.find((tab) => tab.id === values.tab) ?? tabs[0];
 	if (!current) return <Forbidden />;
 

@@ -76,6 +76,7 @@ const NAV: NavItem[] = [
 		permissions: [
 			PERMISSIONS.configs.list,
 			PERMISSIONS.aiPricing.list,
+			PERMISSIONS.aiPrompts.read,
 			PERMISSIONS.keywords.categories,
 			PERMISSIONS.keywords.natures,
 		],
