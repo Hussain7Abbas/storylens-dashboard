@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { Button } from "./button";
-import { Dialog } from "./dialog";
+import { MultiButtonsModal } from "./multi-buttons-modal";
 
 /** Asks before a destructive or irreversible action. */
 export function ConfirmDialog({
@@ -26,28 +25,24 @@ export function ConfirmDialog({
 	onClose: () => void;
 }) {
 	return (
-		<Dialog
+		<MultiButtonsModal
 			open={open}
-			onClose={onClose}
 			title={title}
-			size="sm"
-			footer={
-				<>
-					<Button onClick={onClose} disabled={busy}>
-						Cancel
-					</Button>
-					<Button variant={tone} loading={busy} onClick={onConfirm}>
-						{confirmLabel}
-					</Button>
-				</>
-			}
+			busy={busy}
+			error={error}
+			onClose={onClose}
+			buttons={[
+				{ id: "cancel", label: "Cancel", onClick: onClose, autoFocus: true },
+				{
+					id: "confirm",
+					label: confirmLabel,
+					variant: tone,
+					loading: busy,
+					onClick: onConfirm,
+				},
+			]}
 		>
-			<div className="text-sm leading-relaxed text-muted">{children}</div>
-			{error && (
-				<p className="field-error mt-4" role="alert">
-					{error}
-				</p>
-			)}
-		</Dialog>
+			{children}
+		</MultiButtonsModal>
 	);
 }

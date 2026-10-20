@@ -31,7 +31,7 @@ Standalone public repository, also pinned in the Story Lens umbrella at `apps/da
 ## Design
 
 - Follow `design-system/MASTER.md`, which applies the website's Ink & Iris identity (`storylens-website` `design-system/MASTER.md`) to a dense admin layout. Use the tokens, Inter (self-hosted `@fontsource-variable/inter`), Lucide icons at 1.75 stroke with accessible names on icon-only buttons, visible 3px focus rings, and 44px targets on coarse pointers. Keep light, dark and system themes working, respect reduced motion, and avoid horizontal page scroll at 375px (tables scroll inside their card; a table with no buttons or links would be a scroll area out of keyboard reach, so give it `data-table-stack` and a `data-label` on every cell: it stacks into label and value rows on phones).
-- Confirm destructive actions with `ConfirmDialog`, report results with toasts, and keep errors next to the form that caused them.
+- Confirm destructive actions with `ConfirmDialog` (the two-button adapter for `MultiButtonsModal`), report results with toasts, and keep errors next to the form that caused them.
 - The UI UX Pro Max skill is vendored in `.claude/skills/ui-ux-pro-max` (MIT). Query it for new screens; its palette and font suggestions never override Ink & Iris.
 
 ## Checks and deployment
@@ -79,3 +79,6 @@ Chapter context and Page summary use the same template read/save permissions, 20
 
 
 Chapter-context instructions in Settings → AI now default to compact visual-only extraction. Migration `20261018040000_compact_visual_context` updates the shared template while retaining customized priorities. Current generation uses one nearest earlier chapter and a single bulk read only for returning elements; it never uses later chapters. Active absence expires at 10 chapters and tracks last seen only.
+
+
+`components/ui/multi-buttons-modal.tsx::MultiButtonsModal` is the generic confirmation shell. It accepts any number of named buttons, body content, errors and busy state using the existing native `Dialog`. `ConfirmDialog` remains a thin two-button adapter, so all current destructive/approval confirmations (including keyword/alias/version and category/nature deletion) use this shell. Focus Cancel first; pending actions disable buttons and close/Escape dismissal. Keep errors and replacement selections in the dialog on failure. Informational and editing dialogs continue to use `Dialog`.

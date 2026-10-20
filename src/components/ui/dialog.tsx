@@ -14,6 +14,7 @@ export function Dialog({
 	children,
 	footer,
 	size = "md",
+	dismissible = true,
 }: {
 	open: boolean;
 	onClose: () => void;
@@ -22,6 +23,7 @@ export function Dialog({
 	children?: ReactNode;
 	footer?: ReactNode;
 	size?: "sm" | "md" | "lg";
+	dismissible?: boolean;
 }) {
 	const ref = useRef<HTMLDialogElement>(null);
 	const titleId = useId();
@@ -47,7 +49,7 @@ export function Dialog({
 			aria-describedby={description ? descriptionId : undefined}
 			onCancel={(event) => {
 				event.preventDefault();
-				onClose();
+				if (dismissible) onClose();
 			}}
 			className={`m-auto w-[calc(100%-2rem)] ${width} rounded-card border border-line bg-surface p-0 text-ink shadow-[var(--shadow)] backdrop:bg-black/45 backdrop:backdrop-blur-[2px]`}
 		>
@@ -67,6 +69,7 @@ export function Dialog({
 						<Button
 							variant="ghost"
 							iconOnly
+							disabled={!dismissible}
 							aria-label="Close"
 							title="Close"
 							onClick={onClose}
