@@ -16,6 +16,7 @@ import type { PutKeywordAliasesById200WordVfxColor } from './putKeywordAliasesBy
 import type { PutKeywordAliasesById200MainThemeColor } from './putKeywordAliasesById200MainThemeColor';
 import type { PutKeywordAliasesById200CategoryId } from './putKeywordAliasesById200CategoryId';
 import type { PutKeywordAliasesById200NatureId } from './putKeywordAliasesById200NatureId';
+import type { PutKeywordAliasesById200ImageDescription } from './putKeywordAliasesById200ImageDescription';
 import type { PutKeywordAliasesById200ImagePrompt } from './putKeywordAliasesById200ImagePrompt';
 import type { PutKeywordAliasesById200ImageId } from './putKeywordAliasesById200ImageId';
 import type { PutKeywordAliasesById200CreatedById } from './putKeywordAliasesById200CreatedById';
@@ -40,7 +41,13 @@ export type PutKeywordAliasesById200 = {
   overrideStyle: boolean;
   categoryId: PutKeywordAliasesById200CategoryId;
   natureId: PutKeywordAliasesById200NatureId;
-  imagePrompt: PutKeywordAliasesById200ImagePrompt;
+  imageDescription: PutKeywordAliasesById200ImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
+  imagePrompt?: PutKeywordAliasesById200ImagePrompt;
   imageId: PutKeywordAliasesById200ImageId;
   keywordId: string;
   createdById: PutKeywordAliasesById200CreatedById;

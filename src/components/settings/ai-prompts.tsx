@@ -24,13 +24,13 @@ const PROMPTS = [
 	{
 		field: "imagePrompt",
 		key: "AI_Image_Prompt",
-		title: "Character images",
+		title: "Character image art instructions",
 		hint: "Portrait style and how chapter and novel details guide character images.",
 	},
 	{
 		field: "chapterCoverPrompt",
 		key: "AI_Chapter_Cover_Prompt",
-		title: "Chapter covers",
+		title: "Chapter cover art instructions",
 		hint: "Scene selection, composition, lighting and entity references for chapter covers.",
 	},
 	{
@@ -194,7 +194,7 @@ export function AiPromptsCard() {
 				<h2 className="font-semibold">AI prompts</h2>
 				<p className="mt-1 text-sm text-muted">
 					Shared templates for Cloud and Desktop generation. Changes apply when
-					a new prompt is built; saved image prompts stay editable on their
+					a new prompt is built; saved image descriptions stay editable on their
 					records.
 				</p>
 			</div>

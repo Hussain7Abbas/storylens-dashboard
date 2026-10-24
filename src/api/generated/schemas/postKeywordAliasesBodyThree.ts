@@ -10,6 +10,7 @@ import type { PostKeywordAliasesBodyThreeDescriptionAr } from './postKeywordAlia
 import type { PostKeywordAliasesBodyThreeDescriptionEn } from './postKeywordAliasesBodyThreeDescriptionEn';
 import type { PostKeywordAliasesBodyThreeCategoryId } from './postKeywordAliasesBodyThreeCategoryId';
 import type { PostKeywordAliasesBodyThreeNatureId } from './postKeywordAliasesBodyThreeNatureId';
+import type { PostKeywordAliasesBodyThreeImageDescription } from './postKeywordAliasesBodyThreeImageDescription';
 import type { PostKeywordAliasesBodyThreeImagePrompt } from './postKeywordAliasesBodyThreeImagePrompt';
 import type { PostKeywordAliasesBodyThreeImageId } from './postKeywordAliasesBodyThreeImageId';
 import type { PostKeywordAliasesBodyThreeNameAr } from './postKeywordAliasesBodyThreeNameAr';
@@ -32,6 +33,12 @@ export type PostKeywordAliasesBodyThree = {
   /** @nullable */
   natureId?: PostKeywordAliasesBodyThreeNatureId;
   /** @nullable */
+  imageDescription?: PostKeywordAliasesBodyThreeImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
   imagePrompt?: PostKeywordAliasesBodyThreeImagePrompt;
   /** @nullable */
   imageId?: PostKeywordAliasesBodyThreeImageId;

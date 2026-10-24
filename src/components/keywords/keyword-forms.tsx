@@ -45,12 +45,12 @@ type StyleValues = {
 	categoryId: string;
 	natureId: string;
 	image: PickedImage | null;
-	imagePrompt: string;
+	imageDescription: string;
 };
 
 type Styled = {
 	description: string | null;
-	imagePrompt?: string | null;
+	imageDescription?: string | null;
 	descriptionAr?: string | null;
 	descriptionEn?: string | null;
 	categoryId: string | null;
@@ -62,7 +62,7 @@ function styleValues(item: Styled | undefined | null): StyleValues {
 	return {
 		descriptionAr: descriptionIn(item, "ar") ?? "",
 		descriptionEn: descriptionIn(item, "en") ?? "",
-		imagePrompt: item?.imagePrompt ?? "",
+		imageDescription: item?.imageDescription ?? "",
 		categoryId: item?.categoryId ?? "",
 		natureId: item?.natureId ?? "",
 		image: item?.image ? { id: item.image.id, url: item.image.url } : null,
@@ -76,7 +76,7 @@ function styleBody(values: StyleValues) {
 		categoryId: values.categoryId || null,
 		natureId: values.natureId || null,
 		imageId: values.image?.id ?? null,
-		imagePrompt: values.imagePrompt.trim() || null,
+		imageDescription: values.imageDescription.trim() || null,
 	};
 }
 
@@ -94,7 +94,7 @@ function translationStyle(
 		categoryId: picked.style.categoryId ?? "",
 		natureId: picked.style.natureId ?? "",
 		image: picked.style.image,
-		imagePrompt: picked.style.imagePrompt ?? "",
+		imageDescription: picked.style.imageDescription ?? "",
 	};
 }
 
@@ -261,8 +261,10 @@ function StyleFields({
 				/>
 			</Field>
 			<ImagePromptField
-				value={values.imagePrompt}
-				onChange={(imagePrompt) => onChange({ ...values, imagePrompt })}
+				value={values.imageDescription}
+				onChange={(imageDescription) =>
+					onChange({ ...values, imageDescription })
+				}
 			/>
 			<ImageField
 				label="Image"
@@ -288,11 +290,11 @@ function ImagePromptField({
 	return (
 		<details className="rounded-lg border border-line p-3">
 			<summary className="cursor-pointer text-sm font-semibold">
-				<span>Image Prompt</span>
+				<span>Image Description</span>
 			</summary>
 			<div className="mt-3 grid gap-2">
 				<label className="field-label" htmlFor={id}>
-					Image Prompt
+					Image Description
 				</label>
 				<div className="image-prompt-editor" data-expanded={expanded}>
 					<textarea
@@ -321,10 +323,10 @@ function ImagePromptField({
 							try {
 								await navigator.clipboard.writeText(value);
 								setCopiedValue(value);
-								toast.success("Image prompt copied");
+								toast.success("Image description copied");
 							} catch {
 								toast.error(
-									"Could not copy the image prompt. Select and copy the text below.",
+									"Could not copy the image description. Select and copy the text below.",
 								);
 							}
 						}}

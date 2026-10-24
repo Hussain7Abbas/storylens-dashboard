@@ -12,6 +12,7 @@ import type { PutKeywordVersionsById200StartingChapter } from './putKeywordVersi
 import type { PutKeywordVersionsById200EndingChapter } from './putKeywordVersionsById200EndingChapter';
 import type { PutKeywordVersionsById200CategoryId } from './putKeywordVersionsById200CategoryId';
 import type { PutKeywordVersionsById200NatureId } from './putKeywordVersionsById200NatureId';
+import type { PutKeywordVersionsById200ImageDescription } from './putKeywordVersionsById200ImageDescription';
 import type { PutKeywordVersionsById200ImagePrompt } from './putKeywordVersionsById200ImagePrompt';
 import type { PutKeywordVersionsById200ImageId } from './putKeywordVersionsById200ImageId';
 import type { PutKeywordVersionsById200CreatedById } from './putKeywordVersionsById200CreatedById';
@@ -30,7 +31,13 @@ export type PutKeywordVersionsById200 = {
   endingChapter: PutKeywordVersionsById200EndingChapter;
   categoryId: PutKeywordVersionsById200CategoryId;
   natureId: PutKeywordVersionsById200NatureId;
-  imagePrompt: PutKeywordVersionsById200ImagePrompt;
+  imageDescription: PutKeywordVersionsById200ImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
+  imagePrompt?: PutKeywordVersionsById200ImagePrompt;
   imageId: PutKeywordVersionsById200ImageId;
   keywordId: string;
   createdById: PutKeywordVersionsById200CreatedById;

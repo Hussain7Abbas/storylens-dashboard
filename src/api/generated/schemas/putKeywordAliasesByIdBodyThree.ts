@@ -10,6 +10,7 @@ import type { PutKeywordAliasesByIdBodyThreeDescriptionAr } from './putKeywordAl
 import type { PutKeywordAliasesByIdBodyThreeDescriptionEn } from './putKeywordAliasesByIdBodyThreeDescriptionEn';
 import type { PutKeywordAliasesByIdBodyThreeCategoryId } from './putKeywordAliasesByIdBodyThreeCategoryId';
 import type { PutKeywordAliasesByIdBodyThreeNatureId } from './putKeywordAliasesByIdBodyThreeNatureId';
+import type { PutKeywordAliasesByIdBodyThreeImageDescription } from './putKeywordAliasesByIdBodyThreeImageDescription';
 import type { PutKeywordAliasesByIdBodyThreeImagePrompt } from './putKeywordAliasesByIdBodyThreeImagePrompt';
 import type { PutKeywordAliasesByIdBodyThreeImageId } from './putKeywordAliasesByIdBodyThreeImageId';
 import type { PutKeywordAliasesByIdBodyThreeNameAr } from './putKeywordAliasesByIdBodyThreeNameAr';
@@ -31,6 +32,12 @@ export type PutKeywordAliasesByIdBodyThree = {
   /** @nullable */
   natureId?: PutKeywordAliasesByIdBodyThreeNatureId;
   /** @nullable */
+  imageDescription?: PutKeywordAliasesByIdBodyThreeImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
   imagePrompt?: PutKeywordAliasesByIdBodyThreeImagePrompt;
   /** @nullable */
   imageId?: PutKeywordAliasesByIdBodyThreeImageId;

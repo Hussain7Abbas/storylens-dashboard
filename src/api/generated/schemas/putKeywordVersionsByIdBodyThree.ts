@@ -12,6 +12,7 @@ import type { PutKeywordVersionsByIdBodyThreeDescriptionAr } from './putKeywordV
 import type { PutKeywordVersionsByIdBodyThreeDescriptionEn } from './putKeywordVersionsByIdBodyThreeDescriptionEn';
 import type { PutKeywordVersionsByIdBodyThreeCategoryId } from './putKeywordVersionsByIdBodyThreeCategoryId';
 import type { PutKeywordVersionsByIdBodyThreeNatureId } from './putKeywordVersionsByIdBodyThreeNatureId';
+import type { PutKeywordVersionsByIdBodyThreeImageDescription } from './putKeywordVersionsByIdBodyThreeImageDescription';
 import type { PutKeywordVersionsByIdBodyThreeImagePrompt } from './putKeywordVersionsByIdBodyThreeImagePrompt';
 import type { PutKeywordVersionsByIdBodyThreeImageId } from './putKeywordVersionsByIdBodyThreeImageId';
 
@@ -31,6 +32,12 @@ export type PutKeywordVersionsByIdBodyThree = {
   /** @nullable */
   natureId?: PutKeywordVersionsByIdBodyThreeNatureId;
   /** @nullable */
+  imageDescription?: PutKeywordVersionsByIdBodyThreeImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
   imagePrompt?: PutKeywordVersionsByIdBodyThreeImagePrompt;
   /** @nullable */
   imageId?: PutKeywordVersionsByIdBodyThreeImageId;

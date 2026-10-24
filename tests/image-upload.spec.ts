@@ -262,11 +262,11 @@ for (const kind of ["keyword", "alias", "version"] as const) {
 	}, testInfo) => {
 		const requests = await mockApi(page, { signedIn: true });
 		const dialog = await openImageForm(page, kind);
-		const prompt = dialog.getByLabel("Image Prompt", { exact: true });
+		const prompt = dialog.getByLabel("Image Description", { exact: true });
 		await expect(prompt).not.toBeVisible();
 		await dialog
 			.locator("summary")
-			.filter({ hasText: /^Image Prompt$/ })
+			.filter({ hasText: /^Image Description$/ })
 			.click();
 		await expect(prompt).toBeVisible();
 		await expect(prompt).toHaveCSS("height", "100px");
@@ -279,7 +279,7 @@ for (const kind of ["keyword", "alias", "version"] as const) {
 		const editor = dialog.locator(".image-prompt-editor");
 		const section = dialog
 			.locator("summary")
-			.filter({ hasText: /^Image Prompt$/ });
+			.filter({ hasText: /^Image Description$/ });
 		if (testInfo.project.name === "chromium") {
 			await section.focus();
 			await page.mouse.move(0, 0);
@@ -325,7 +325,7 @@ for (const kind of ["keyword", "alias", "version"] as const) {
 			requests.some(
 				(request) =>
 					request.method === "PUT" &&
-					(request.body as { imagePrompt?: string })?.imagePrompt ===
+					(request.body as { imageDescription?: string })?.imageDescription ===
 						"Watercolor portrait. Silver hair, green cloak.",
 			),
 		).toBe(true);

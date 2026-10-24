@@ -8,11 +8,15 @@ const definitions = [
 		key: "AI_Keyword_Prompt",
 		title: "Keyword generation",
 	},
-	{ field: "imagePrompt", key: "AI_Image_Prompt", title: "Character images" },
+	{
+		field: "imagePrompt",
+		key: "AI_Image_Prompt",
+		title: "Character image art instructions",
+	},
 	{
 		field: "chapterCoverPrompt",
 		key: "AI_Chapter_Cover_Prompt",
-		title: "Chapter covers",
+		title: "Chapter cover art instructions",
 	},
 	{
 		field: "chapterContextPrompt",

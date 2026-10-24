@@ -16,6 +16,7 @@ import type { PostKeywordAliases200WordVfxColor } from './postKeywordAliases200W
 import type { PostKeywordAliases200MainThemeColor } from './postKeywordAliases200MainThemeColor';
 import type { PostKeywordAliases200CategoryId } from './postKeywordAliases200CategoryId';
 import type { PostKeywordAliases200NatureId } from './postKeywordAliases200NatureId';
+import type { PostKeywordAliases200ImageDescription } from './postKeywordAliases200ImageDescription';
 import type { PostKeywordAliases200ImagePrompt } from './postKeywordAliases200ImagePrompt';
 import type { PostKeywordAliases200ImageId } from './postKeywordAliases200ImageId';
 import type { PostKeywordAliases200CreatedById } from './postKeywordAliases200CreatedById';
@@ -40,7 +41,13 @@ export type PostKeywordAliases200 = {
   overrideStyle: boolean;
   categoryId: PostKeywordAliases200CategoryId;
   natureId: PostKeywordAliases200NatureId;
-  imagePrompt: PostKeywordAliases200ImagePrompt;
+  imageDescription: PostKeywordAliases200ImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
+  imagePrompt?: PostKeywordAliases200ImagePrompt;
   imageId: PostKeywordAliases200ImageId;
   keywordId: string;
   createdById: PostKeywordAliases200CreatedById;

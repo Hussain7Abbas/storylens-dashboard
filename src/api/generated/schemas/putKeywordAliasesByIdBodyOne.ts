@@ -10,6 +10,7 @@ import type { PutKeywordAliasesByIdBodyOneDescriptionAr } from './putKeywordAlia
 import type { PutKeywordAliasesByIdBodyOneDescriptionEn } from './putKeywordAliasesByIdBodyOneDescriptionEn';
 import type { PutKeywordAliasesByIdBodyOneCategoryId } from './putKeywordAliasesByIdBodyOneCategoryId';
 import type { PutKeywordAliasesByIdBodyOneNatureId } from './putKeywordAliasesByIdBodyOneNatureId';
+import type { PutKeywordAliasesByIdBodyOneImageDescription } from './putKeywordAliasesByIdBodyOneImageDescription';
 import type { PutKeywordAliasesByIdBodyOneImagePrompt } from './putKeywordAliasesByIdBodyOneImagePrompt';
 import type { PutKeywordAliasesByIdBodyOneImageId } from './putKeywordAliasesByIdBodyOneImageId';
 import type { PutKeywordAliasesByIdBodyOneNameAr } from './putKeywordAliasesByIdBodyOneNameAr';
@@ -31,6 +32,12 @@ export type PutKeywordAliasesByIdBodyOne = {
   /** @nullable */
   natureId?: PutKeywordAliasesByIdBodyOneNatureId;
   /** @nullable */
+  imageDescription?: PutKeywordAliasesByIdBodyOneImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
   imagePrompt?: PutKeywordAliasesByIdBodyOneImagePrompt;
   /** @nullable */
   imageId?: PutKeywordAliasesByIdBodyOneImageId;

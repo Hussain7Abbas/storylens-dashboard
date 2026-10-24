@@ -16,6 +16,7 @@ import type { PostKeywordsBodyTwoDescriptionAr } from './postKeywordsBodyTwoDesc
 import type { PostKeywordsBodyTwoDescriptionEn } from './postKeywordsBodyTwoDescriptionEn';
 import type { PostKeywordsBodyTwoCategoryId } from './postKeywordsBodyTwoCategoryId';
 import type { PostKeywordsBodyTwoNatureId } from './postKeywordsBodyTwoNatureId';
+import type { PostKeywordsBodyTwoImageDescription } from './postKeywordsBodyTwoImageDescription';
 import type { PostKeywordsBodyTwoImagePrompt } from './postKeywordsBodyTwoImagePrompt';
 import type { PostKeywordsBodyTwoImageId } from './postKeywordsBodyTwoImageId';
 
@@ -44,6 +45,12 @@ export type PostKeywordsBodyTwo = {
   /** @nullable */
   natureId?: PostKeywordsBodyTwoNatureId;
   /** @nullable */
+  imageDescription?: PostKeywordsBodyTwoImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
   imagePrompt?: PostKeywordsBodyTwoImagePrompt;
   /** @nullable */
   imageId?: PostKeywordsBodyTwoImageId;

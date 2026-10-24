@@ -12,6 +12,7 @@ import type { GetNovelsByIdKeywords200DataItemVersionsItemStartingChapter } from
 import type { GetNovelsByIdKeywords200DataItemVersionsItemEndingChapter } from './getNovelsByIdKeywords200DataItemVersionsItemEndingChapter';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCategoryId } from './getNovelsByIdKeywords200DataItemVersionsItemCategoryId';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemNatureId } from './getNovelsByIdKeywords200DataItemVersionsItemNatureId';
+import type { GetNovelsByIdKeywords200DataItemVersionsItemImageDescription } from './getNovelsByIdKeywords200DataItemVersionsItemImageDescription';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemImagePrompt } from './getNovelsByIdKeywords200DataItemVersionsItemImagePrompt';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemImageId } from './getNovelsByIdKeywords200DataItemVersionsItemImageId';
 import type { GetNovelsByIdKeywords200DataItemVersionsItemCreatedById } from './getNovelsByIdKeywords200DataItemVersionsItemCreatedById';
@@ -30,7 +31,13 @@ export type GetNovelsByIdKeywords200DataItemVersionsItem = {
   endingChapter: GetNovelsByIdKeywords200DataItemVersionsItemEndingChapter;
   categoryId: GetNovelsByIdKeywords200DataItemVersionsItemCategoryId;
   natureId: GetNovelsByIdKeywords200DataItemVersionsItemNatureId;
-  imagePrompt: GetNovelsByIdKeywords200DataItemVersionsItemImagePrompt;
+  imageDescription: GetNovelsByIdKeywords200DataItemVersionsItemImageDescription;
+  /**
+   * Deprecated since 2026-10-24; removed after 2027-04-30. Use imageDescription instead.
+   * @deprecated
+   * @nullable
+   */
+  imagePrompt?: GetNovelsByIdKeywords200DataItemVersionsItemImagePrompt;
   imageId: GetNovelsByIdKeywords200DataItemVersionsItemImageId;
   keywordId: string;
   createdById: GetNovelsByIdKeywords200DataItemVersionsItemCreatedById;

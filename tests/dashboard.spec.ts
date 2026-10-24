@@ -586,7 +586,7 @@ test("a new keyword is created with its base details", async ({ page }) => {
 	);
 	await fillName(dialog, "en", "Old Bell");
 	await dialog.getByLabel("Category").selectOption("cat-person");
-	await dialog.getByLabel("Description").fill("Rings at dawn");
+	await dialog.getByLabel("Description", { exact: true }).fill("Rings at dawn");
 	await dialog.getByText("Full word match").click();
 	await dialog.getByRole("button", { name: "Create keyword" }).click();
 	await expect(page.getByText("Keyword created")).toBeVisible();
@@ -605,7 +605,7 @@ test("a new keyword is created with its base details", async ({ page }) => {
 			categoryId: "cat-person",
 			natureId: null,
 			imageId: null,
-			imagePrompt: null,
+			imageDescription: null,
 		},
 	});
 });
@@ -833,7 +833,9 @@ test("a keyword's Link tab merges the other language's keyword on save", async (
 	const name = dialog.getByLabel("Name", { exact: true });
 	await expect(name).toHaveValue("The Lantern");
 	await expect(name).toBeDisabled();
-	await expect(dialog.getByLabel("Description")).toHaveValue("A glowing relic");
+	await expect(dialog.getByLabel("Description", { exact: true })).toHaveValue(
+		"A glowing relic",
+	);
 
 	await dialog.getByRole("button", { name: "Save changes" }).click();
 	await expect(page.getByText("Keyword updated")).toBeVisible();
